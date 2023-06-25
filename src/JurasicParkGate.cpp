@@ -5,15 +5,15 @@
   */
 
 #include "JurasicParkGate.hpp"       // config and control for the application interface
-#include "GhMgr.hpp"            // config and control for the application interface
+#include "Logging.hpp"          // config and control for the File interface
 #include "FileMgr.hpp"          // config and control for the File interface
 #include "WifiMgr.hpp"          // config and control for the WiFi interface
 #include "WebMgr.hpp"           // config and control for the web user interface
 // #include "SensorMgr.hpp"        // config and control for the Data collection objects
 #ifdef USE_DISPLAY
-    #include "OutputMgr.hpp"        // config and control for the Data collection objects
-#endif // def USE_DISPLAY
 #include "DisplayMgr.hpp"       // config and control for the TFT Display object
+#endif // def USE_DISPLAY
+// #include "OutputMgr.hpp"        // config and control for the Data collection objects
 
 #include <Wire.h>
 
@@ -31,8 +31,7 @@ listOfApplications_t g_listOfApplications
     & Logging,
     & WiFiMgr,
     & WebMgr,
-    & OutputMgr,
-    & JurasicParkGateMgr
+//    & OutputMgr,
 };
 
 bool reboot = false;

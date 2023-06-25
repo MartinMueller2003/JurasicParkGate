@@ -13,7 +13,7 @@
   *
   */
 
-#include "Greenhouse.hpp"
+#include "JurasicParkGate.hpp"
 
 #include <esp_wifi.h>
 
@@ -51,7 +51,7 @@ c_WiFiMgr::c_WiFiMgr () : c_Common (String (F ("WiFiMgr")))
     // this gets called pre-setup so there is nothing we can do here.
     fsm_WiFi_state_Boot_imp.Init ();
 
-    hostname = String ("Greenhouse-") + WiFi.macAddress ();
+    hostname = String ("JurasicParkGate-") + WiFi.macAddress ();
 
     EventManagerEvents. addListener (   WiFiConnectEvent,       [] (int one, int two)->void{WiFiMgr.onWiFiConnectEvent    (one, two);});
     EventManagerEvents. addListener (   WiFiDisConnectEvent,    [] (int one, int two)->void{WiFiMgr.onWiFiDisconnectEvent (one, two);});
@@ -591,7 +591,7 @@ void fsm_WiFi_state_ConnectingAsAP::Init ()
     {
         WiFi.mode (WIFI_AP);
 
-        String ssid = String (F ("Greenhouse-")) + WiFiMgr.hostname;
+        String ssid = String (F ("JurasicParkGate-")) + WiFiMgr.hostname;
         WiFi.softAP (ssid.c_str ());
 
         #ifdef USE_DISPLAY

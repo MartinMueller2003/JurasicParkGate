@@ -6,7 +6,6 @@
 #include "FileMgr.hpp"
 #include "CfgMgr.hpp"
 #include "RtcMgr.hpp"
-#include "Sensor.hpp"
 
 /*****************************************************************************/
 /* global data                                                               */
@@ -25,8 +24,6 @@ c_History::c_History (const HistoryDefinition_t & HistoryDefinition)
     // DEBUG_START;
 
     m_Config = HistoryDefinition;
-    // DEBUG_V (String ("Name: ") + ((c_Sensor*)this)->GetName());
-    // DEBUG_V (String ("  ID: ") + ((c_Sensor*)this)->GetId());
 
     // DEBUG_END;
 }  // c_History
@@ -35,9 +32,6 @@ c_History::c_History (const HistoryDefinition_t & HistoryDefinition)
 c_History::c_History ()
 {
     // DEBUG_START;
-
-    // DEBUG_V (String ("Name: ") + ((c_Sensor*)this)->GetName ());
-    // DEBUG_V (String ("  ID: ") + ((c_Sensor*)this)->GetId ());
 
     // DEBUG_END;
 }  // c_History
@@ -78,8 +72,6 @@ void c_History::SetConfig (JsonObject & JsonData)
     m_Config.iHistoryIntervalSec = TimeSpan (temp);
 
     // DEBUG_V (String ("EnableRecording: ") + String (m_Config.EnableRecording));
-    // DEBUG_V (String ("Name: ") + ((c_Sensor*)this)->GetName());
-    // DEBUG_V (String ("  Id: ") + ((c_Sensor*)this)->GetId());
 
     // DEBUG_END;
 }  // SetConfig
@@ -99,9 +91,6 @@ void c_History::WriteRecord (String & sNewRecord)
 
     do  // once
     {
-        // DEBUG_V (String ("Name: ") + ((c_Sensor*)this)->GetName ());
-        // DEBUG_V (String ("  Id: ") + ((c_Sensor*)this)->GetId ());
-
         if (false == m_Config.EnableRecording)
         {
             // DEBUG_V ("Recording Not Enabled");
@@ -130,8 +119,8 @@ void c_History::WriteRecord (String & sNewRecord)
             // build a json record
             DynamicJsonDocument jsonDoc (1024);
             JsonObject jsonDocObject = jsonDoc.to <JsonObject>();
-            jsonDocObject[CN_name]      = ((c_Sensor *)this)->GetName ();
-            jsonDocObject[CN_type]      = ((c_Sensor *)this)->GetId ();
+//             jsonDocObject[CN_name]      = ((c_Sensor *)this)->GetName ();
+//             jsonDocObject[CN_type]      = ((c_Sensor *)this)->GetId ();
             jsonDocObject[CN_reading]   = sNewRecord;
             jsonDocObject[CN_time]      = String (now.unixtime ());
 

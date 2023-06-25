@@ -15,7 +15,7 @@
   */
 
 #include "JurasicParkGate.hpp"
-#include "EFUpdate.hpp"
+// #include "EFUpdate.hpp"
 #include "CfgMgr.hpp"
 #include <ESPAsyncWebServer.h>
 // #include <EspalexaDevice.h>
@@ -38,12 +38,10 @@ public:
     // void onAlexaMessage        (EspalexaDevice * pDevice);
     // void RegisterAlexaCallback (DeviceCallbackFunction cb);
     // bool IsAlexaCallbackValid  () { return (nullptr != pAlexaCallback); }
-    void    FirmwareUpload        (AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
     void    handleFileUpload      (AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
     void    NetworkStateChanged   (bool NewNetworkState);
 private:
 
-    EFUpdate            efupdate;
     // DeviceCallbackFunction pAlexaCallback = nullptr;
     // EspalexaDevice *       pAlexaDevice   = nullptr;
 

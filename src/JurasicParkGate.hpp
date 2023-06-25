@@ -19,8 +19,9 @@
 
 #include "Common.hpp"
 #include "CfgMgr.hpp"
-// #include "Logging.hpp"
-// #include "ConstNames.hpp"
+#include "Logging.hpp"
+#include "ConstNames.hpp"
+#include "RtcMgr.hpp"
 
 #define REBOOT_DELAYms  100     ///< Delay for rebooting once reboot flag is set
 #define LOG_PORT        Serial  ///< Serial port for console logging

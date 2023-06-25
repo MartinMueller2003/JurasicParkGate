@@ -25,7 +25,6 @@
 
 const uint8_t HTTP_PORT = 80;                   ///< Default web server port
 
-static EFUpdate efupdate;                       /// EFU Update Handler
 static AsyncWebServer   webServer (HTTP_PORT);  // Web Server
 static AsyncWebSocket   webSocket ("/ws");      // Web Socket Plugin
 
@@ -140,17 +139,6 @@ void c_WebMgr::init ()
             this->GetConfiguration ();
             request->send (200, "text/json", WebSocketFrameCollectionBuffer);
         });
-
-    // Firmware upload handler - only in station mode
-    webServer.on (
-        "/updatefw",
-        HTTP_POST,
-        [] (AsyncWebServerRequest * request)
-        {
-            webSocket.textAll ("X6");
-        },
-        [] (AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final) {WebMgr.FirmwareUpload (request, filename, index, data, len,  final);}).setFilter (
-        ON_STA_FILTER);
 
     // Static Handler
     webServer.serveStatic (CN_Slash, LittleFS, "/www/").setDefaultFile ("index.html").setFilter (filterApi);
@@ -805,69 +793,6 @@ void c_WebMgr::processCmdDelete (JsonObject & jsonCmd)
 
     // DEBUG_END;
 }  // processCmdDelete
-
-// -----------------------------------------------------------------------------
-void c_WebMgr::FirmwareUpload (AsyncWebServerRequest    * request,
-                               String                   filename,
-                               size_t                   index,
-                               uint8_t                  * data,
-                               size_t                   len,
-                               bool final)
-{
-    // DEBUG_START;
-
-    do  // once
-    {
-        // make sure we are in AP mode
-        if (0 == WiFi.softAPgetStationNum ())
-        {
-            // DEBUG_V("Not in AP Mode");
-
-            // we are not talking to a station so we are not in AP mode
-            // break;
-        }
-
-        // DEBUG_V ("");
-
-        // is the first message in the upload?
-        if (0 == index)
-        {
-            #ifdef ARDUINO_ARCH_ESP8266
-                WiFiUDP::stopAll ();
-            #else // ifdef ARDUINO_ARCH_ESP8266
-                // this is not supported for ESP32
-            #endif // ifdef ARDUINO_ARCH_ESP8266
-            LOG_INFO (String (F ("Upload Started: ")) + filename);
-            efupdate.begin ();
-        }
-
-        // DEBUG_V ("");
-
-        if (!efupdate.process (data, len))
-        {
-            LOG_ERROR (String (F ("UPDATE ERROR: ")) + String (efupdate.getError ()));
-        }
-
-        if (efupdate.hasError ())
-        {
-            // DEBUG_V ("efupdate.hasError");
-            request->send (200, CN_textSLASHplain, (String (F ("Update Error: ")) + String (efupdate.getError ())).c_str ());
-            break;
-        }
-
-        // DEBUG_V ("");
-
-        if (final)
-        {
-            request->send (200, CN_textSLASHplain, (String (F ("Update Finished: ")) + String (efupdate.getError ())).c_str ());
-            LOG_INFO (F ("Upload Finished."));
-            efupdate.end ();
-            LittleFS.begin ();
-        }
-    } while (false);
-
-    // DEBUG_END;
-}  // onEvent
 
 // -----------------------------------------------------------------------------
 /*
