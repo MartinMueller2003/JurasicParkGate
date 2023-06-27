@@ -31,11 +31,11 @@
 #define I2CResetPin     gpio_num_t::GPIO_NUM_4
 #define TracePulseGpio  gpio_num_t::GPIO_NUM_16
 
-#define SD_CARD_MISO_PIN    gpio_num_t::GPIO_NUM_35
-#define SD_CARD_MOSI_PIN    gpio_num_t::GPIO_NUM_19
-#define SD_CARD_CLK_PIN     gpio_num_t::GPIO_NUM_18
+#define SD_CARD_MISO_PIN    gpio_num_t::GPIO_NUM_2
+#define SD_CARD_MOSI_PIN    gpio_num_t::GPIO_NUM_15
+#define SD_CARD_CLK_PIN     gpio_num_t::GPIO_NUM_14
 #define SD_CARD_CLK_MHZ     SD_SCK_MHZ (50)  // 50 MHz SPI clock
-#define SD_CARD_CS_PIN      gpio_num_t::GPIO_NUM_21
+#define SD_CARD_CS_PIN      gpio_num_t::GPIO_NUM_13
 
 #define PWM1_PIN    gpio_num_t::GPIO_NUM_27
 #define PWM2_PIN    gpio_num_t::GPIO_NUM_13
