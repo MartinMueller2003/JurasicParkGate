@@ -4,7 +4,7 @@
   *    Author:	mmueller
   */
 
-#include "JurasicParkGate.hpp"       // config and control for the application interface
+#include "JurasicParkGate.hpp"  // config and control for the application interface
 #include "Logging.hpp"          // config and control for the File interface
 #include "FileMgr.hpp"          // config and control for the File interface
 #include "WifiMgr.hpp"          // config and control for the WiFi interface
@@ -31,7 +31,7 @@ listOfApplications_t g_listOfApplications
     & Logging,
     & WiFiMgr,
     & WebMgr,
-//    & OutputMgr,
+    //    & OutputMgr,
 };
 
 bool reboot = false;
@@ -48,6 +48,11 @@ void setup ()
     // SaveCrash.clear();
 
     // DEBUG_V (F ("Init App Start"));
+
+    DEBUG_V (   String (" Total heap: ") + String (ESP.getHeapSize ()));
+    DEBUG_V (   String ("  Free heap: ") + String (ESP.getFreeHeap ()));
+    DEBUG_V (   String ("Total PSRAM: ") + String (ESP.getPsramSize ()));
+    DEBUG_V (   String (" Free PSRAM: ") + String (ESP.getFreePsram ()));
 
     // Init each of the applications
     for (auto & listOfApplicationsIterator : g_listOfApplications)
