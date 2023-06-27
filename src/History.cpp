@@ -119,8 +119,8 @@ void c_History::WriteRecord (String & sNewRecord)
             // build a json record
             DynamicJsonDocument jsonDoc (1024);
             JsonObject jsonDocObject = jsonDoc.to <JsonObject>();
-//             jsonDocObject[CN_name]      = ((c_Sensor *)this)->GetName ();
-//             jsonDocObject[CN_type]      = ((c_Sensor *)this)->GetId ();
+            // jsonDocObject[CN_name]      = ((c_Sensor *)this)->GetName ();
+            // jsonDocObject[CN_type]      = ((c_Sensor *)this)->GetId ();
             jsonDocObject[CN_reading]   = sNewRecord;
             jsonDocObject[CN_time]      = String (now.unixtime ());
 
