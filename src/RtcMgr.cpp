@@ -84,53 +84,55 @@ void DEBUG_TracePulse (uint32_t numPulses)
 /*****************************************************************************/
 void c_rtcMgr::HardResetI2cMux ()
 {
-    // DEBUG_START;
-    pinMode (I2CResetPin, OUTPUT);
-    // DEBUG_V();
-    digitalWrite (I2CResetPin, LOW);
-    // DEBUG_V();
-    delayMicroseconds (10);
-    digitalWrite (I2CResetPin, HIGH);
-    // DEBUG_V();
-    delayMicroseconds (1);
-    // DEBUG_END;
+    #ifdef SupportI2cMux
+        // DEBUG_START;
+        pinMode (I2CResetPin, OUTPUT);
+        // DEBUG_V();
+        digitalWrite (I2CResetPin, LOW);
+        // DEBUG_V();
+        delayMicroseconds (10);
+        digitalWrite (I2CResetPin, HIGH);
+        // DEBUG_V();
+        delayMicroseconds (1);
+        // DEBUG_END;
+    #endif // def SupportI2cMux
 }  // HardResetI2cMux
 
 /*****************************************************************************/
 void c_rtcMgr::SetUpI2cChannels ()
 {
     // DEBUG_START;
-#ifdef SupportI2cMux
-    uint8_t ChansToEnable = 0;
-    for (uint8_t ChanToTest = 0x80;ChanToTest > 0;ChanToTest >>= 1)
-    {
-        HardResetI2cMux ();
-        i2cmux.writeRegister (ChanToTest);
-        if (i2cmux.readRegister () != ChanToTest)
+    #ifdef SupportI2cMux
+        uint8_t ChansToEnable = 0;
+        for (uint8_t ChanToTest = 0x80;ChanToTest > 0;ChanToTest >>= 1)
         {
-            // DEBUG_V (String ("Could not verify I2C Mux setting for 0x") + String (ChanToTest, HEX));
-        }
-        else
-        {
-            uint32_t numDevices = ScanI2Cbus (MUX_I2C_ADDRESS, MUX_I2C_ADDRESS);
-            if (0 != numDevices)
+            HardResetI2cMux ();
+            i2cmux.writeRegister (ChanToTest);
+            if (i2cmux.readRegister () != ChanToTest)
             {
-                // DEBUG_V (String ("Found bus: 0x") + String (ChanToTest, HEX) + " Num devices: " + String (numDevices));
-                ChansToEnable |= ChanToTest;
+                // DEBUG_V (String ("Could not verify I2C Mux setting for 0x") + String (ChanToTest, HEX));
             }
             else
             {
-                // DEBUG_V (String ("Broken bus: 0x") + String (ChanToTest, HEX));
+                uint32_t numDevices = ScanI2Cbus (MUX_I2C_ADDRESS, MUX_I2C_ADDRESS);
+                if (0 != numDevices)
+                {
+                    // DEBUG_V (String ("Found bus: 0x") + String (ChanToTest, HEX) + " Num devices: " + String (numDevices));
+                    ChansToEnable |= ChanToTest;
+                }
+                else
+                {
+                    // DEBUG_V (String ("Broken bus: 0x") + String (ChanToTest, HEX));
+                }
             }
         }
-    }
 
-    HardResetI2cMux ();
-    // DEBUG_V (String ("Enable bus: 0x") + String (ChansToEnable, HEX));
-    i2cmux.writeRegister (ChansToEnable);
+        HardResetI2cMux ();
+        // DEBUG_V (String ("Enable bus: 0x") + String (ChansToEnable, HEX));
+        i2cmux.writeRegister (ChansToEnable);
 
-    ScanI2Cbus (1, 127, true);
-#endif // def SupportI2cMux
+        ScanI2Cbus (1, 127, true);
+    #endif // def SupportI2cMux
 
     // DEBUG_END;
 }
@@ -162,67 +164,68 @@ void c_rtcMgr::Init (void)
             LOG_ERROR (F ("Failed to set up the two wire interface"));
             break;
         }
-#ifdef SupportI2cMux
 
-        // DEBUG_V ();
+        #ifdef SupportI2cMux
 
-        // DEBUG_TracePulse (2);
-        HardResetI2cMux ();
-        // DEBUG_TracePulse (3);
-        ScanI2Cbus (MUX_I2C_ADDRESS, MUX_I2C_ADDRESS);
-        // DEBUG_TracePulse (4);
+            // DEBUG_V ();
 
-        SoftResetI2C ();
-        // DEBUG_TracePulse (5);
+            // DEBUG_TracePulse (2);
+            HardResetI2cMux ();
+            // DEBUG_TracePulse (3);
+            ScanI2Cbus (MUX_I2C_ADDRESS, MUX_I2C_ADDRESS);
+            // DEBUG_TracePulse (4);
 
-        HardResetI2cMux ();
-        // DEBUG_TracePulse (6);
+            SoftResetI2C ();
+            // DEBUG_TracePulse (5);
 
-        // delay(100);
-        // HardResetI2cMux ();
+            HardResetI2cMux ();
+            // DEBUG_TracePulse (6);
 
-        do
-        {
-            // DEBUG_TracePulse (7);
+            // delay(100);
+            // HardResetI2cMux ();
 
-            // DEBUG_V (   String ("Detect Devices before mux begin, Found ") + String (ScanI2Cbus (8, 127)) + " devices.");
-            // DEBUG_V ("Detect MUX");
-            if (0 == ScanI2Cbus (MUX_I2C_ADDRESS, MUX_I2C_ADDRESS))
+            do
             {
-                LOG_ERROR (F ("Could not detect the I2C MUX"));
-                // delay(2000);
-                break;
+                // DEBUG_TracePulse (7);
+
+                // DEBUG_V (   String ("Detect Devices before mux begin, Found ") + String (ScanI2Cbus (8, 127)) + " devices.");
+                // DEBUG_V ("Detect MUX");
+                if (0 == ScanI2Cbus (MUX_I2C_ADDRESS, MUX_I2C_ADDRESS))
+                {
+                    LOG_ERROR (F ("Could not detect the I2C MUX"));
+                    // delay(2000);
+                    break;
+                }
+                else
+                {
+                    // DEBUG_TracePulse (8);
+                    // delay(2000);
+                    LOG_INFO (F ("I2C Mux Detected"));
+                }
+            } while (false);
+
+            // DEBUG_V ("Begin MUX");
+            // DEBUG_TracePulse (9);
+            HardResetI2cMux ();
+            i2cmux.begin (GhWire);
+
+            // DEBUG_TracePulse (10);
+
+            HardResetI2cMux ();
+            if (i2cmux.readRegister () != 0)
+            {
+                LOG_ERROR (F ("Could not verify I2C Mux setting"));
             }
             else
             {
-                // DEBUG_TracePulse (8);
-                // delay(2000);
-                LOG_INFO (F ("I2C Mux Detected"));
+                // DEBUG_V("Verified I2C Mux setting");
             }
-        } while (false);
 
-        // DEBUG_V ("Begin MUX");
-        // DEBUG_TracePulse (9);
-        HardResetI2cMux ();
-        i2cmux.begin (GhWire);
+            // DEBUG_TracePulse (11);
 
-        // DEBUG_TracePulse (10);
-
-        HardResetI2cMux ();
-        if (i2cmux.readRegister () != 0)
-        {
-            LOG_ERROR (F ("Could not verify I2C Mux setting"));
-        }
-        else
-        {
-            // DEBUG_V("Verified I2C Mux setting");
-        }
-
-        // DEBUG_TracePulse (11);
-
-        SetUpI2cChannels ();
-        // DEBUG_TracePulse (12);
-#endif // def SupportI2cMux
+            SetUpI2cChannels ();
+            // DEBUG_TracePulse (12);
+        #endif // def SupportI2cMux
 
         // DEBUG_V (   String ("Detect Devices before RTC begin, Found ") + String (ScanI2Cbus (8, 127)) + " devices.");
         // DEBUG_V ("Detect RTC");
