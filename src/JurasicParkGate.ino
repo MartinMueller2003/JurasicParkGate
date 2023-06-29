@@ -76,7 +76,7 @@ static void _u0_putc(char c){
 #ifdef ESPS_VERSION
 const String VERSION = STRING(ESPS_VERSION);
 #else
-const String VERSION = "4.x-dev";
+const String VERSION = "1.x-dev";
 #endif
 
 const String BUILD_DATE = String(__DATE__) + " - " + String(__TIME__);
