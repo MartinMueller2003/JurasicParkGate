@@ -1,9 +1,9 @@
 /*
 * ConstNames.hpp - List of strings that can be reused
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -17,7 +17,7 @@
 *
 */
 
-#include "ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 const CN_PROGMEM char CN_active                   [] = "active";
 const CN_PROGMEM char CN_ActiveHigh               [] = "ActiveHigh";
@@ -27,7 +27,6 @@ const CN_PROGMEM char CN_activevalue              [] = "activevalue";
 const CN_PROGMEM char CN_addr                     [] = "addr";
 const CN_PROGMEM char CN_advancedView             [] = "advancedView";
 const CN_PROGMEM char CN_allleds                  [] = "allleds";
-const CN_PROGMEM char CN_APA102                   [] = "APA102";
 const CN_PROGMEM char CN_ap_fallback              [] = "ap_fallback";
 const CN_PROGMEM char CN_ap_timeout               [] = "ap_timeout";
 const CN_PROGMEM char CN_ap_reboot                [] = "ap_reboot";
@@ -59,8 +58,6 @@ const CN_PROGMEM char CN_Default                  [] = "Default";
 const CN_PROGMEM char CN_device                   [] = "device";
 const CN_PROGMEM char CN_dhcp                     [] = "dhcp";
 const CN_PROGMEM char CN_Disabled                 [] = "Disabled";
-const CN_PROGMEM char CN_DMX                      [] = "DMX";
-const CN_PROGMEM char CN_Dotfseq                  [] = ".fseq";
 const CN_PROGMEM char CN_Dotjson                  [] = ".json";
 const CN_PROGMEM char CN_Dotpl                    [] = ".pl";
 const CN_PROGMEM char CN_duration                 [] = "duration";
@@ -80,7 +77,7 @@ const CN_PROGMEM char CN_enabled                  [] = "enabled";
 const CN_PROGMEM char CN_errors                   [] = "errors";
 const CN_PROGMEM char CN_ESP32                    [] = "ESP32";
 const CN_PROGMEM char CN_ESP8266                  [] = "ESP8266";
-const CN_PROGMEM char CN_ESPixelStick             [] = "ESPixelStick";
+const CN_PROGMEM char CN_JurasicParkGate             [] = "JurasicParkGate";
 const CN_PROGMEM char CN_eth                      [] = "eth";
 const CN_PROGMEM char CN_EthDrv                   [] = "EthDrv";
 const CN_PROGMEM char CN_false                    [] = "false";
@@ -89,17 +86,14 @@ const CN_PROGMEM char CN_file                     [] = "file";
 const CN_PROGMEM char CN_filename                 [] = "filename";
 const CN_PROGMEM char CN_files                    [] = "files";
 const CN_PROGMEM char CN_Frequency                [] = "Frequency";
-const CN_PROGMEM char CN_fseqfilename             [] = "fseqfilename";
 const CN_PROGMEM char CN_g                        [] = "g";
 const CN_PROGMEM char CN_gamma                    [] = "gamma";
 const CN_PROGMEM char CN_gateway                  [] = "gateway";
-const CN_PROGMEM char CN_GECE                     [] = "GECE";
 const CN_PROGMEM char CN_get                      [] = "get";
 const CN_PROGMEM char CN_gen_ser_hdr              [] = "gen_ser_hdr";
 const CN_PROGMEM char CN_gen_ser_ftr              [] = "gen_ser_ftr";
 const CN_PROGMEM char CN_gid                      [] = "gid";
 const CN_PROGMEM char CN_group_size               [] = "group_size";
-const CN_PROGMEM char CN_GS8208                   [] = "GS8208";
 const CN_PROGMEM char CN_Heap_colon               [] = "Heap: ";
 const CN_PROGMEM char CN_hadisco                  [] = "hadisco";
 const CN_PROGMEM char CN_haprefix                 [] = "haprefix";
@@ -147,7 +141,6 @@ const CN_PROGMEM char CN_Paused                   [] = "Paused";
 const CN_PROGMEM char CN_pixel_count              [] = "pixel_count";
 const CN_PROGMEM char CN_Platform                 [] = "Platform";
 const CN_PROGMEM char CN_play                     [] = "play";
-const CN_PROGMEM char CN_playFseq                 [] = "playFseq";
 const CN_PROGMEM char CN_playlist                 [] = "playlist";
 const CN_PROGMEM char CN_plussigns                [] = "+++++";
 const CN_PROGMEM char CN_polarity                 [] = "polarity";
@@ -158,7 +151,6 @@ const CN_PROGMEM char CN_pwm                      [] = "pwm";
 const CN_PROGMEM char CN_r                        [] = "r";
 const CN_PROGMEM char CN_Relay                    [] = "Relay";
 const CN_PROGMEM char CN_remote                   [] = "remote";
-const CN_PROGMEM char CN_Renard                   [] = "Renard";
 const CN_PROGMEM char CN_rev                      [] = "rev";
 const CN_PROGMEM char CN_reverse                  [] = "reverse";
 const CN_PROGMEM char CN_RMT                      [] = "RMT";
@@ -189,16 +181,12 @@ const CN_PROGMEM char CN_time                     [] = "time";
 const CN_PROGMEM char CN_time_elapsed             [] = "time_elapsed";
 const CN_PROGMEM char CN_TimeRemaining            [] = "TimeRemaining";
 const CN_PROGMEM char CN_time_remaining           [] = "time_remaining";
-const CN_PROGMEM char CN_TLS3001                  [] = "TLS3001";
-const CN_PROGMEM char CN_TM1814                   [] = "TM1814";
 const CN_PROGMEM char CN_topic                    [] = "topic";
 const CN_PROGMEM char CN_topicset                 [] = "topicset";
 const CN_PROGMEM char CN_transitions              [] = "transitions";
 const CN_PROGMEM char CN_trig                     [] = "trig";
 const CN_PROGMEM char CN_true                     [] = "true";
 const CN_PROGMEM char CN_type                     [] = "type";
-const CN_PROGMEM char CN_UCS1903                  [] = "UCS1903";
-const CN_PROGMEM char CN_UCS8903                  [] = "UCS8903";
 const CN_PROGMEM char CN_ui                       [] = "ui";
 const CN_PROGMEM char CN_unichanlim               [] = "unichanlim";
 const CN_PROGMEM char CN_unifirst                 [] = "unifirst";
@@ -213,8 +201,6 @@ const CN_PROGMEM char CN_Version                  [] = "Version";
 const CN_PROGMEM char CN_weus                     [] = "weus";
 const CN_PROGMEM char CN_wifi                     [] = "wifi";
 const CN_PROGMEM char CN_WiFiDrv                  [] = "WiFiDrv";
-const CN_PROGMEM char CN_WS2801                   [] = "WS2801";
-const CN_PROGMEM char CN_WS2811                   [] = "WS2811";
 const CN_PROGMEM char CN_XP                       [] = "XP";
 const CN_PROGMEM char CN_zig_size                 [] = "zig_size";
 

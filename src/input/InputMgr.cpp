@@ -1,9 +1,9 @@
 /*
 * InputMgr.cpp - Input Management class
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -21,18 +21,14 @@
 *
 */
 
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 //-----------------------------------------------------------------------------
 // bring in driver definitions
 #include "InputDisabled.hpp"
-#include "InputE131.hpp"
 #include "InputEffectEngine.hpp"
 #include "InputMQTT.h"
 #include "InputAlexa.h"
-#include "InputDDP.h"
-#include "InputFPPRemote.h"
-#include "InputArtnet.hpp"
 // needs to be last
 #include "InputMgr.hpp"
 
@@ -434,24 +430,6 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 break;
             }
 
-            case e_InputType::InputType_E1_31:
-            {
-                if (InputTypeIsAllowedOnChannel (InputType_E1_31, ChannelIndex))
-                {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting E1.31 for channel '")) + ChannelIndex + "'.");
-                    }
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputE131 (ChannelIndex, InputType_E1_31, InputDataBufferSize);
-                    // DEBUG_V ("");
-                }
-                else
-                {
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
-                }
-                break;
-            }
-
             case e_InputType::InputType_Effects:
             {
                 if (InputTypeIsAllowedOnChannel (InputType_Effects, ChannelIndex))
@@ -497,62 +475,6 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                         logcon (String (F ("Starting Alexa for channel '")) + ChannelIndex + "'.");
                     }
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputAlexa (ChannelIndex, InputType_Alexa, InputDataBufferSize);
-                    // DEBUG_V ("");
-                }
-                else
-                {
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
-                }
-                break;
-            }
-
-            case e_InputType::InputType_DDP:
-            {
-                if (InputTypeIsAllowedOnChannel (InputType_DDP, ChannelIndex))
-                {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting DDP for channel '")) + ChannelIndex + "'.");
-                    }
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDDP (ChannelIndex, InputType_DDP, InputDataBufferSize);
-                    // DEBUG_V ("");
-                }
-                else
-                {
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
-                }
-                break;
-            }
-
-#ifdef SUPPORT_FPP
-            case e_InputType::InputType_FPP:
-            {
-                if (InputTypeIsAllowedOnChannel (InputType_FPP, ChannelIndex))
-                {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting FPP Remote for channel '")) + ChannelIndex + "'.");
-                    }
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputFPPRemote (ChannelIndex, InputType_FPP, InputDataBufferSize);
-                    // DEBUG_V ("");
-                }
-                else
-                {
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
-                }
-                break;
-            }
-#endif // def SUPPORT_FPP
-
-            case e_InputType::InputType_Artnet:
-            {
-                if (InputTypeIsAllowedOnChannel (InputType_Artnet, ChannelIndex))
-                {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting Artnet for channel '")) + ChannelIndex + "'.");
-                    }
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputArtnet (ChannelIndex, InputType_Artnet, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
                 else

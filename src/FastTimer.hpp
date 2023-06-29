@@ -2,9 +2,9 @@
 /*
 * FastTimer.hpp
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -18,7 +18,7 @@
 *
 */
 
-#include "ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 class FastTimer
 {

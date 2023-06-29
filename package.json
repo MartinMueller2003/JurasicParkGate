@@ -1,21 +1,21 @@
 {
-  "name": "espixelstick",
+  "name": "JurasicParkGate",
   "version": "1.0.0",
-  "description": "Gulp based build system for ESPixelStick web files",
+  "description": "Gulp based build system for JurasicParkGate web files",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/forkineye/ESPixelStick.git"
+    "url": "git+https://github.com/MartnMueller2003/JurasicParkGate.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/forkineye/ESPixelStick/issues"
+    "url": "https://github.com/MartnMueller2003/JurasicParkGate/issues"
   },
-  "homepage": "https://github.com/forkineye/ESPixelStick#readme",
+  "homepage": "https://github.com/MartnMueller2003/JurasicParkGate#readme",
   "devDependencies": {
     "del": "^6.0.0",
     "eslint": "^7.32.0",

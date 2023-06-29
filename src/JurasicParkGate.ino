@@ -1,9 +1,9 @@
 /*
-* ESPixelStick.ino
+* JurasicParkGate.ino
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2016, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -20,7 +20,7 @@
 #include <Arduino.h>
 
 // Core
-#include "src/ESPixelStick.h"
+#include "JurasicParkGate.h"
 #include "src/EFUpdate.h"
 #include <Int64String.h>
 
@@ -34,13 +34,10 @@
 #include "src/network/NetworkMgr.hpp"
 
 // WEB interface
-#include "src/WebMgr.hpp"
+#include "WebMgr.hpp"
 
 // File System Interface
-#include "src/FileMgr.hpp"
-
-// Services
-#include "src/service/FPPDiscovery.h"
+#include "FileMgr.hpp"
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include <Hash.h>
@@ -151,7 +148,7 @@ void setup()
 
     // Dump version and build information
     LOG_PORT.println ();
-    logcon (String(CN_ESPixelStick) + " v" + VERSION + " (" + BUILD_DATE + ")");
+    logcon (String(CN_JurasicParkGate) + " v" + VERSION + " (" + BUILD_DATE + ")");
 #ifdef ARDUINO_ARCH_ESP8266
     logcon (ESP.getFullVersion ());
 #else
@@ -186,9 +183,6 @@ void setup()
     // Configure and start the web server
     WebMgr.Begin(&config);
 
-    // DEBUG_V(String("FPPDiscovery Heap: ") + String(ESP.getFreeHeap()));
-    FPPDiscovery.begin ();
-
     // DEBUG_V(String("Final Heap: ") + String(ESP.getFreeHeap()));
 
 #ifdef ARDUINO_ARCH_ESP8266
@@ -221,7 +215,7 @@ bool validateConfig()
     // Device defaults
     if (!config.id.length ())
     {
-        config.id = "ESPixelStick";
+        config.id = "JurasicParkGate";
         configValid = false;
         // DEBUG_V ();
     }

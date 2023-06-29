@@ -2,9 +2,9 @@
 /*
 * GPIO_Defs_ESP32_TTGO_T8.hpp - Output Management class
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -41,17 +41,5 @@
 #define USE_MISO_PULLUP
 
 // Output Types
-// Not Finished - #define SUPPORT_OutputType_TLS3001
-// #define SUPPORT_OutputType_APA102  // SPI
-#define SUPPORT_OutputType_DMX              // UART
-#define SUPPORT_OutputType_GECE             // UART
-#define SUPPORT_OutputType_GS8208           // UART / RMT
-#define SUPPORT_OutputType_Renard           // UART
-#define SUPPORT_OutputType_Serial           // UART
-#define SUPPORT_OutputType_TM1814           // UART / RMT
-#define SUPPORT_OutputType_UCS1903          // UART / RMT
-#define SUPPORT_OutputType_UCS8903          // UART / RMT
-// #define SUPPORT_OutputType_WS2801           // SPI
-#define SUPPORT_OutputType_WS2811           // UART / RMT
 #define SUPPORT_OutputType_Relay            // GPIO
 #define SUPPORT_OutputType_Servo_PCA9685    // I2C (default pins)

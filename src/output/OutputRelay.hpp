@@ -1,8 +1,8 @@
 #pragma once
 /******************************************************************
 *
-*       Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
-*       Orginal ESPixelStickproject by 2015 Shelby Merrick
+*       Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
+*       Orginal JurasicParkGateproject by 2015 Martin Mueller
 *
 *       Brought to you by:
 *              Bill Porter
@@ -27,7 +27,7 @@ GNU General Public License for more details.
 *   Relay States and then outputs on a GPIO
 *
 */
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 #ifdef SUPPORT_OutputType_Relay
 

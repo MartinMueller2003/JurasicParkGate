@@ -1,9 +1,9 @@
 /*
 * WiFiDriver.cpp - Output Management class
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -17,7 +17,7 @@
 *
 */
 
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 #ifdef ARDUINO_ARCH_ESP8266
 #   include <eagle_soc.h>
@@ -28,7 +28,7 @@
 
 #include "WiFiDriver.hpp"
 #include "NetworkMgr.hpp"
-#include "../FileMgr.hpp"
+#include "FileMgr.hpp"
 
 //-----------------------------------------------------------------------------
 /*
@@ -788,7 +788,7 @@ void fsm_WiFi_state_ConnectingAsAP::Init ()
         WiFi.enableAP(true);
         String Hostname;
         NetworkMgr.GetHostname (Hostname);
-        String ssid = "ESPixelStick-" + String (Hostname);
+        String ssid = "JurasicParkGate-" + String (Hostname);
         WiFi.softAP (ssid.c_str ());
 
         pWiFiDriver->setIpAddress (WiFi.localIP ());

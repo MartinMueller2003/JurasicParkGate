@@ -528,13 +528,13 @@ function ProcessModeConfigurationDatafppremote(channelConfig) {
     $(jqSelector).empty();
 
     $(jqSelector).append('<option value="...">Play Remote Sequence</option>');
-
+/*
     // for each file in the list
     Fseq_File_List.files.forEach(function (listEntry) {
         // add in a new entry
         $(jqSelector).append('<option value="' + listEntry.name + '">' + listEntry.name + '</option>');
     });
-
+*/
     // set the current selector value
     $(jqSelector).val(channelConfig.fseqfilename);
 
@@ -969,14 +969,7 @@ function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
     // by default, do not show the ECB config data
     $('#ecb').addClass("hidden");
 
-    if ("fpp_remote" === ChannelTypeName) {
-        $('#ecb').removeClass("hidden");
-        if (null !== Fseq_File_List) {
-            ProcessModeConfigurationDatafppremote(channelConfig);
-        }
-    }
-
-    else if ("effects" === ChannelTypeName) {
+    if ("effects" === ChannelTypeName) {
         $('#ecb').removeClass("hidden");
         ProcessModeConfigurationDataEffects(channelConfig);
     }
@@ -1607,7 +1600,7 @@ function wsConnect() {
         };
     }
     else {
-        alert('WebSockets is NOT supported by your Browser! You will need to upgrade your browser or downgrade to v2.0 of the ESPixelStick firmware.');
+        alert('WebSockets is NOT supported by your Browser! You will need to upgrade your browser or downgrade to v2.0 of the JurasicParkGate firmware.');
     }
 }
 
@@ -1962,66 +1955,6 @@ function ProcessReceivedJsonStatusMessage(data) {
     }
 
     InputStatus = Status.input[1];
-
-    if ({}.hasOwnProperty.call(InputStatus, 'Player')) {
-        let PlayerStatus = InputStatus.Player;
-        if ({}.hasOwnProperty.call(PlayerStatus, 'FPPDiscovery')) {
-            $('#FPPRemoteStatus').removeClass("hidden")
-
-            let FPPDstatus = PlayerStatus.FPPDiscovery
-
-            $('#fppsyncreceived').text(FPPDstatus.SyncCount);
-            $('#fppsyncadjustments').text(FPPDstatus.SyncAdjustmentCount);
-            $('#fppremoteip').text(FPPDstatus.FppRemoteIp);
-            $('#fppplayedfilecount').text(FPPDstatus.PlayedFileCount);
-
-            $('#fppremoteFilePlayerFilename').text(FPPDstatus.current_sequence);
-            $('#fppremoteFilePlayerTimeElapsed').text(FPPDstatus.time_elapsed);
-            $('#fppremoteFilePlayerTimeRemaining').text(FPPDstatus.time_remaining);
-            $('#fppremotelasterror').text(FPPDstatus.errors);
-        }
-        else {
-            $('#FPPRemoteStatus').addClass("hidden")
-        }
-
-        if ({}.hasOwnProperty.call(PlayerStatus, 'File')) {
-            $('#LocalFilePlayerStatus').removeClass("hidden");
-
-            let FilePlayerStatus = PlayerStatus.File;
-            $('#localFilePlayerFilename').text(FilePlayerStatus.current_sequence);
-            $('#localFilePlayerTimeElapsed').text(FilePlayerStatus.time_elapsed);
-            $('#localFilePlayerTimeRemaining').text(FilePlayerStatus.time_remaining);
-        }
-        else {
-            $('#LocalFilePlayerStatus').addClass("hidden");
-        }
-
-        if ({}.hasOwnProperty.call(PlayerStatus, 'Effect')) {
-            $('#LocalEffectPlayerStatus').removeClass("hidden");
-
-            $('#localFilePlayerEffectName').text(PlayerStatus.Effect.currenteffect);
-            $('#localFilePlayerEffectTimeRemaining').text(PlayerStatus.Effect.TimeRemaining);
-        }
-        else {
-            $('#LocalEffectPlayerStatus').addClass("hidden")
-        }
-
-        if ({}.hasOwnProperty.call(PlayerStatus, 'Paused')) {
-            $('#PausedPlayerStatus').removeClass("hidden");
-
-            $('#PausedTimeRemaining').text(PlayerStatus.Paused.TimeRemaining);
-        }
-        else {
-            $('#PausedPlayerStatus').addClass("hidden")
-        }
-    }
-    else {
-        $('#LocalPlayListPlayerStatus').addClass("hidden");
-        $('#LocalFilePlayerStatus').addClass("hidden");
-        $('#LocalEffectPlayerStatus').addClass("hidden");
-        $('#PausedPlayerStatus').addClass("hidden");
-        $('#FPPRemoteStatus').addClass("hidden");
-    }
 
     let OutputStatus = Status.output[1];
     if(undefined !== OutputStatus)

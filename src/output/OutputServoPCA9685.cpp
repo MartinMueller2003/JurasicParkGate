@@ -1,7 +1,7 @@
 /******************************************************************
 *
-*       Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
-*       Orginal ESPixelStickproject by 2015 Shelby Merrick
+*       Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
+*       Orginal JurasicParkGateproject by 2015 Martin Mueller
 *
 *This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or(at your option) any later version.
 This program is distributed in the hope that it will be useful,
@@ -12,7 +12,7 @@ GNU General Public License for more details.
 *
 ******************************************************************/
 
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 #ifdef SUPPORT_OutputType_Servo_PCA9685
 

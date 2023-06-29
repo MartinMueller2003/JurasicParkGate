@@ -2,8 +2,8 @@
 /*
 * InputAlexa.h
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
 * http://www.forkineye.com
 *
 *  This program is provided free for you to use in any way that you wish,
@@ -19,7 +19,7 @@
 */
 
 #include "InputCommon.hpp"
-#include "../WebMgr.hpp"
+#include "WebMgr.hpp"
 
 class c_InputAlexa : public c_InputCommon
 {

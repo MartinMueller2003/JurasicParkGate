@@ -2,9 +2,9 @@
 /*
 * InputMQTT.h
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -22,7 +22,6 @@
 #include "InputCommon.hpp"
 #include <AsyncMqttClient.h>
 #include "InputEffectEngine.hpp"
-#include "InputFPPRemotePlayItem.hpp"
 
 class c_InputMQTT : public c_InputCommon
 {
@@ -51,7 +50,6 @@ private:
     AsyncMqttClient mqtt;           // MQTT object
     Ticker          mqttTicker;     // Ticker to handle MQTT
     c_InputCommon * pEffectsEngine = nullptr;
-    c_InputFPPRemotePlayItem* pPlayFileEngine = nullptr;
 
     // Keep track of last known effect configuration state
     c_InputEffectEngine::MQTTConfiguration_s effectConfig;
@@ -79,11 +77,9 @@ private:
     void onNetworkDisconnect ();  ///< Call from onWiFiDisconnect()
     void validate ();      ///< Call from validateConfig()
     void NetworkStateChanged (bool IsConnected, bool RebootAllowed); // used by poorly designed rx functions
-    void PlayFseq (JsonObject & JsonConfig);
     void PlayEffect (JsonObject & JsonConfig);
     void GetEngineConfig (JsonObject & JsonConfig);
     void GetEffectList (JsonObject & JsonConfig);
-    void StopPlayFileEngine ();
     void UpdateEffectConfiguration (JsonObject & JsonConfig);
 
     void load ();          ///< Load configuration from File System

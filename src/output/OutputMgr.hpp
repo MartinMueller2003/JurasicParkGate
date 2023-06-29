@@ -2,9 +2,9 @@
 /*
 * OutputMgr.hpp - Output Management class
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -22,10 +22,10 @@
 *
 */
 
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 
-#include "../memdebug.h"
-#include "../FileMgr.hpp"
+#include "memdebug.h"
+#include "FileMgr.hpp"
 
 class c_OutputCommon; ///< forward declaration to the pure virtual output class that will be defined later.
 
@@ -125,61 +125,13 @@ public:
     {
         OutputType_Disabled = 0,
 
-        #ifdef SUPPORT_OutputType_WS2811
-        OutputType_WS2811 = 1,
-        #endif // def SUPPORT_OutputType_WS2811
-
-        #ifdef SUPPORT_OutputType_GECE
-        OutputType_GECE = 2,
-        #endif // def SUPPORT_OutputType_GECE
-
-        #ifdef SUPPORT_OutputType_DMX
-        OutputType_DMX = 3,
-        #endif // def SUPPORT_OutputType_DMX
-
-        #ifdef SUPPORT_OutputType_Renard
-        OutputType_Renard = 4,
-        #endif // def SUPPORT_OutputType_Renard
-
-        #ifdef SUPPORT_OutputType_Serial
-        OutputType_Serial = 5,
-        #endif // def SUPPORT_OutputType_Serial
-
         #ifdef SUPPORT_OutputType_Relay
-        OutputType_Relay = 6,
+        OutputType_Relay,
         #endif // def SUPPORT_OutputType_Relay
 
         #ifdef SUPPORT_OutputType_Servo_PCA9685
-        OutputType_Servo_PCA9685 = 7,
+        OutputType_Servo_PCA9685,
         #endif // def SUPPORT_OutputType_Servo_PCA9685
-
-        #ifdef SUPPORT_OutputType_UCS1903
-        OutputType_UCS1903 = 8,
-        #endif // def SUPPORT_OutputType_UCS1903
-
-        #ifdef SUPPORT_OutputType_TM1814
-        OutputType_TM1814 = 9,
-        #endif // def SUPPORT_OutputType_TM1814
-
-        #ifdef SUPPORT_OutputType_WS2801
-        OutputType_WS2801 = 10,
-        #endif // def SUPPORT_OutputType_WS2801
-
-        #ifdef SUPPORT_OutputType_APA102
-        OutputType_APA102 = 11,
-        #endif // def SUPPORT_OutputType_APA102
-
-        #ifdef SUPPORT_OutputType_GS8208
-        OutputType_GS8208 = 12,
-        #endif // def SUPPORT_OutputType_GS8208
-
-        #ifdef SUPPORT_OutputType_UCS8903
-        OutputType_UCS8903 = 13,
-        #endif // def SUPPORT_OutputType_UCS8903
-
-        #ifdef SUPPORT_OutputType_TLS3001
-        OutputType_TLS3001 = 14,
-        #endif // def SUPPORT_OutputType_TLS3001
 
         // Add new types here
         OutputType_End, // must be last

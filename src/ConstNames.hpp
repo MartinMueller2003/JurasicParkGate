@@ -2,9 +2,9 @@
 /*
 * ConstNames.hpp - List of strings that can be reused
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -36,7 +36,6 @@ extern const CN_PROGMEM char CN_ActiveLow[];
 extern const CN_PROGMEM char CN_addr[];
 extern const CN_PROGMEM char CN_advancedView[];
 extern const CN_PROGMEM char CN_allleds [];
-extern const CN_PROGMEM char CN_APA102 [];
 extern const CN_PROGMEM char CN_ap_fallback [];
 extern const CN_PROGMEM char CN_ap_timeout [];
 extern const CN_PROGMEM char CN_ap_reboot [];
@@ -68,10 +67,8 @@ extern const CN_PROGMEM char CN_device [];
 extern const CN_PROGMEM char CN_dhcp[];
 extern const CN_PROGMEM char CN_Default[];
 extern const CN_PROGMEM char CN_Disabled[];
-extern const CN_PROGMEM char CN_Dotfseq[];
 extern const CN_PROGMEM char CN_Dotjson[];
 extern const CN_PROGMEM char CN_Dotpl[];
-extern const CN_PROGMEM char CN_DMX[];
 extern const CN_PROGMEM char CN_duration[];
 extern const CN_PROGMEM char CN_effect[];
 extern const CN_PROGMEM char CN_effect_list[];
@@ -89,7 +86,7 @@ extern const CN_PROGMEM char CN_enabled[];
 extern const CN_PROGMEM char CN_errors[];
 extern const CN_PROGMEM char CN_ESP32[];
 extern const CN_PROGMEM char CN_ESP8266[];
-extern const CN_PROGMEM char CN_ESPixelStick [];
+extern const CN_PROGMEM char CN_JurasicParkGate [];
 extern const CN_PROGMEM char CN_eth[];
 extern const CN_PROGMEM char CN_EthDrv[];
 extern const CN_PROGMEM char CN_false [];
@@ -98,17 +95,14 @@ extern const CN_PROGMEM char CN_file[];
 extern const CN_PROGMEM char CN_filename[];
 extern const CN_PROGMEM char CN_files[];
 extern const CN_PROGMEM char CN_Frequency[];
-extern const CN_PROGMEM char CN_fseqfilename[];
 extern const CN_PROGMEM char CN_gateway[];
 extern const CN_PROGMEM char CN_g[];
 extern const CN_PROGMEM char CN_gamma[];
-extern const CN_PROGMEM char CN_GECE[];
 extern const CN_PROGMEM char CN_get[];
 extern const CN_PROGMEM char CN_gen_ser_hdr[];
 extern const CN_PROGMEM char CN_gen_ser_ftr[];
 extern const CN_PROGMEM char CN_gid[];
 extern const CN_PROGMEM char CN_group_size[];
-extern const CN_PROGMEM char CN_GS8208[];
 extern const CN_PROGMEM char CN_hadisco[];
 extern const CN_PROGMEM char CN_haprefix[];
 extern const CN_PROGMEM char CN_Heap_colon [];
@@ -158,7 +152,6 @@ extern const CN_PROGMEM char CN_polarity[];
 extern const CN_PROGMEM char CN_port[];
 extern const CN_PROGMEM char CN_Platform[];
 extern const CN_PROGMEM char CN_play[];
-extern const CN_PROGMEM char CN_playFseq[];
 extern const CN_PROGMEM char CN_playlist [];
 extern const CN_PROGMEM char CN_plussigns [];
 extern const CN_PROGMEM char CN_power_pin[];
@@ -166,7 +159,6 @@ extern const CN_PROGMEM char CN_prependnullcount [];
 extern const CN_PROGMEM char CN_pwm [];
 extern const CN_PROGMEM char CN_Relay[];
 extern const CN_PROGMEM char CN_remote[];
-extern const CN_PROGMEM char CN_Renard[];
 extern const CN_PROGMEM char CN_r[];
 extern const CN_PROGMEM char CN_rev[];
 extern const CN_PROGMEM char CN_reverse[];
@@ -198,16 +190,12 @@ extern const CN_PROGMEM char CN_time[];
 extern const CN_PROGMEM char CN_time_elapsed[];
 extern const CN_PROGMEM char CN_TimeRemaining[];
 extern const CN_PROGMEM char CN_time_remaining[];
-extern const CN_PROGMEM char CN_TLS3001[];
-extern const CN_PROGMEM char CN_TM1814[];
 extern const CN_PROGMEM char CN_topic[];
 extern const CN_PROGMEM char CN_topicset[];
 extern const CN_PROGMEM char CN_transitions[];
 extern const CN_PROGMEM char CN_trig[];
 extern const CN_PROGMEM char CN_true[];
 extern const CN_PROGMEM char CN_type[];
-extern const CN_PROGMEM char CN_UCS1903[];
-extern const CN_PROGMEM char CN_UCS8903[];
 extern const CN_PROGMEM char CN_ui[];
 extern const CN_PROGMEM char CN_unichanlim[];
 extern const CN_PROGMEM char CN_unifirst[];
@@ -222,8 +210,6 @@ extern const CN_PROGMEM char CN_Version[];
 extern const CN_PROGMEM char CN_weus[];
 extern const CN_PROGMEM char CN_wifi[];
 extern const CN_PROGMEM char CN_WiFiDrv[];
-extern const CN_PROGMEM char CN_WS2801[];
-extern const CN_PROGMEM char CN_WS2811[];
 extern const CN_PROGMEM char CN_XP[];
 extern const CN_PROGMEM char CN_zig_size[];
 

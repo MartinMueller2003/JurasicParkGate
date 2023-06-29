@@ -1,9 +1,9 @@
 /*
 * WebMgr.cpp - Output Management class
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -17,11 +17,10 @@
 *
 */
 
-#include "ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 #include "output/OutputMgr.hpp"
 #include "input/InputMgr.hpp"
-#include "service/FPPDiscovery.h"
 #include "network/NetworkMgr.hpp"
 
 #include "WebMgr.hpp"
@@ -195,46 +194,14 @@ void c_WebMgr::init ()
     	webServer.on ("/updatefw", HTTP_POST, [](AsyncWebServerRequest* request)
         {
             webSocket.textAll ("X6");
-        }, [](AsyncWebServerRequest* request, String filename, uint32_t index, uint8_t* data, uint32_t len, bool final) {WebMgr.FirmwareUpload (request, filename, index, data, len,  final); }).setFilter (ON_STA_FILTER);
-
-    	// URL's needed for FPP Connect fseq uploading and querying
-   	 	webServer.on ("/fpp", HTTP_GET,
-        	[](AsyncWebServerRequest* request)
-        	{
-        		FPPDiscovery.ProcessGET(request);
-        	});
-
-    	webServer.on ("/fpp", HTTP_POST | HTTP_PUT,
-        	[](AsyncWebServerRequest* request)
-        	{
-            	FPPDiscovery.ProcessPOST(request);
-        	},
-
-        	[](AsyncWebServerRequest *request, String filename, uint32_t index, uint8_t *data, uint32_t len, bool final)
-        	{
-            	FPPDiscovery.ProcessFile(request, filename, index, data, len, final);
-        	},
-
-            [](AsyncWebServerRequest *request, uint8_t *data, uint32_t len, uint32_t index, uint32_t total)
-            {
-                FPPDiscovery.ProcessBody(request, data, len, index, total);
-            });
-
-        // URL that FPP's status pages use to grab JSON about the current status, what's playing, etc...
-        // This can be used to mimic the behavior of actual FPP remotes
-    	webServer.on ("/fppjson.php", HTTP_GET, [](AsyncWebServerRequest* request)
-            {
-                FPPDiscovery.ProcessFPPJson(request);
-            });
+        }, 
+        [](AsyncWebServerRequest* request, String filename, uint32_t index, uint8_t* data, uint32_t len, bool final) {WebMgr.FirmwareUpload (request, filename, index, data, len,  final); }).setFilter (ON_STA_FILTER);
 
         // Static Handlers
    	 	webServer.serveStatic ("/UpdRecipe", LittleFS, "/UpdRecipe.json");
         // webServer.serveStatic ("/static", LittleFS, "/www/static").setCacheControl ("max-age=31536000");
     	webServer.serveStatic ("/", LittleFS, "/www/").setDefaultFile ("index.html");
-
-        // FS Debugging Handler
-        // webServer.serveStatic ("/fs", LittleFS, "/" );
-
+/*
         // if the client posts to the upload page
     	webServer.on ("/upload", HTTP_POST | HTTP_PUT | HTTP_OPTIONS,
         	[](AsyncWebServerRequest * request)
@@ -251,11 +218,6 @@ void c_WebMgr::init ()
                 }
             },
 
-        	[this](AsyncWebServerRequest* request, String filename, uint32_t index, uint8_t* data, uint32_t len, bool final)
-            {
-                FPPDiscovery.ProcessFile (request, filename, index, data, len, final);
-            },
-
         	[this](AsyncWebServerRequest* request, uint8_t* data, uint32_t len, uint32_t index, uint32_t total)
             {
                 // DEBUG_V (String ("Got process Body request: index: ") + String (index));
@@ -264,7 +226,7 @@ void c_WebMgr::init ()
             	request->send (404, CN_textSLASHplain, "Page Not found");
         	}
     	);
-
+*/
     		webServer.on ("/download", HTTP_GET, [](AsyncWebServerRequest* request)
             {
                 // DEBUG_V (String ("url: ") + String (request->url ()));
@@ -660,9 +622,6 @@ void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient* client)
     NetworkMgr.GetStatus (system);
     // DEBUG_V ("");
 
-    FPPDiscovery.GetStatus (system);
-    // DEBUG_V ("");
-
     // Ask Input Stats
     InputMgr.GetStatus (status);
     // DEBUG_V ("");
@@ -683,7 +642,6 @@ void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient* client)
     // DEBUG_V (response);
 
     client->text (pWebSocketFrameCollectionBuffer);
-    // client->text ((F ("XJ{\"status\":{\"system\":{\"freeheap\":\"18504\",\"uptime\":14089,\"SDinstalled\":true,\"rssi\":-69,\"ip\":\"192.168.10.237\",\"subnet\":\"255.255.255.0\",\"mac\":\"24:A1:60 : 2E : 09 : 5D\",\"hostname\":\"esps - 2e095d\",\"ssid\":\"MaRtInG\",\"FPPDiscovery\":{\"FppRemoteIp\":\"(IP unset)\",\"SyncCount\":0,\"SyncAdjustmentCount\":0,\"current_sequence\":\"\",\"playlist\":\"\",\"seconds_elapsed\":\"0\",\"seconds_played\":\"0\",\"seconds_remaining\":\"0\",\"sequence_filename\":\"\",\"time_elapsed\":\"00 : 00\",\"time_remaining\":\"00 : 00\",\"errors\":\"\"}},\"inputbutton\":{\"id\":0,\"state\":\"off\"},\"input\":[{\"e131\":{\"id\":0,\"unifirst\":1,\"unilast\":5,\"unichanlim\":512,\"num_packets\":0,\"last_clientIP\":0,\"channels\":[{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0},{\"errors\":0}],\"packet_errors\":0}},{\"LocalPlayer\":{\"id\":1,\"active\":false}}],\"output\":[{\"id\":0,\"framerefreshrate\":41,\"FrameCount\":528},{\"id\":1,\"framerefreshrate\":0,\"FrameCount\":0}]}}")));
 
     // DEBUG_END;
 

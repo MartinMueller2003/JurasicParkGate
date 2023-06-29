@@ -2,9 +2,9 @@
 /*
 * GPIO_Defs.hpp - Output Management class
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -18,7 +18,7 @@
 *
 */
 
-#include "ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 #ifdef ARDUINO_ARCH_ESP32
 #   include <driver/gpio.h>
@@ -74,62 +74,9 @@ typedef enum
 #endif // def ARDUINO_ARCH_ESP8266
 
 // Platform specific GPIO definitions
-#if   defined (BOARD_ESP32_CAM)
-#   include "platformDefinitions/GPIO_Defs_ESP32_CAM.hpp"
-#elif defined (BOARD_ESP32_D1_MINI_ETH)
-#   include "platformDefinitions/GPIO_Defs_ESP32_D1_MINI_ETH.hpp"
-#elif defined (BOARD_ESP32_D1_MINI)
-#   include "platformDefinitions/GPIO_Defs_ESP32_D1_MINI.hpp"
-#elif defined (BOARD_ESP32_LOLIN_D32_PRO_ETH)
-#   include "platformDefinitions/GPIO_Defs_ESP32_LoLin_D32_PRO_ETH.hpp"
-#elif defined (BOARD_ESP32_LOLIN_D32_PRO)
-#   include "platformDefinitions/GPIO_Defs_ESP32_LoLin_D32_PRO.hpp"
-#elif defined (BOARD_ESP32_M5STACK_ATOM)
-#   include "platformDefinitions/GPIO_Defs_ESP32_M5Stack_Atom.hpp"
-#elif defined (BOARD_ESP32_MH_ET_LIVE_MiniKit)
-#   include "platformDefinitions/GPIO_Defs_ESP32_MH_ET_LIVE_MiniKit.hpp"
-#elif defined (BOARD_ESP32_QUINLED_DIG_OCTA)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_Dig-Octa.hpp"
-#elif defined (BOARD_ESP32_OLIMEX_GATEWAY)
-#   include "platformDefinitions/GPIO_Defs_ESP32_Olimex_Gateway.hpp"
-#elif defined (BOARD_ESP32_QUINLED_QUAD_ETH)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_QUAD_ETH.hpp"
-#elif defined (BOARD_ESP32_QUINLED_QUAD_AE_PLUS)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_QUAD_AE_Plus.hpp"
-#elif defined (BOARD_ESP32_QUINLED_QUAD_AE_PLUS_8)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_QUAD_AE_Plus_8.hpp"
-#elif defined (BOARD_ESP32_QUINLED_QUAD)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_QUAD.hpp"
-#elif defined (BOARD_ESP32_QUINLED_UNO_ETH)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_UNO_ETH.hpp"
-#elif defined (BOARD_ESP32_QUINLED_UNO)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_UNO.hpp"
-#elif defined (BOARD_ESP32_QUINLED_UNO_AE_PLUS)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_UNO_AE_Plus.hpp"
-#elif defined (BOARD_ESP32_QUINLED_UNO_ESPSV3)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_UNO_ESPSV3.hpp"
-#elif defined (BOARD_ESP32_QUINLED_UNO_ETH_ESPSV3)
-#   include "platformDefinitions/GPIO_Defs_ESP32_QUINLED_UNO_ETH_ESPSV3.hpp"
-#elif defined (BOARD_ESP32_TTGO_T8)
+
+#if defined (BOARD_ESP32_TTGO_T8)
 #   include "platformDefinitions/GPIO_Defs_ESP32_TTGO_T8.hpp"
-#elif defined (BOARD_ESP32_WT32ETH01)
-#   include "platformDefinitions/GPIO_Defs_ESP32_WT32ETH01.hpp"
-#elif defined (BOARD_ESP32_TWILIGHTLORD)
-#   include "platformDefinitions/GPIO_Defs_ESP32_TWILIGHTLORD.hpp"
-#elif defined (BOARD_ESP32_TWILIGHTLORD_ETH)
-#   include "platformDefinitions/GPIO_Defs_ESP32_TWILIGHTLORD_ETH.hpp"
-#elif defined (BOARD_ESP32_TWILIGHTLORD_ETH)
-#   include "platformDefinitions/GPIO_Defs_ESP32_DevkitC.hpp"
-#elif defined (BOARD_ESP01S)
-#   include "platformDefinitions/GPIO_Defs_ESP8266_ESP01S.hpp"
-#elif defined (BOARD_ESPS_V3)
-#   include "platformDefinitions/GPIO_Defs_ESP8266_ESPS_V3.hpp"
-#elif defined (BOARD_ESPS_ESP3DEUXQUATRO_DMX)
-#   include "platformDefinitions/GPIO_Defs_ESP32_ESP3DEUXQuattro_DMX.hpp"
-#elif defined (ARDUINO_ARCH_ESP32)
-#   include "platformDefinitions/GPIO_Defs_ESP32_generic.hpp"
-#elif defined (ARDUINO_ARCH_ESP8266)
-#   include "platformDefinitions/GPIO_Defs_ESP8266_Generic.hpp"
 #else
 #   error "No valid platform definition"
 #endif // ndef platform specific GPIO definitions

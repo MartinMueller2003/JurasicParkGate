@@ -1,9 +1,9 @@
 /*
 * InputMQTT.cpp
 *
-* Project: ESPixelStick - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2021, 2022 Shelby Merrick
-* http://www.forkineye.com
+* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+* Copyright (c) 2023 Martin Mueller
+* http://www.MartnMueller2003.com
 *
 *  This program is provided free for you to use in any way that you wish,
 *  subject to the laws and regulations where you are using it.  Due diligence
@@ -17,13 +17,11 @@
 *
 */
 
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 #include <Ticker.h>
 #include <Int64String.h>
 #include "InputMQTT.h"
-#include "InputFPPRemotePlayFile.hpp"
-#include "InputFPPRemotePlayList.hpp"
-#include "../network/NetworkMgr.hpp"
+#include "NetworkMgr.hpp"
 
 #if defined ARDUINO_ARCH_ESP32
 #   include <functional>
@@ -40,7 +38,7 @@ c_InputMQTT::c_InputMQTT (c_InputMgr::e_InputChannelIds NewInputChannelId,
 
     String Hostname;
     NetworkMgr.GetHostname (Hostname);
-    topic = String (F ("forkineye/")) + Hostname;
+    topic = String (F ("MartnMueller2003/")) + Hostname;
     lwtTopic = topic + CN_slashstatus;
 
     // Effect config defaults
@@ -57,7 +55,7 @@ c_InputMQTT::c_InputMQTT (c_InputMgr::e_InputChannelIds NewInputChannelId,
     mqtt.setWill (lwtTopic.c_str(), 1, true, LWT_OFFLINE);
 
     // DEBUG_END;
-} // c_InputE131
+} // c_InputMQTT
 
 //-----------------------------------------------------------------------------
 c_InputMQTT::~c_InputMQTT ()
@@ -82,13 +80,6 @@ c_InputMQTT::~c_InputMQTT ()
         pEffectsEngine = nullptr;
     }
     // DEBUG_V ("");
-
-    if (nullptr != pPlayFileEngine)
-    {
-        // DEBUG_V ("");
-        delete pPlayFileEngine;
-        pPlayFileEngine = nullptr;
-    }
 
     // DEBUG_END;
 } // ~c_InputMQTT
@@ -157,11 +148,6 @@ void c_InputMQTT::Process ()
             // DEBUG_V ("");
             pEffectsEngine->Process ();
         }
-    }
-
-    if (nullptr != pPlayFileEngine)
-    {
-        pPlayFileEngine->Poll ();
     }
 
     // DEBUG_END;
@@ -429,16 +415,8 @@ void c_InputMQTT::onMqttMessage(
             setFromJSON (effectName, root, CN_effect);
             // DEBUG_V ("effectName: " + effectName);
 
-            if (effectName.equals(CN_playFseq))
-            {
-                // DEBUG_V ("");
-                PlayFseq (root);
-            }
-            else
-            {
-                // DEBUG_V ("");
-                PlayEffect (root);
-            }
+            // DEBUG_V ("");
+            PlayEffect (root);
         }
         else
         {
@@ -447,12 +425,6 @@ void c_InputMQTT::onMqttMessage(
             {
                 delete pEffectsEngine;
                 pEffectsEngine = nullptr;
-            }
-
-            if (nullptr != pPlayFileEngine)
-            {
-                delete pPlayFileEngine;
-                pPlayFileEngine = nullptr;
             }
             // DEBUG_V ("");
         }
@@ -469,94 +441,9 @@ void c_InputMQTT::onMqttMessage(
 } // onMqttMessage
 
 //-----------------------------------------------------------------------------
-void c_InputMQTT::PlayFseq (JsonObject & JsonConfig)
-{
-    // DEBUG_START;
-
-    do // once
-    {
-        if (nullptr != pEffectsEngine)
-        {
-            // DEBUG_V ("Delete Effect Engine");
-            delete pEffectsEngine;
-            pEffectsEngine = nullptr;
-        }
-        // DEBUG_V ("");
-
-        String FileName;
-        setFromJSON (FileName, JsonConfig, CN_filename);
-
-        uint32_t PlayCount = 1;
-        setFromJSON (PlayCount, JsonConfig, CN_count);
-        // DEBUG_V (String (" FileName: ") + FileName);
-        // DEBUG_V (String ("PlayCount: ") + String(PlayCount));
-
-        bool FileIsPlayList   = FileName.endsWith (String (F (".pl")));
-        bool FileIsStandalone = FileName.endsWith (String (F (".fseq")));
-
-        if (!FileIsPlayList && !FileIsStandalone)
-        {
-            // not a file we can process
-            logcon (String (F ("ERROR: Unsupported file type for File Play operation. File:'")) + FileName + "'");
-            break;
-        }
-
-        bool EngineFileIsPlayList   = false;
-        // bool EngineFileIsStandalone = false;
-        String PlayingFile;
-
-        // do we have an engine running?
-        if (nullptr != pPlayFileEngine)
-        {
-            PlayingFile = pPlayFileEngine->GetFileName ();
-
-            EngineFileIsPlayList   = PlayingFile.endsWith (String (F (".pl")));
-            // EngineFileIsStandalone = PlayingFile.endsWith (String (F (".fseq")));
-
-            // is it the right engine?
-            if (EngineFileIsPlayList != FileIsPlayList)
-            {
-                StopPlayFileEngine ();
-
-                EngineFileIsPlayList   = false;
-                // EngineFileIsStandalone = false;
-            }
-            else
-            {
-                // DEBUG_V ("Starting File");
-                pPlayFileEngine->Start (FileName, 0, PlayCount);
-                break;
-            }
-        }
-
-        // DEBUG_V ("no engine is running.");
-
-        if (FileIsPlayList)
-        {
-            // DEBUG_V ("Instantiate Play List Engine");
-            pPlayFileEngine = new c_InputFPPRemotePlayList (GetInputChannelId ());
-        }
-        else
-        {
-            // DEBUG_V ("Instantiate Play File Engine");
-            pPlayFileEngine = new c_InputFPPRemotePlayFile (GetInputChannelId ());
-        }
-
-        // DEBUG_V ("Start Playing");
-        pPlayFileEngine->Start (FileName, 0, PlayCount);
-
-    } while (false);
-
-    // DEBUG_END;
-
-} // PlayFseq
-
-//-----------------------------------------------------------------------------
 void c_InputMQTT::PlayEffect (JsonObject & JsonConfig)
 {
     // DEBUG_START;
-
-    StopPlayFileEngine ();
 
     // DEBUG_V ("");
 
@@ -582,21 +469,6 @@ void c_InputMQTT::PlayEffect (JsonObject & JsonConfig)
 } // PlayEffect
 
 //-----------------------------------------------------------------------------
-void c_InputMQTT::StopPlayFileEngine ()
-{
-    // DEBUG_START;
-
-    if (nullptr != pPlayFileEngine)
-    {
-        delete pPlayFileEngine;
-        pPlayFileEngine = nullptr;
-    }
-
-    // DEBUG_END;
-
-} // StopPlayFileEngine
-
-//-----------------------------------------------------------------------------
 void c_InputMQTT::GetEngineConfig (JsonObject & JsonConfig)
 {
      // DEBUG_START;
@@ -619,16 +491,6 @@ void c_InputMQTT::GetEngineConfig (JsonObject & JsonConfig)
     color[CN_r] = effectConfig.color.r;
     color[CN_g] = effectConfig.color.g;
     color[CN_b] = effectConfig.color.b;
-
-    if (nullptr != pPlayFileEngine)
-    {
-        JsonConfig[CN_effect] = CN_playFseq;
-        JsonConfig[CN_filename] = pPlayFileEngine->GetFileName ();
-    }
-    else
-    {
-        JsonConfig[CN_filename] = String ("");
-    }
 
     // DEBUG_END;
 
@@ -658,8 +520,6 @@ void c_InputMQTT::GetEffectList (JsonObject & JsonConfig)
         delete pEffectsEngine;
         pEffectsEngine = nullptr;
     }
-
-    JsonConfig[CN_effect_list].add (CN_playFseq);
 
     // add the file play fields.
     // DEBUG_END;
@@ -703,14 +563,14 @@ void c_InputMQTT::publishHA()
 
         // Create a unique id using the chip id, and fill in the device properties
         // to enable integration support in HomeAssistant.
-        JsonConfig[F ("unique_id")] = CN_ESPixelStick + chipId;
+        JsonConfig[F ("unique_id")] = CN_JurasicParkGate + chipId;
 
         JsonObject device = JsonConfig.createNestedObject (CN_device);
         device[F ("identifiers")]  = WiFi.macAddress ();
-        device[F ("manufacturer")] = F ("Forkineye");
-        device[F ("model")]        = CN_ESPixelStick;
+        device[F ("manufacturer")] = F ("MartnMueller2003");
+        device[F ("model")]        = CN_JurasicParkGate;
         device[CN_name]            = config.id;
-        device[F ("sw_version")]   = String (CN_ESPixelStick) + " v" + VERSION;
+        device[F ("sw_version")]   = String (CN_JurasicParkGate) + " v" + VERSION;
 
         String HaJsonConfig;
         serializeJson(JsonConfig, HaJsonConfig);

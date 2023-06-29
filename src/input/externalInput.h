@@ -2,7 +2,7 @@
 // only allow the file to be included once.
 #pragma once
 
-#include "../ESPixelStick.h"
+#include "JurasicParkGate.h"
 
 /*****************************************************************************/
 class fsm_ExternalInput_state;

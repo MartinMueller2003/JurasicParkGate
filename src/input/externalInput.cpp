@@ -2,7 +2,7 @@
  * Manage a single input line
  */
 #include "externalInput.h"
-#include "../FileMgr.hpp"
+#include "FileMgr.hpp"
 #include "InputMgr.hpp"
 
 /*****************************************************************************/
