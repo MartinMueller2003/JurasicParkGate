@@ -7,14 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title id="title"></title>
 
-    <!-- for local development
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" href="css/treejs.css" id="treejs_styles">
     <link rel="stylesheet" href="css/dropzone.css" id="dropzone_styles">
-    -->
-
-    <link rel="stylesheet" type="text/css" href="esps.css">
 
 </head>
 
@@ -52,8 +48,8 @@
             <div class="row">
                 <div class="col-sm-6">
                     <fieldset>
-                        <legend class="esps-legend">System Status</legend>
-                        <table class="esps-table">
+                        <legend class="jpg-legend">System Status</legend>
+                        <table class="jpg-table">
                             <tr>
                                 <td width="33%">Free Heap</td>
                                 <td><span id="x_freeheap"></span></td>
@@ -73,8 +69,8 @@
                         </table>
                     </fieldset>
                     <fieldset>
-                        <legend class="esps-legend">WiFi Status</legend>
-                        <table class="esps-table">
+                        <legend class="jpg-legend">WiFi Status</legend>
+                        <table class="jpg-table">
                             <tr>
                                 <td width="33%">Connected</td>
                                 <td><span id="w_connected"></span></td>
@@ -106,8 +102,8 @@
                         </table>
                     </fieldset>
                     <fieldset id="ethernet_status" class="hidden">
-                        <legend class="esps-legend">Ethernet Status</legend>
-                        <table class="esps-table">
+                        <legend class="jpg-legend">Ethernet Status</legend>
+                        <table class="jpg-table">
                             <tr>
                                 <td width="33%">Connected</td>
                                 <td><span id="e_connected"></span></td>
@@ -132,164 +128,10 @@
                     </fieldset>
                 </div>
 
-                <div class="col-sm-6 hidden" id="E131Status">
-                    <fieldset>
-                        <legend class="esps-legend">E1.31 Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="33%">Universe Range</td>
-                                <td><span id="uni_first"></span> to <span id="uni_last"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Channels / Universe</td>
-                                <td><span id="chanlim"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Total Packets</td>
-                                <td><span id="pkts"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Packet Errors</td>
-                                <td><span id="perr"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Source IP</td>
-                                <td><span id="clientip"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6 hidden" id="ArtnetStatus">
-                    <fieldset>
-                        <legend class="esps-legend">Artnet Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="33%">Universe Range</td>
-                                <td><span id="an_uni_first"></span> to <span id="an_uni_last"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Channels / Universe</td>
-                                <td><span id="an_chanlim"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Total Packets</td>
-                                <td><span id="an_pkts"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Packet Errors</td>
-                                <td><span id="an_perr"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Source IP</td>
-                                <td><span id="an_clientip"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6 hidden" id="ddpStatus">
-                    <fieldset>
-                        <legend class="esps-legend">DDP Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="33%">Total Packets: </td>
-                                <td><span id="ddppacketsreceived"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Total KBytes: </td>
-                                <td><span id="ddpbytesreceived"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Errors: </td>
-                                <td><span id="ddperrors"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6 hidden" id="FPPRemoteStatus">
-                    <fieldset>
-                        <legend class="esps-legend">FPP Remote Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="50%">Total Sync Packets: </td>
-                                <td><span id="fppsyncreceived"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Sync Adjustments: </td>
-                                <td><span id="fppsyncadjustments"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Total Files Played: </td>
-                                <td><span id="fppplayedfilecount"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Master IP: </td>
-                                <td><span id="fppremoteip"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Filename: </td>
-                                <td><span id="fppremoteFilePlayerFilename"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Time Elapsed: </td>
-                                <td><span id="fppremoteFilePlayerTimeElapsed"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Time Remaining: </td>
-                                <td><span id="fppremoteFilePlayerTimeRemaining"></span></td>
-                            </tr>
-                            <tr class="hidden AdvancedMode">
-                                <td width="50%">Last Error: </td>
-                                <td><span id="fppremotelasterror"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6 hidden" id="LocalPlayListPlayerStatus">
-                    <fieldset>
-                        <legend class="esps-legend">Local Play List Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="50%">File Name: </td>
-                                <td><span id="localPlayListName"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Entry: </td>
-                                <td><span id="localPlayListEntry"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Count: </td>
-                                <td><span id="localPlayListCount"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Remaining Repeat: </td>
-                                <td><span id="localPlayListRepeat"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6 hidden" id="LocalFilePlayerStatus">
-                    <fieldset>
-                        <legend class="esps-legend">Local File Player Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="50%">Filename: </td>
-                                <td><span id="localFilePlayerFilename"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Time Elapsed: </td>
-                                <td><span id="localFilePlayerTimeElapsed"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="50%">Time Remaining: </td>
-                                <td><span id="localFilePlayerTimeRemaining"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
                 <div class="col-sm-6 hidden" id="LocalEffectPlayerStatus">
                     <fieldset>
-                        <legend class="esps-legend">Local Effect Player Status</legend>
-                        <table class="esps-table">
+                        <legend class="jpg-legend">Local Effect Player Status</legend>
+                        <table class="jpg-table">
                             <tr>
                                 <td width="50%">Name: </td>
                                 <td><span id="localFilePlayerEffectName"></span></td>
@@ -301,21 +143,10 @@
                         </table>
                     </fieldset>
                 </div>
-                <div class="col-sm-6 hidden" id="PausedPlayerStatus">
-                    <fieldset>
-                        <legend class="esps-legend">Paused Player Status</legend>
-                        <table class="esps-table">
-                            <tr>
-                                <td width="50%">Time Remaining: </td>
-                                <td><span id="PausedTimeRemaining"></span></td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
                 <div class="col-sm-6 hidden" id="RelayStatus">
                     <fieldset>
-                        <legend class="esps-legend">Relay Status</legend>
-                        <table class="esps-table">
+                        <legend class="jpg-legend">Relay Status</legend>
+                        <table class="jpg-table">
                             <thead>
                                 <tr>
                                     <th width="30%">Output</th>
@@ -366,7 +197,7 @@
         <div id="pg_network" class="mdiv hidden anchor">
             <form class="form-horizontal">
                 <fieldset id="network">
-                    <legend class="esps-legend">Network Configuration</legend>
+                    <legend class="jpg-legend">Network Configuration</legend>
                     <div class="form-group" id="fg_hostname">
                         <label class="control-label col-sm-2" for="hostname">Hostname</label>
                         <div class="col-sm-6">
@@ -375,7 +206,7 @@
                         </div>
                     </div>
                     <fieldset id="wifi">
-                        <legend class="esps-legend">WiFi Configuration</legend>
+                        <legend class="jpg-legend">WiFi Configuration</legend>
                         <div class="form-group" id="fg_ssid">
                             <label class="control-label col-sm-2" for="ssid">SSID</label>
                             <div class="col-sm-6">
@@ -463,7 +294,7 @@
                         </div>
                     </fieldset>
                     <fieldset id="eth" class="">
-                        <legend class="esps-legend">Ethernet Configuration</legend>
+                        <legend class="jpg-legend">Ethernet Configuration</legend>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-8">
                                 <div class="checkbox"><label><input type="checkbox" id="weus"
@@ -586,7 +417,7 @@
         <div id="config" class="mdiv hidden anchor">
             <form class="form-horizontal">
                 <fieldset id="device">
-                    <legend class="esps-legend">Device Configuration</legend>
+                    <legend class="jpg-legend">Device Configuration</legend>
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="id">Device Name</label>
                         <div class="col-sm-10"><input type="text" class="form-control" id="id" maxlength="64"
@@ -638,7 +469,7 @@
                     <div id="fg_input_mode"></div>
 
                     <div class="hidden" id="ecb">
-                        <legend class="esps-legend" for="ecb_title">Advance Effect/File via Button</legend>
+                        <legend class="jpg-legend" for="ecb_title">Advance Effect/File via Button</legend>
                         <div class="form-group col-sm-offset-2" id="ecb_title">
             
                             <label class="control-label col-sm-2" for="ecb_enable">Enable</label>
@@ -684,7 +515,7 @@
         <div id="diag" class="mdiv hidden anchor">
             <form class="form-horizontal">
                 <fieldset>
-                    <legend class="esps-legend">View Stream</legend>
+                    <legend class="jpg-legend">View Stream</legend>
                     <div class="form-group">
                         <label class="control-label col-sm-2">Display As</label>
                         <div class="col-sm-2">
@@ -712,7 +543,7 @@
         <!-- FIleManagement -->
         <div id="filemanagement" class="mdiv hidden anchor">
             <fieldset>
-                <legend class="esps-legend">File Management</legend>
+                <legend class="jpg-legend">File Management</legend>
                 <form>
                     <label class="control-label col-sm-2" for="totalBytes">SD Size (MB):</label>
                     <output id="totalBytes"></output>
@@ -730,8 +561,8 @@
                 </div>
                 <div>
                     <fieldset>
-                        <legend class="esps-legend">Files</legend>
-                        <table class="esps-table">
+                        <legend class="jpg-legend">Files</legend>
+                        <table class="jpg-table">
                             <thead>
                                 <tr>
                                     <th width="10%">Selected</th>
@@ -764,7 +595,7 @@
         <!-- Administration -->
         <div id="admin" class="mdiv hidden anchor">
             <fieldset>
-                <legend class="esps-legend">Administration</legend>
+                <legend class="jpg-legend">Administration</legend>
                 <form class="form-horizontal" id="updatefw" action="/updatefw" method="post"
                     enctype="multipart/form-data">
                     <div class="form-group">
@@ -905,16 +736,12 @@
         </div>
     </footer>
 
-    <!-- for local development
     <script type="text/javascript" src="js/dropzone.js"></script>
     <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/jqColorPicker.js"></script>
-    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
     <script type="text/javascript" src="js/FileSaver.js"></script>
-    -->
-
-    <script type="text/javascript" src="esps.js"></script>
 
 </body>
 
