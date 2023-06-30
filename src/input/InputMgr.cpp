@@ -29,6 +29,7 @@
 #include "InputEffectEngine.hpp"
 #include "InputMQTT.h"
 #include "InputAlexa.h"
+#include "InputButtons.hpp"
 // needs to be last
 #include "InputMgr.hpp"
 
@@ -46,12 +47,7 @@ typedef struct
 
 static const InputTypeXlateMap_t InputTypeXlateMap[c_InputMgr::e_InputType::InputType_End] =
 {
-    {c_InputMgr::e_InputType::InputType_E1_31,    "E1.31",      c_InputMgr::e_InputChannelIds::InputPrimaryChannelId},
-    {c_InputMgr::e_InputType::InputType_DDP,      "DDP",        c_InputMgr::e_InputChannelIds::InputPrimaryChannelId},
-#ifdef SUPPORT_FPP
-    {c_InputMgr::e_InputType::InputType_FPP,      "FPP Remote", c_InputMgr::e_InputChannelIds::InputSecondaryChannelId},
-#endif // def SUPPORT_FPP
-    {c_InputMgr::e_InputType::InputType_Artnet,   "Artnet",     c_InputMgr::e_InputChannelIds::InputPrimaryChannelId},
+    {c_InputMgr::e_InputType::InputType_Buttons,  "Buttons",    c_InputMgr::e_InputChannelIds::InputPrimaryChannelId},
     {c_InputMgr::e_InputType::InputType_Effects,  "Effects",    c_InputMgr::e_InputChannelIds::InputSecondaryChannelId},
     {c_InputMgr::e_InputType::InputType_MQTT,     "MQTT",       c_InputMgr::e_InputChannelIds::InputSecondaryChannelId},
     {c_InputMgr::e_InputType::InputType_Alexa,    "Alexa",      c_InputMgr::e_InputChannelIds::InputSecondaryChannelId},
@@ -113,9 +109,6 @@ void c_InputMgr::Begin (uint32_t BufferSize)
     // prevent recalls
     if (true == HasBeenInitialized) { return; }
 
-    String temp = String (F("Effects Control"));
-    ExternalInput.Init (0,0, c_ExternalInput::Polarity_t::ActiveLow, temp);
-
     // make sure the pointers are set up properly
     for (auto & CurrentInput : InputChannelDrivers)
     {
@@ -141,24 +134,8 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
     // add IM config parameters
     // DEBUG_V ("");
 
-    JsonObject InputMgrButtonData;
-
-    if (true == jsonConfig.containsKey (IM_EffectsControlButtonName))
-    {
-        // DEBUG_V ("");
-        InputMgrButtonData = jsonConfig[IM_EffectsControlButtonName];
-    }
-    else
-    {
-        // DEBUG_V ("");
-        InputMgrButtonData = jsonConfig.createNestedObject (IM_EffectsControlButtonName);
-    }
     // DEBUG_V ("");
     // extern void PrettyPrint (JsonObject & jsonStuff, String Name);
-
-    // PrettyPrint (InputMgrButtonData, String("Before ECB"));
-    ExternalInput.GetConfig (InputMgrButtonData);
-    // PrettyPrint (InputMgrButtonData, String("After ECB"));
 
     // DEBUG_V ("");
 
@@ -311,20 +288,19 @@ void c_InputMgr::GetConfig (byte * Response, uint32_t maxlen)
 //-----------------------------------------------------------------------------
 void c_InputMgr::GetStatus (JsonObject& jsonStatus)
 {
-    // DEBUG_START;
+    // _ DEBUG_START;
 
     JsonObject InputButtonStatus = jsonStatus.createNestedObject (F ("inputbutton"));
-    ExternalInput.GetStatistics (InputButtonStatus);
 
     JsonArray InputStatus = jsonStatus.createNestedArray (F ("input"));
     for (auto & CurrentInput : InputChannelDrivers)
     {
         JsonObject channelStatus = InputStatus.createNestedObject ();
         CurrentInput.pInputChannelDriver->GetStatus (channelStatus);
-        // DEBUG_V("");
+        // _ DEBUG_V("");
     }
 
-    // DEBUG_END;
+    // _ DEBUG_END;
 } // GetStatus
 
 //-----------------------------------------------------------------------------
@@ -405,7 +381,8 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             InputChannelDrivers[ChannelIndex].pInputChannelDriver->GetDriverName (DriverName);
             rebootNeeded |= InputChannelDrivers[ChannelIndex].pInputChannelDriver->isShutDownRebootNeeded();
             // DEBUG_V (String ("rebootNeeded: ") + String (rebootNeeded));
-            if (!IsBooting) {
+            if (!IsBooting)
+            {
                 logcon (String(F("Shutting Down '")) + DriverName + String(F("' on Input: ")) + String(ChannelIndex));
             }
 
@@ -415,29 +392,53 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
 
             // DEBUG_V ("");
         } // end there is an existing driver
-        // DEBUG_V ();
+        // DEBUG_V ("Set up the new driver");
 
         switch (NewInputChannelType)
         {
             case e_InputType::InputType_Disabled:
             {
+                // DEBUG_V ("InputType_Disabled: Start");
                 if (!IsBooting)
                 {
                     logcon (String (F ("Disabled Input type for channel '")) + ChannelIndex + "'.");
                 }
                 InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
-                // DEBUG_V ("");
+                // DEBUG_V ("InputType_Disabled: End");
+                break;
+            }
+
+            case e_InputType::InputType_Buttons :
+            {
+                // DEBUG_V ("InputType_Button: Start");
+                if (InputTypeIsAllowedOnChannel (InputType_Buttons, ChannelIndex))
+                {
+                    if (!IsBooting)
+                    {
+                        logcon (String (F ("Starting Button for channel '")) + ChannelIndex + "'.");
+                    }
+                    // DEBUG_V ("c_InputButtons");
+                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputButtons (ChannelIndex, InputType_Effects, InputDataBufferSize);
+                    // DEBUG_V ("c_InputButtons");
+                }
+                else
+                {
+                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
+                }
+                // DEBUG_V ("c_InputButton: End");
                 break;
             }
 
             case e_InputType::InputType_Effects:
             {
+                // DEBUG_V ("InputType_Effects: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_Effects, ChannelIndex))
                 {
                     if (!IsBooting)
                     {
                         logcon (String (F ("Starting Effects Engine for channel '")) + ChannelIndex + "'.");
                     }
+                    // DEBUG_V ("c_InputEffectEngine");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputEffectEngine (ChannelIndex, InputType_Effects, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
@@ -445,11 +446,13 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 {
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
+                // DEBUG_V ("InputType_Effects: End");
                 break;
             }
 
             case e_InputType::InputType_MQTT:
             {
+                // DEBUG_V ("InputType_MQTT: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_MQTT, ChannelIndex))
                 {
                     if (!IsBooting)
@@ -463,11 +466,13 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 {
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
+                // DEBUG_V ("InputType_MQTT: End");
                 break;
             }
 
             case e_InputType::InputType_Alexa:
             {
+                // DEBUG_V ("InputType_Alexa: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_Alexa, ChannelIndex))
                 {
                     if (!IsBooting)
@@ -481,6 +486,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 {
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
+                // DEBUG_V ("InputType_Alexa: End");
                 break;
             }
 
@@ -554,7 +560,7 @@ void c_InputMgr::LoadConfig ()
 ///< Called from loop(), renders Input data
 void c_InputMgr::Process ()
 {
-    // DEBUG_START;
+    // _ DEBUG_START;
     // do we need to save the current config?
 
     do // once
@@ -564,8 +570,6 @@ void c_InputMgr::Process ()
             // prevent calls to process when we are doing a long operation
             break;
         }
-
-        ExternalInput.Poll ();
 
         if (true == configLoadNeeded)
         {
@@ -580,12 +584,12 @@ void c_InputMgr::Process ()
         bool aBlankTimerIsRunning = false;
         for (auto & CurrentInput : InputChannelDrivers)
         {
-            // DEBUG_V("");
+            // _ DEBUG_V("");
             CurrentInput.pInputChannelDriver->Process ();
 
             if (!BlankTimerHasExpired (CurrentInput.pInputChannelDriver->GetInputChannelId()))
             {
-                // DEBUG_V (String ("Blank Timer is running: ") + String (CurrentInput.pInputChannelDriver->GetInputChannelId ()));
+                // _ DEBUG_V (String ("Blank Timer is running: ") + String (CurrentInput.pInputChannelDriver->GetInputChannelId ()));
                 aBlankTimerIsRunning = true;
                 break;
             }
@@ -593,7 +597,7 @@ void c_InputMgr::Process ()
 
         if (false == aBlankTimerIsRunning && config.BlankDelay != 0)
         {
-            // DEBUG_V("Clear Input Buffer");
+            // _ DEBUG_V("Clear Input Buffer");
             OutputMgr.ClearBuffer ();
             RestartBlankTimer (InputSecondaryChannelId);
         } // ALL blank timers have expired
@@ -606,22 +610,8 @@ void c_InputMgr::Process ()
 
     } while (false);
 
-    // DEBUG_END;
+    // _ DEBUG_END;
 } // Process
-
-//-----------------------------------------------------------------------------
-void c_InputMgr::ProcessButtonActions (c_ExternalInput::InputValue_t value)
-{
-    // DEBUG_START;
-
-    for(auto & CurrentInputChannel : InputChannelDrivers)
-    {
-        CurrentInputChannel.pInputChannelDriver->ProcessButtonActions(value);
-    }
-
-    // DEBUG_END;
-
-} // ProcessButtonActions
 
 //-----------------------------------------------------------------------------
 /*
@@ -659,18 +649,6 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
         {
             logcon (String (F ("InputMgr: Incorrect Version found. Using existing/default config.")));
             // break;
-        }
-
-        // extract my own config data here
-        if (true == InputChannelMgrData.containsKey (IM_EffectsControlButtonName))
-        {
-            // DEBUG_V ("Found Input Button Config");
-            JsonObject InputButtonConfig = InputChannelMgrData[IM_EffectsControlButtonName];
-            ExternalInput.ProcessConfig (InputButtonConfig);
-        }
-        else
-        {
-            logcon (String (F ("InputMgr: No Input Button Settings Found. Using Defaults")));
         }
 
         // do we have a channel configuration array?

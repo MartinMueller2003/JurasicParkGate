@@ -106,7 +106,6 @@ public:
     void GetDriverName (String  & sDriverName) { sDriverName = "Effects"; } ///< get the name for the instantiated driver
     void SetBufferInfo (uint32_t BufferSize);
     void NextEffect ();
-    void ProcessButtonActions(c_ExternalInput::InputValue_t value);
 
     // Effect functions
     uint16_t effectSolidColor ();

@@ -111,13 +111,13 @@ RF_PRE_INIT() {
 
 void TestHeap(uint32_t Id)
 {
-    DEBUG_V(String("Test ID: ") + String(Id));
-    DEBUG_V(String("Allocate JSON document. Size = ") + String(20 * 1024));
-    DEBUG_V(String("Heap Before: ") + ESP.getFreeHeap());
+    // DEBUG_V(String("Test ID: ") + String(Id));
+    // DEBUG_V(String("Allocate JSON document. Size = ") + String(20 * 1024));
+    // DEBUG_V(String("Heap Before: ") + ESP.getFreeHeap());
     {
         DynamicJsonDocument jsonDoc(20 * 1024);
     }
-    DEBUG_V(String(" Heap After: ") + ESP.getFreeHeap());
+    // DEBUG_V(String(" Heap After: ") + ESP.getFreeHeap());
 }
 
 /// Arduino Setup

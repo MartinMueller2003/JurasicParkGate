@@ -454,7 +454,6 @@ void c_InputMQTT::PlayEffect (JsonObject & JsonConfig)
         pEffectsEngine->Begin ();
         pEffectsEngine->SetBufferInfo (InputDataBufferSize);
 
-        // DEBUG_V (String ("    InputDataBuffer: ") + String (uint32_t(InputDataBuffer)));
         // DEBUG_V (String ("InputDataBufferSize: ") + String (InputDataBufferSize));
     }
     // DEBUG_V ("");

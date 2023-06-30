@@ -32,6 +32,8 @@ c_InputCommon::c_InputCommon (c_InputMgr::e_InputChannelIds NewInputChannelId,
     InputChannelId(NewInputChannelId),
     ChannelType(NewChannelType)
 {
+    // DEBUG_START;
+    // DEBUG_END;
 } // c_InputMgr
 
 //-------------------------------------------------------------------------------

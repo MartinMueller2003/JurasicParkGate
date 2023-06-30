@@ -82,59 +82,11 @@ typedef struct
 //-----------------------------------------------------------------------------
 static const OutputChannelIdToGpioAndPortEntry_t OutputChannelIdToGpioAndPort[] =
 {
-#ifdef DEFAULT_UART_0_GPIO
-    {DEFAULT_UART_0_GPIO, UART_NUM_0, c_OutputMgr::OM_PortType_t::Uart},
-#endif // def DEFAULT_UART_0_GPIO
-
-#ifdef DEFAULT_UART_1_GPIO
-    {DEFAULT_UART_1_GPIO, UART_NUM_1, c_OutputMgr::OM_PortType_t::Uart},
-#endif // def DEFAULT_UART_1_GPIO
-
-#ifdef DEFAULT_UART_2_GPIO
-    {DEFAULT_UART_2_GPIO, UART_NUM_2, c_OutputMgr::OM_PortType_t::Uart},
-#endif // def DEFAULT_UART_2_GPIO
-
-    // RMT ports
-#ifdef DEFAULT_RMT_0_GPIO
-    {DEFAULT_RMT_0_GPIO, uart_port_t(0), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_0_GPIO
-
-#ifdef DEFAULT_RMT_1_GPIO
-    {DEFAULT_RMT_1_GPIO, uart_port_t(1), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_1_GPIO
-
-#ifdef DEFAULT_RMT_2_GPIO
-    {DEFAULT_RMT_2_GPIO, uart_port_t(2), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_2_GPIO
-
-#ifdef DEFAULT_RMT_3_GPIO
-    {DEFAULT_RMT_3_GPIO, uart_port_t(3), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_3_GPIO
-
-#ifdef DEFAULT_RMT_4_GPIO
-    {DEFAULT_RMT_4_GPIO, uart_port_t(4), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_4_GPIO
-
-#ifdef DEFAULT_RMT_5_GPIO
-    {DEFAULT_RMT_5_GPIO, uart_port_t(5), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_5_GPIO
-
-#ifdef DEFAULT_RMT_6_GPIO
-    {DEFAULT_RMT_6_GPIO, uart_port_t(6), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_6_GPIO
-
-#ifdef DEFAULT_RMT_7_GPIO
-    {DEFAULT_RMT_7_GPIO, uart_port_t(7), c_OutputMgr::OM_PortType_t::Rmt},
-#endif // def DEFAULT_RMT_7_GPIO
-
-#ifdef SUPPORT_SPI_OUTPUT
-    {DEFAULT_SPI_DATA_GPIO, uart_port_t(-1), c_OutputMgr::OM_PortType_t::Spi},
-#endif
-
-#if defined(SUPPORT_OutputType_Relay) || defined(SUPPORT_OutputType_Servo_PCA9685)
     {DEFAULT_RELAY_GPIO, uart_port_t(-1), c_OutputMgr::OM_PortType_t::Relay},
-#endif // defined(SUPPORT_OutputType_Relay) || defined(SUPPORT_OutputType_Servo_PCA9685)
-
+    {DEFAULT_RELAY_GPIO, uart_port_t(-1), c_OutputMgr::OM_PortType_t::Relay},
+    {DEFAULT_RELAY_GPIO, uart_port_t(-1), c_OutputMgr::OM_PortType_t::Relay},
+    {DEFAULT_RELAY_GPIO, uart_port_t(-1), c_OutputMgr::OM_PortType_t::Relay},
+    {DEFAULT_RELAY_GPIO, uart_port_t(-1), c_OutputMgr::OM_PortType_t::Relay},
 };
 
 //-----------------------------------------------------------------------------
@@ -868,7 +820,7 @@ void c_OutputMgr::SetSerialUart()
     {
         Serial.begin(115200);
         ConsoleUartIsActive = true;
-        DEBUG_V("Turn ON Console");
+        // DEBUG_V("Turn ON Console");
     }
     else
     {

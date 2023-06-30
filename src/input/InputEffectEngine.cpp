@@ -308,7 +308,6 @@ void c_InputEffectEngine::PollFlash ()
 
             // force the effect to overwrite the buffer
             EffectDelayTimer.CancelTimer();
-            // DEBUG_V(String("         now: ") + String(now));
             // DEBUG_V(String("   NextDelay: ") + String(NextDelay));
             // DEBUG_V(String("NextDuration: ") + String(NextDuration));
 
@@ -368,31 +367,6 @@ void c_InputEffectEngine::Process ()
     // DEBUG_END;
 
 } // process
-
-//----------------------------------------------------------------------------
-void c_InputEffectEngine::ProcessButtonActions(c_ExternalInput::InputValue_t value)
-{
-    // DEBUG_START;
-
-    if(c_ExternalInput::InputValue_t::longOn == value)
-    {
-        // DEBUG_V("flip the dark flag");
-        StayDark = !StayDark;
-        // DEBUG_V(String("StayDark: ") + String(StayDark));
-
-    }
-    else if(c_ExternalInput::InputValue_t::shortOn == value)
-    {
-        // DEBUG_V("Move to the next effect");
-        NextEffect();
-    }
-    else if(c_ExternalInput::InputValue_t::off == value)
-    {
-        // DEBUG_V("Got input Off notification");
-    }
-
-    // DEBUG_END;
-} // ProcessButtonActions
 
 //-----------------------------------------------------------------------------
 void c_InputEffectEngine::SetBufferInfo (uint32_t BufferSize)
@@ -908,7 +882,6 @@ uint16_t c_InputEffectEngine::effectTransition ()
     */
 
     // DEBUG_START;
-    // DEBUG_V(String("TransitionTargetColorId: ") + String(TransitionTargetColorId));
 
     if(ColorHasReachedTarget())
     {
@@ -980,8 +953,6 @@ uint16_t c_InputEffectEngine::effectMarquee ()
         Advance the next output pixel forward
         wait
     */
-
-    // DEBUG_V(String("MarqueeTargetColorId: ") + String(MarqueeTargetColorId));
 
     uint32_t CurrentMarqueePixelLocation = effectMarqueePixelLocation;
     uint32_t NumPixelsToProcess = PixelCount;

@@ -25,7 +25,6 @@
 #include "JurasicParkGate.h"
 #include "FileMgr.hpp"
 #include "OutputMgr.hpp"
-#include "externalInput.h"
 
 class c_InputCommon; ///< forward declaration to the pure virtual Input class that will be defined later.
 
@@ -62,22 +61,16 @@ public:
     void GetDriverName        (String & Name) { Name = "InputMgr"; }
     void RestartBlankTimer    (e_InputChannelIds Selector) { BlankEndTime[int(Selector)].StartTimer(config.BlankDelay * 1000); }
     bool BlankTimerHasExpired (e_InputChannelIds Selector) { return (BlankEndTime[int(Selector)].IsExpired()); }
-    void ProcessButtonActions (c_ExternalInput::InputValue_t value);
 
     enum e_InputType
     {
-        InputType_E1_31 = 0,
+        InputType_Buttons = 0,
         InputType_Effects,
         InputType_MQTT,
         InputType_Alexa,
-        InputType_DDP,
-#ifdef SUPPORT_FPP
-        InputType_FPP,
-#endif // def SUPPORT_FPP
-        InputType_Artnet,
         InputType_Disabled,
         InputType_End,
-        InputType_Start = InputType_E1_31,
+        InputType_Start = InputType_Buttons,
         InputType_Default = InputType_Disabled,
     };
 
@@ -94,15 +87,12 @@ private:
     DriverInfo_t    InputChannelDrivers[InputChannelId_End]; ///< pointer(s) to the current active Input driver
     uint32_t        InputDataBufferSize = 0;
     bool            HasBeenInitialized  = false;
-    c_ExternalInput ExternalInput;
     bool            EffectEngineIsConfiguredToRun[InputChannelId_End];
     bool            IsConnected         = false;
     bool            configInProgress    = false;
     bool            configLoadNeeded    = false;
 
     // configuration parameter names for the channel manager within the config file
-#   define IM_EffectsControlButtonName F ("ecb")
-
     bool ProcessJsonConfig           (JsonObject & jsonConfig);
     void CreateJsonConfig            (JsonObject & jsonConfig);
     bool ProcessJsonChannelConfig    (JsonObject & jsonConfig, uint32_t ChannelIndex);

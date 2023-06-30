@@ -56,12 +56,12 @@ void c_InputDisabled::Begin()
 //-----------------------------------------------------------------------------
 void c_InputDisabled::GetStatus (JsonObject & jsonStatus)
 {
-    // DEBUG_START;
+    // _ DEBUG_START;
 
     JsonObject Status = jsonStatus.createNestedObject (F ("disabled"));
     Status[CN_id] = InputChannelId;
 
-    // DEBUG_END;
+    // _ DEBUG_END;
 
 } // GetStatus
 
@@ -95,8 +95,8 @@ void c_InputDisabled::GetConfig(ArduinoJson::JsonObject & jsonConfig)
 //----------------------------------------------------------------------------
 void c_InputDisabled::Process()
 {
-    // DEBUG_START;
+    // _ DEBUG_START;
 
-    // DEBUG_END;
+    // _ DEBUG_END;
 
 } // Render

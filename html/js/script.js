@@ -916,13 +916,6 @@ function ProcessModeConfigurationDataServoPCA9685(ServoConfig) {
 
 } // ProcessModeConfigurationDataServoPCA9685
 
-function ProcessInputConfig() {
-    $('#ecb_enable').prop("checked", Input_Config.ecb.enabled);
-    $('#ecb_gpioid').val(Input_Config.ecb.id);
-    $('#ecb_polarity').val(Input_Config.ecb.polarity);
-    $('#ecb_longPress').val(Input_Config.ecb.long);
-} // ProcessInputConfig
-
 function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
     // console.info("ProcessModeConfigurationData: Start");
 
@@ -966,15 +959,7 @@ function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
         }
     });
 
-    // by default, do not show the ECB config data
-    $('#ecb').addClass("hidden");
-
-    if ("effects" === ChannelTypeName) {
-        $('#ecb').removeClass("hidden");
-        ProcessModeConfigurationDataEffects(channelConfig);
-    }
-
-    else if ("relay" === ChannelTypeName) {
+    if ("relay" === ChannelTypeName) {
         // console.info("ProcessModeConfigurationData: relay");
         ProcessModeConfigurationDataRelay(channelConfig);
     }
@@ -1104,7 +1089,6 @@ function LoadDeviceSetupSelectedOption(OptionListName, DisplayedChannelId) {
         $('#' + OptionListName + 'mode' + DisplayedChannelId).load(HtmlLoadFileName, function () {
             if ("input" === OptionListName) {
                 ProcessModeConfigurationData(DisplayedChannelId, OptionListName, Input_Config);
-                ProcessInputConfig();
             }
             else if ("output" === OptionListName) {
                 ProcessModeConfigurationData(DisplayedChannelId, OptionListName, Output_Config);
@@ -1433,12 +1417,6 @@ function ValidateConfigFields(ElementList) {
 // Build dynamic JSON config submission for "Device" tab
 function submitDeviceConfig() {
     ExtractChannelConfigFromHtmlPage(Input_Config.channels, "input");
-
-    Input_Config.ecb.enabled = $('#ecb_enable').is(':checked');
-    Input_Config.ecb.id = $('#ecb_gpioid').val();
-    Input_Config.ecb.polarity = $("#ecb_polarity").val();
-    Input_Config.ecb.long = $("#ecb_longPress").val();
-
     ExtractChannelConfigFromHtmlPage(Output_Config.channels, "output");
 
     submitNetworkConfig();
@@ -1477,7 +1455,7 @@ function wsConnect() {
             target = document.location.host;
         }
 
-        target = "192.168.10.229";
+        target = "192.168.10.216";
         // target = "192.168.10.101";
 
         // Open a new web socket and set the binary type
