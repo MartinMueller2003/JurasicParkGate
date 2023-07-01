@@ -28,7 +28,6 @@
 //-----------------------------------------------------------------------------
 // bring in driver definitions
 #include "OutputDisabled.hpp"
-#include "OutputRelay.hpp"
 #include "OutputServoPCA9685.hpp"
 // needs to be last
 #include "OutputMgr.hpp"
@@ -39,15 +38,6 @@
     #define DEFAULT_RELAY_GPIO      gpio_num_t::GPIO_NUM_1
 #endif // ndef DEFAULT_RELAY_GPIO
 
-#if defined(ARDUINO_ARCH_ESP32)
-void OM_Task (void *arg)
-{
-    while(1){
-        // DEBUG_V();
-        OutputMgr.TaskPoll();
-    }
-}
-#endif // ined(ARDUINO_ARCH_ESP32)
 
 //-----------------------------------------------------------------------------
 // Local Data definitions
@@ -60,15 +50,8 @@ typedef struct
 
 static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::OutputType_End] =
 {
-#ifdef SUPPORT_OutputType_Relay
-        {c_OutputMgr::e_OutputType::OutputType_Relay, "Relay"},
-#endif // def SUPPORT_OutputType_Servo_PCA9685
-
-#ifdef SUPPORT_OutputType_Servo_PCA9685
-        {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"},
-#endif // def SUPPORT_OutputType_Servo_PCA9685
-
-        {c_OutputMgr::e_OutputType::OutputType_Disabled, "Disabled"},
+    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"},
+    {c_OutputMgr::e_OutputType::OutputType_Disabled, "Disabled"},
 };
 
 //-----------------------------------------------------------------------------
@@ -137,7 +120,7 @@ void c_OutputMgr::Begin ()
 
         if (0 == OutputChannelId_End)
         {
-            logcon("ERROR: No output Channels defined. Rebooting");
+            logcon(F("ERROR: No output Channels defined. Rebooting"));
             reboot = true;
             break;
         }
@@ -169,11 +152,6 @@ void c_OutputMgr::Begin ()
 
         // Preset the output memory
         memset((void*)&OutputBuffer[0], 0x00, sizeof(OutputBuffer));
-
-#if defined(ARDUINO_ARCH_ESP32)
-        xTaskCreatePinnedToCore(OM_Task, "OM_Task", 4096, NULL, 10, &myTaskHandle, 0);
-        vTaskPrioritySet(myTaskHandle, 4);
-#endif // defined(ARDUINO_ARCH_ESP32)
 
     } while (false);
 
@@ -469,35 +447,11 @@ void c_OutputMgr::InstantiateNewOutputChannel(DriverInfo_t & CurrentOutputChanne
                 break;
             }
 
-#ifdef SUPPORT_OutputType_Relay
-            case e_OutputType::OutputType_Relay:
-            {
-                if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
-                {
-                    // logcon (CN_stars + String (F (" Starting RELAY for channel '")) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
-                    CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputRelay(CurrentOutputChannelDriver.DriverId, CurrentOutputChannelDriver.GpioPin,  CurrentOutputChannelDriver.PortId, OutputType_Relay);
-                    // DEBUG_V ();
-                    break;
-                }
-                // DEBUG_V ();
-
-                if (!BuildingNewConfig)
-                {
-                    logcon(CN_stars + String(F(" Cannot Start RELAY for channel '")) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
-                }
-                CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled(CurrentOutputChannelDriver.DriverId, CurrentOutputChannelDriver.GpioPin,  CurrentOutputChannelDriver.PortId, OutputType_Disabled);
-                // DEBUG_V ();
-
-                break;
-            }
-#endif // def SUPPORT_OutputType_Relay
-
-#ifdef SUPPORT_OutputType_Servo_PCA9685
             case e_OutputType::OutputType_Servo_PCA9685:
             {
-                if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
+                // if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
                 {
-                    // logcon (CN_stars + String (F (" Starting Servo PCA9685 for channel '")) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
+                    logcon (CN_stars + String (F (" Starting Servo PCA9685 for channel '")) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
                     CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputServoPCA9685(CurrentOutputChannelDriver.DriverId, CurrentOutputChannelDriver.GpioPin,  CurrentOutputChannelDriver.PortId, OutputType_Servo_PCA9685);
                     // DEBUG_V ();
                     break;
@@ -512,7 +466,6 @@ void c_OutputMgr::InstantiateNewOutputChannel(DriverInfo_t & CurrentOutputChanne
                 // DEBUG_V ();
                 break;
             }
-#endif // SUPPORT_OutputType_Servo_PCA9685
 
             default:
             {

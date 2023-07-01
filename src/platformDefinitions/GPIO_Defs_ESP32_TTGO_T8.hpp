@@ -19,10 +19,10 @@
 */
 
 //Output Manager
-#define LED_SDA                 gpio_num_t::GPIO_NUM_21  // Green LED and SDA. Will light-up if PCA9865 is used.
+#define LED_SDA                 gpio_num_t::GPIO_NUM_21  // Green LED.
 
-#define DEFAULT_I2C_SDA         gpio_num_t::GPIO_NUM_21
-#define DEFAULT_I2C_SCL         gpio_num_t::GPIO_NUM_22
+#define DEFAULT_I2C_SDA         gpio_num_t::GPIO_NUM_22
+#define DEFAULT_I2C_SCL         gpio_num_t::GPIO_NUM_23
 
 // File Manager
 #define SUPPORT_SD
@@ -31,7 +31,3 @@
 #define SD_CARD_CLK_PIN         gpio_num_t::GPIO_NUM_14
 #define SD_CARD_CS_PIN          gpio_num_t::GPIO_NUM_13
 #define USE_MISO_PULLUP
-
-// Output Types
-#define SUPPORT_OutputType_Relay            // GPIO
-#define SUPPORT_OutputType_Servo_PCA9685    // I2C (default pins)

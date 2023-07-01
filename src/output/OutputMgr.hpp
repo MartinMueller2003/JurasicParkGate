@@ -64,57 +64,8 @@ public:
     // handles to determine which output channel we are dealing with
     enum e_OutputChannelIds
     {
-        #ifdef DEFAULT_UART_0_GPIO
-        OutputChannelId_UART_0,
-        #endif // def DEFAULT_UART_0_GPIO
-
-        #ifdef DEFAULT_UART_1_GPIO
-        OutputChannelId_UART_1,
-        #endif // def DEFAULT_UART_1_GPIO
-
-        #ifdef DEFAULT_UART_2_GPIO
-        OutputChannelId_UART_2,
-        #endif // def DEFAULT_UART_2_GPIO
-
-        #ifdef DEFAULT_RMT_0_GPIO
-        OutputChannelId_RMT_0,
-        #endif // def DEFAULT_RMT_0_GPIO
-
-        #ifdef DEFAULT_RMT_1_GPIO
-        OutputChannelId_RMT_1,
-        #endif // def DEFAULT_RMT_1_GPIO
-
-        #ifdef DEFAULT_RMT_2_GPIO
-        OutputChannelId_RMT_2,
-        #endif // def DEFAULT_RMT_2_GPIO
-
-        #ifdef DEFAULT_RMT_3_GPIO
-        OutputChannelId_RMT_3,
-        #endif // def DEFAULT_RMT_3_GPIO
-
-        #ifdef DEFAULT_RMT_4_GPIO
-        OutputChannelId_RMT_4,
-        #endif // def DEFAULT_RMT_3_GPIO
-
-        #ifdef DEFAULT_RMT_5_GPIO
-        OutputChannelId_RMT_5,
-        #endif // def DEFAULT_RMT_3_GPIO
-
-        #ifdef DEFAULT_RMT_6_GPIO
-        OutputChannelId_RMT_6,
-        #endif // def DEFAULT_RMT_3_GPIO
-
-        #ifdef DEFAULT_RMT_7_GPIO
-        OutputChannelId_RMT_7,
-        #endif // def DEFAULT_RMT_3_GPIO
-
-        #ifdef SUPPORT_SPI_OUTPUT
-        OutputChannelId_SPI_1,
-        #endif // def SUPPORT_SPI_OUTPUT
-
-        #if defined(SUPPORT_OutputType_Relay) || defined(SUPPORT_OutputType_Servo_PCA9685)
-        OutputChannelId_Relay,
-        #endif // def SUPPORT_RELAY_OUTPUT
+        OutputChannelId_Relay_1,
+        OutputChannelId_Relay_2,
 
         OutputChannelId_End, // must be last in the list
         OutputChannelId_Start = 0,
@@ -124,32 +75,15 @@ public:
     enum e_OutputType
     {
         OutputType_Disabled = 0,
-
-        #ifdef SUPPORT_OutputType_Relay
-        OutputType_Relay,
-        #endif // def SUPPORT_OutputType_Relay
-
-        #ifdef SUPPORT_OutputType_Servo_PCA9685
         OutputType_Servo_PCA9685,
-        #endif // def SUPPORT_OutputType_Servo_PCA9685
 
         // Add new types here
         OutputType_End, // must be last
         OutputType_Start = OutputType_Disabled,
     };
 
-#ifdef ARDUINO_ARCH_ESP8266
-#   define OM_MAX_NUM_CHANNELS      (1200 * 3)
-#   define OM_MAX_CONFIG_SIZE       ((uint32_t)(3 * 1024))
-#else // ARDUINO_ARCH_ESP32
-#   ifdef BOARD_HAS_PSRAM
-#       define OM_MAX_NUM_CHANNELS  (7000 * 3)
-#       define OM_MAX_CONFIG_SIZE   ((uint32_t)(20 * 1024))
-#   else
-#       define OM_MAX_NUM_CHANNELS  (3000 * 3)
-#       define OM_MAX_CONFIG_SIZE   ((uint32_t)(13 * 1024))
-#   endif // !def BOARD_HAS_PSRAM
-#endif // !def ARDUINO_ARCH_ESP32
+#define OM_MAX_NUM_CHANNELS  (16 * 2)
+#define OM_MAX_CONFIG_SIZE   ((uint32_t)(10 * 1024))
 
     enum OM_PortType_t
     {
@@ -202,13 +136,6 @@ private:
     gpio_num_t ConsoleTxGpio = gpio_num_t::GPIO_NUM_1;
     gpio_num_t ConsoleRxGpio = gpio_num_t::GPIO_NUM_3;
     bool       ConsoleUartIsActive = true;
-#if defined(ARDUINO_ARCH_ESP32)
-    TaskHandle_t myTaskHandle = NULL;
-    // uint32_t PollCount = 0;
-#endif // defined(ARDUINO_ARCH_ESP32)
-
-#define OM_IS_UART (CurrentOutputChannelDriver.PortType == OM_PortType_t::Uart)
-#define OM_IS_RMT  (CurrentOutputChannelDriver.PortType == OM_PortType_t::Rmt)
 
 }; // c_OutputMgr
 
