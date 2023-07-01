@@ -27,8 +27,8 @@ class c_InputButtons : public c_InputCommon
 {
 public:
 	c_InputButtons (c_InputMgr::e_InputChannelIds NewInputChannelId,
-				   c_InputMgr::e_InputType       NewChannelType,
-              	   uint32_t                      BufferSize);
+				    c_InputMgr::e_InputType       NewChannelType,
+              	    uint32_t                      BufferSize);
 
 	enum InputValue_t
 	{
@@ -46,9 +46,10 @@ public:
 	void SetBufferInfo (uint32_t BufferSize);
 	void NetworkStateChanged (bool IsConnected); // used by poorly designed rx functions
 
+#define NumButtons 5
+
 protected:
 
-	#define NumButtons 6
 	c_InputButton Buttons[NumButtons];
 		
 }; // c_InputButtons

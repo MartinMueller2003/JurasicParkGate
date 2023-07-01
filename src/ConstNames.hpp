@@ -44,6 +44,7 @@ extern const CN_PROGMEM char CN_b[];
 extern const CN_PROGMEM char CN_b16[];
 extern const CN_PROGMEM char CN_baudrate[];
 extern const CN_PROGMEM char CN_blanktime[];
+extern const CN_PROGMEM char CN_buttons[];
 extern const CN_PROGMEM char CN_bridge[];
 extern const CN_PROGMEM char CN_brightness[];
 extern const CN_PROGMEM char CN_brightnessEnd[];

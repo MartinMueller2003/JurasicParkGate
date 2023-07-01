@@ -167,6 +167,7 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         // create a record for this channel
         JsonObject ChannelConfigData;
         String sChannelId = String (CurrentChannel.pInputChannelDriver->GetInputChannelId ());
+        // DEBUG_V (String("sChannelId: '") + String(sChannelId) + "'");
         if (true == InputMgrChannelsData.containsKey (sChannelId))
         {
             // DEBUG_V ("");
@@ -180,20 +181,26 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         }
 
         // save the name as the selected channel type
-        ChannelConfigData[CN_type] = int (CurrentChannel.pInputChannelDriver->GetInputType ());
+        uint32_t DriverType = int (CurrentChannel.pInputChannelDriver->GetInputType ());
+        String DriverTypeStr = String (DriverType);
+        // DEBUG_V(String("DriverTypeId: ") + DriverTypeStr);
+        String DriverNameStr;
+        CurrentChannel.pInputChannelDriver->GetDriverName(DriverNameStr);
+        // DEBUG_V(String("DriverName: '") + DriverNameStr + "'");
 
-        String DriverTypeId = String (int (CurrentChannel.pInputChannelDriver->GetInputType ()));
+        ChannelConfigData[CN_type] = DriverType;
+
         JsonObject ChannelConfigByTypeData;
-        if (true == ChannelConfigData.containsKey (String (DriverTypeId)))
+        if (true == ChannelConfigData.containsKey (String (DriverTypeStr)))
         {
-            ChannelConfigByTypeData = ChannelConfigData[DriverTypeId];
+            ChannelConfigByTypeData = ChannelConfigData[DriverTypeStr];
             // DEBUG_V ("");
         }
         else
         {
             // add our section header
             // DEBUG_V ("");
-            ChannelConfigByTypeData = ChannelConfigData.createNestedObject (DriverTypeId);
+            ChannelConfigByTypeData = ChannelConfigData.createNestedObject (DriverTypeStr);
         }
 
         // ask the channel to add its data to the record
@@ -220,10 +227,8 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
 void c_InputMgr::CreateNewConfig ()
 {
     // DEBUG_START;
-    if (!IsBooting)
-    {
-        logcon (String (F ("--- WARNING: Creating a new Input Manager configuration Data set ---")));
-    }
+
+    logcon (String (F ("--- WARNING: Creating a new Input Manager configuration Data set ---")));
 
     // create a place to save the config
     // DEBUG_V(String("Heap: ") + String(ESP.getFreeHeap()));
@@ -247,7 +252,7 @@ void c_InputMgr::CreateNewConfig ()
         {
             // DEBUG_V(String("DriverId: ") + CurrentInput.DriverId);
             InstantiateNewInputChannel (e_InputChannelIds(CurrentInput.DriverId), e_InputType(InputTypeId), false);
-        }// end for each interface
+        } // end for each interface
 
         // DEBUG_V ("collect the config data");
         CreateJsonConfig (JsonConfig);
@@ -289,8 +294,6 @@ void c_InputMgr::GetConfig (byte * Response, uint32_t maxlen)
 void c_InputMgr::GetStatus (JsonObject& jsonStatus)
 {
     // _ DEBUG_START;
-
-    JsonObject InputButtonStatus = jsonStatus.createNestedObject (F ("inputbutton"));
 
     JsonArray InputStatus = jsonStatus.createNestedArray (F ("input"));
     for (auto & CurrentInput : InputChannelDrivers)
@@ -386,8 +389,8 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 logcon (String(F("Shutting Down '")) + DriverName + String(F("' on Input: ")) + String(ChannelIndex));
             }
 
+            // DEBUG_V ("Delete old driver instance");
             delete InputChannelDrivers[ChannelIndex].pInputChannelDriver;
-            // DEBUG_V ();
             InputChannelDrivers[ChannelIndex].pInputChannelDriver = nullptr;
 
             // DEBUG_V ("");
@@ -399,10 +402,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             case e_InputType::InputType_Disabled:
             {
                 // DEBUG_V ("InputType_Disabled: Start");
-                if (!IsBooting)
-                {
-                    logcon (String (F ("Disabled Input type for channel '")) + ChannelIndex + "'.");
-                }
+                logcon (String (F ("Disabled Input type for channel '")) + ChannelIndex + "'.");
                 InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 // DEBUG_V ("InputType_Disabled: End");
                 break;
@@ -413,16 +413,14 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 // DEBUG_V ("InputType_Button: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_Buttons, ChannelIndex))
                 {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting Button for channel '")) + ChannelIndex + "'.");
-                    }
+                    logcon (String (F ("Starting Button for channel '")) + ChannelIndex + "'.");
                     // DEBUG_V ("c_InputButtons");
-                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputButtons (ChannelIndex, InputType_Effects, InputDataBufferSize);
+                    InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputButtons (ChannelIndex, InputType_Buttons, InputDataBufferSize);
                     // DEBUG_V ("c_InputButtons");
                 }
                 else
                 {
+                    // DEBUG_V("InputType_Button: Not allowed on channel");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
                 // DEBUG_V ("c_InputButton: End");
@@ -434,16 +432,14 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 // DEBUG_V ("InputType_Effects: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_Effects, ChannelIndex))
                 {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting Effects Engine for channel '")) + ChannelIndex + "'.");
-                    }
+                    logcon (String (F ("Starting Effects Engine for channel '")) + ChannelIndex + "'.");
                     // DEBUG_V ("c_InputEffectEngine");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputEffectEngine (ChannelIndex, InputType_Effects, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
                 else
                 {
+                    // DEBUG_V("InputType_Effects: Not allowed on channel");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
                 // DEBUG_V ("InputType_Effects: End");
@@ -455,15 +451,13 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 // DEBUG_V ("InputType_MQTT: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_MQTT, ChannelIndex))
                 {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting MQTT for channel '")) + ChannelIndex + "'.");
-                    }
+                    logcon (String (F ("Starting MQTT for channel '")) + ChannelIndex + "'.");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputMQTT (ChannelIndex, InputType_MQTT, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
                 else
                 {
+                    // DEBUG_V("InputType_MQTT: Not allowed on channel");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
                 // DEBUG_V ("InputType_MQTT: End");
@@ -475,15 +469,13 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 // DEBUG_V ("InputType_Alexa: Start");
                 if (InputTypeIsAllowedOnChannel (InputType_Alexa, ChannelIndex))
                 {
-                    if (!IsBooting)
-                    {
-                        logcon (String (F ("Starting Alexa for channel '")) + ChannelIndex + "'.");
-                    }
+                    logcon (String (F ("Starting Alexa for channel '")) + ChannelIndex + "'.");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputAlexa (ChannelIndex, InputType_Alexa, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
                 else
                 {
+                    // DEBUG_V("InputType_Alexa: Not allowed on channel");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 }
                 // DEBUG_V ("InputType_Alexa: End");
@@ -492,10 +484,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
 
             default:
             {
-                if (!IsBooting)
-                {
-                    logcon (CN_stars + String (F (" Unknown Input type for channel '")) + ChannelIndex + String(F ("'. Using disabled. ")) + CN_stars);
-                }
+                logcon (CN_stars + String (F (" Unknown Input type for channel '")) + ChannelIndex + String(F ("'. Using disabled. ")) + CN_stars);
                 InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 // DEBUG_V ("");
                 break;
@@ -503,9 +492,9 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
         } // end switch (NewChannelType)
 
         // DEBUG_V ("");
-        //String sDriverName;
-        //pInputChannelDrivers[ChannelIndex]->GetDriverName (sDriverName);
-        //Serial.println (String (CN_stars) + " '" + sDriverName + F("' Initialization for input: '") + String(ChannelIndex) + "' " + CN_stars);
+        // String sDriverName;
+        // pInputChannelDrivers[ChannelIndex]->GetDriverName (sDriverName);
+        // Serial.println (String (CN_stars) + " '" + sDriverName + F("' Initialization for input: '") + String(ChannelIndex) + "' " + CN_stars);
         if (StartDriver)
         {
             // DEBUG_V (String ("StartDriver: ") + String (StartDriver));

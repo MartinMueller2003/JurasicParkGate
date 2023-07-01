@@ -34,7 +34,7 @@ public:
 	void GetDriverName (String& sDriverName) { sDriverName = Name; } ///< get the name for the instantiated driver
 	void SetBufferInfo (uint32_t BufferSize);
 	void NetworkStateChanged (bool IsConnected); // used by poorly designed rx functions
-
+	void SetName( String & value) {Name = value;}
 protected:
 
 	enum Polarity_t

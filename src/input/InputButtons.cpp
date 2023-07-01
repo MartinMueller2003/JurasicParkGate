@@ -23,6 +23,14 @@
 /*****************************************************************************/
 /*	Global Data                                                              */
 /*****************************************************************************/
+static String DefaultButtonNames[]
+{
+	{"Open/Close"}, // 
+	{"Lights"},
+	{"Pause/Play"},
+	{"Skip"},
+	{"Stop"},
+};
 
 /*****************************************************************************/
 /* Code                                                                      */
@@ -33,9 +41,18 @@ c_InputButtons::c_InputButtons (c_InputMgr::e_InputChannelIds NewInputChannelId,
                                 uint32_t                      BufferSize) :
     c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
 {
-	DEBUG_START;
+    // DEBUG_START;
 	
-	DEBUG_END;
+    // DEBUG_V(String("NewInputChannelId: ") + String(int(NewInputChannelId)));
+    // DEBUG_V(String("   NewChannelType: ") + String(int(NewChannelType)));
+
+	uint32_t index = 0;
+	for(auto & CurrentButton : Buttons)
+	{
+		CurrentButton.SetName(DefaultButtonNames[index++]);
+	}
+
+    // DEBUG_END;
 
 } // c_InputButtons
 
@@ -62,13 +79,29 @@ void c_InputButtons::GetConfig (JsonObject & JsonData)
 {
     // DEBUG_START;
 
-	// if the array does not exist, then make it
+	// make sure an array exists
+	if (false == JsonData.containsKey (CN_buttons))
+	{
+		DEBUG_V ("Create Button array");
+		JsonData.createNestedArray (CN_buttons);
+	}
+    JsonArray InputButtonArray = JsonData[CN_buttons];
+	
+	// remove the existing array
+	InputButtonArray.clear();
 
+	// DEBUG_V ("");
+
+	uint32_t index = 0;
 	for(auto & CurrentButton : Buttons)
 	{
 		// Create an array entry
+		JsonObject CurrentJsonData = InputButtonArray.createNestedObject();
 
-		// send the config to the button
+		CurrentJsonData[CN_device] = index++;
+
+		// Get the config from the button
+		CurrentButton.GetConfig(CurrentJsonData);
 	}
 
     // DEBUG_END;
@@ -80,18 +113,19 @@ void c_InputButtons::GetStatus (JsonObject & JsonData)
 {
 	DEBUG_START;
 
-	// create the button array
+    JsonArray InputStatus = JsonData.createNestedArray (CN_buttons);
 
+	uint32_t index = 0;
 	for(auto & CurrentButton : Buttons)
 	{
-		// create a button status object
-
-		CurrentButton.GetStatus(JsonData);
+        JsonObject channelStatus = InputStatus.createNestedObject ();
+		channelStatus[CN_device] = index++;
+        CurrentButton.GetStatus (channelStatus);
 	}
 
 	DEBUG_END;
 
-} // GetStatistics
+} // GetStatus
 
 //-----------------------------------------------------------------------------
 void c_InputButtons::SetBufferInfo (uint32_t BufferSize)
@@ -109,34 +143,53 @@ void c_InputButtons::SetBufferInfo (uint32_t BufferSize)
 /*****************************************************************************/
 bool c_InputButtons::SetConfig (JsonObject & JsonData)
 {
-	DEBUG_START;
+    // DEBUG_START;
 
-	for(auto & CurrentButton : Buttons)
+	if (false == JsonData.containsKey (CN_buttons))
 	{
-		// locate the config
+		DEBUG_V ("Create Button array");
+		JsonData.createNestedArray (CN_buttons);
+	}
+    JsonArray InputButtonArray = JsonData[CN_buttons];
+
+	for(JsonObject CurrentButtonJsonData : InputButtonArray)
+	{
+		if (false == CurrentButtonJsonData.containsKey (CN_device))
+		{
+			logcon(F("Missing ID in button config. Skipping entry"));
+			continue;
+		}
+
+		uint32_t index = CurrentButtonJsonData[CN_device];
+		if(index >= NumButtons)
+		{
+			logcon(String(F("Invalid button array entry ID: ")) + String(index));
+			continue;
+		}
 
 		// send the config to the button
+		Buttons[uint32_t(CurrentButtonJsonData[CN_id])].SetConfig(CurrentButtonJsonData);
 	}
 
-	DEBUG_END;
+    // DEBUG_END;
 	return true;
 } // ProcessConfig
 
 /*****************************************************************************/
 void c_InputButtons::Process (void)
 {
-	DEBUG_START;
+	// _ DEBUG_START;
 	
 	for(auto & CurrentButton : Buttons)
 	{
 		CurrentButton.Process();
 	}
 
-	DEBUG_END;
+	// _ DEBUG_END;
 
 } // Poll
 
-//-----------------------------------------------------------------------------
+/*****************************************************************************/
 void c_InputButtons::NetworkStateChanged (bool IsConnected)
 {
 } // NetworkStateChanged
