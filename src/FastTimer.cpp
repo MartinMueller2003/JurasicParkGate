@@ -1,74 +1,69 @@
 /*
-* FastTimer.cpp - Output Management class
-*
-* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2023 Martin Mueller
-* http://www.MartnMueller2003.com
-*
-*  This program is provided free for you to use in any way that you wish,
-*  subject to the laws and regulations where you are using it.  Due diligence
-*  is strongly suggested before using this code.  Please give credit where due.
-*
-*  The Author makes no warranty of any kind, express or implied, with regard
-*  to this program or the documentation contained in this document.  The
-*  Author shall not be liable in any event for incidental or consequential
-*  damages in connection with, or arising out of, the furnishing, performance
-*  or use of these programs.
-*
-*/
+  * FastTimer.cpp - Output Management class
+  *
+  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+  * Copyright (c) 2023 Martin Mueller
+  * http://www.MartnMueller2003.com
+  *
+  *  This program is provided free for you to use in any way that you wish,
+  *  subject to the laws and regulations where you are using it.  Due diligence
+  *  is strongly suggested before using this code.  Please give credit where due.
+  *
+  *  The Author makes no warranty of any kind, express or implied, with regard
+  *  to this program or the documentation contained in this document.  The
+  *  Author shall not be liable in any event for incidental or consequential
+  *  damages in connection with, or arising out of, the furnishing, performance
+  *  or use of these programs.
+  *
+  */
 
 #include "FastTimer.hpp"
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 ///< Start up the driver and put it into a safe mode
 FastTimer::FastTimer ()
 {
-    CancelTimer();
-} // FastTimer
+    CancelTimer ();
+}  // FastTimer
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 ///< deallocate any resources and put the output channels into a safe state
 FastTimer::~FastTimer ()
 {
     // DEBUG_START;
 
     // DEBUG_END;
+}  // ~FastTimer
 
-} // ~FastTimer
-
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 ///< Start the module
 void FastTimer::StartTimer (uint32_t DurationMS)
 {
     // DEBUG_START;
 
-    uint64_t now = uint64_t(millis());
+    uint64_t now = uint64_t (millis ());
 
-    EndTimeMS = now + uint64_t(DurationMS);
-    offsetMS = uint64_t((EndTimeMS > uint32_t(-1)) ? uint32_t(-1) : uint32_t(0));
+    EndTimeMS   = now + uint64_t (DurationMS);
+    offsetMS    = uint64_t ((EndTimeMS > uint32_t (-1)) ? uint32_t (-1) : uint32_t (0));
 
     // DEBUG_END;
-} // StartTimer
+}  // StartTimer
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 bool FastTimer::IsExpired ()
 {
-    return ((uint64_t(millis ()) + uint64_t(offsetMS)) >= EndTimeMS);
+    return (uint64_t (millis ()) + uint64_t (offsetMS)) >= EndTimeMS;
+}  // IsExpired
 
-} // IsExpired
-
-//-----------------------------------------------------------------------------
-void FastTimer::CancelTimer()
+// -----------------------------------------------------------------------------
+void FastTimer::CancelTimer ()
 {
-    EndTimeMS = millis();
-    offsetMS = 0;
+    EndTimeMS   = millis ();
+    offsetMS    = 0;
+}  // CancelTimer
 
-} // CancelTimer
-
-//-----------------------------------------------------------------------------
-uint32_t FastTimer::GetTimeRemaining()
+// -----------------------------------------------------------------------------
+uint32_t FastTimer::GetTimeRemaining ()
 {
-    
-    return (IsExpired()) ? 0 : uint32_t(EndTimeMS - (uint64_t(millis()) + uint64_t(offsetMS)));
-
-} // GetTimeRemaining
+    return (IsExpired ()) ? 0 : uint32_t (EndTimeMS - (uint64_t (millis ()) + uint64_t (offsetMS)));
+}  // GetTimeRemaining

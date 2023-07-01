@@ -1,21 +1,21 @@
 /*
-* InputAlexa.cpp
-*
-* Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-* Copyright (c) 2023 Martin Mueller
-* http://www.MartnMueller2003.com
-*
-*  This program is provided free for you to use in any way that you wish,
-*  subject to the laws and regulations where you are using it.  Due diligence
-*  is strongly suggested before using this code.  Please give credit where due.
-*
-*  The Author makes no warranty of any kind, express or implied, with regard
-*  to this program or the documentation contained in this document.  The
-*  Author shall not be liable in any event for incidental or consequential
-*  damages in connection with, or arising out of, the furnishing, performance
-*  or use of these programs.
-*
-*/
+  * InputAlexa.cpp
+  *
+  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+  * Copyright (c) 2023 Martin Mueller
+  * http://www.MartnMueller2003.com
+  *
+  *  This program is provided free for you to use in any way that you wish,
+  *  subject to the laws and regulations where you are using it.  Due diligence
+  *  is strongly suggested before using this code.  Please give credit where due.
+  *
+  *  The Author makes no warranty of any kind, express or implied, with regard
+  *  to this program or the documentation contained in this document.  The
+  *  Author shall not be liable in any event for incidental or consequential
+  *  damages in connection with, or arising out of, the furnishing, performance
+  *  or use of these programs.
+  *
+  */
 
 #include "JurasicParkGate.h"
 #include <Int64String.h>
@@ -24,23 +24,23 @@
 #include "SaferStringConversion.hpp"
 
 #if defined ARDUINO_ARCH_ESP32
-#   include <functional>
-#endif
+#include <functional>
+#endif // if defined ARDUINO_ARCH_ESP32
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 c_InputAlexa::c_InputAlexa (
-    c_InputMgr::e_InputChannelIds NewInputChannelId,
-    c_InputMgr::e_InputType       NewChannelType,
-    uint32_t                        BufferSize) :
+                            c_InputMgr::e_InputChannelIds   NewInputChannelId,
+                            c_InputMgr::e_InputType         NewChannelType,
+                            uint32_t                        BufferSize) :
     c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
 
 {
     // DEBUG_START;
 
     // DEBUG_END;
-} // c_InputE131
+}  // c_InputE131
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 c_InputAlexa::~c_InputAlexa ()
 {
     if (HasBeenInitialized)
@@ -55,11 +55,10 @@ c_InputAlexa::~c_InputAlexa ()
             pEffectsEngine = nullptr;
         }
     }
+}  // ~c_InputAlexa
 
-} // ~c_InputAlexa
-
-//-----------------------------------------------------------------------------
-void c_InputAlexa::Begin()
+// -----------------------------------------------------------------------------
+void c_InputAlexa::Begin ()
 {
     // DEBUG_START;
 
@@ -68,31 +67,30 @@ void c_InputAlexa::Begin()
         // DEBUG_END;
         return;
     }
+
     HasBeenInitialized = true;
 
     pEffectsEngine = new c_InputEffectEngine (c_InputMgr::e_InputChannelIds::InputSecondaryChannelId, c_InputMgr::e_InputType::InputType_Effects, InputDataBufferSize);
     pEffectsEngine->SetOperationalState (false);
 
-    WebMgr.RegisterAlexaCallback ([this](EspalexaDevice* pDevice) {this->onMessage (pDevice); });
+    WebMgr.RegisterAlexaCallback ([this] (EspalexaDevice * pDevice) {this->onMessage (pDevice);});
 
     pEffectsEngine->Begin ();
 
     // DEBUG_END;
+}  // begin
 
-} // begin
-
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void c_InputAlexa::GetConfig (JsonObject & jsonConfig)
 {
     // DEBUG_START;
 
 
     // DEBUG_END;
+}  // GetConfig
 
-} // GetConfig
-
-//-----------------------------------------------------------------------------
-void c_InputAlexa::GetStatus (JsonObject& /* jsonStatus */)
+// -----------------------------------------------------------------------------
+void c_InputAlexa::GetStatus (JsonObject & /* jsonStatus */)
 {
     // DEBUG_START;
 
@@ -100,10 +98,9 @@ void c_InputAlexa::GetStatus (JsonObject& /* jsonStatus */)
     // mqttStatus["unifirst"] = startUniverse;
 
     // DEBUG_END;
+}  // GetStatus
 
-} // GetStatus
-
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void c_InputAlexa::Process ()
 {
     // DEBUG_START;
@@ -113,10 +110,9 @@ void c_InputAlexa::Process ()
     }
 
     // DEBUG_END;
+}  // process
 
-} // process
-
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void c_InputAlexa::SetBufferInfo (uint32_t BufferSize)
 {
     // DEBUG_START;
@@ -128,26 +124,24 @@ void c_InputAlexa::SetBufferInfo (uint32_t BufferSize)
     pEffectsEngine->SetBufferInfo (BufferSize);
 
     // DEBUG_END;
+}  // SetBufferInfo
 
-} // SetBufferInfo
-
-//-----------------------------------------------------------------------------
-bool c_InputAlexa::SetConfig (ArduinoJson::JsonObject& jsonConfig)
+// -----------------------------------------------------------------------------
+bool c_InputAlexa::SetConfig (ArduinoJson::JsonObject & jsonConfig)
 {
     // DEBUG_START;
 
     // DEBUG_END;
 
     return true;
-} // SetConfig
+}  // SetConfig
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void c_InputAlexa::validateConfiguration ()
 {
     // DEBUG_START;
     // DEBUG_END;
-
-} // validate
+}  // validate
 
 /////////////////////////////////////////////////////////
 //
@@ -155,16 +149,16 @@ void c_InputAlexa::validateConfiguration ()
 //
 /////////////////////////////////////////////////////////
 
-//-----------------------------------------------------------------------------
-void c_InputAlexa::onMessage(EspalexaDevice * pDevice)
+// -----------------------------------------------------------------------------
+void c_InputAlexa::onMessage (EspalexaDevice * pDevice)
 {
     // DEBUG_START;
-    do // once
+    do  // once
     {
         OutputMgr.ClearBuffer ();
 
         char HexColor[8];
-        ESP_ERROR_CHECK(saferRgbToHtmlColorString(HexColor, pDevice->getR (), pDevice->getG (), pDevice->getB ()));
+        ESP_ERROR_CHECK (saferRgbToHtmlColorString (HexColor, pDevice->getR (), pDevice->getG (), pDevice->getB ()));
 
         // DEBUG_V (String ("pDevice->getR: ") + String (pDevice->getR ()));
         // DEBUG_V (String ("pDevice->getG: ") + String (pDevice->getG ()));
@@ -189,9 +183,7 @@ void c_InputAlexa::onMessage(EspalexaDevice * pDevice)
         pEffectsEngine->SetConfig (JsonConfig);
 
         // DEBUG_V ("");
-
     } while (false);
 
     // DEBUG_END;
-
-} // onMessage
+}  // onMessage

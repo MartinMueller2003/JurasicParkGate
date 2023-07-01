@@ -1,2 +1,2 @@
-#define SECRETS_SSID "MaRtInG"
-#define SECRETS_PASS "martinshomenetwork"
+#define SECRETS_SSID    "MaRtInG"
+#define SECRETS_PASS    "martinshomenetwork"

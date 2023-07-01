@@ -1,20 +1,19 @@
 /******************************************************************
-*
-*       Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
-*       Orginal JurasicParkGateproject by 2015 Martin Mueller
-*
-*This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or(at your option) any later version.
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-<http://www.gnu.org/licenses/>
-*
-******************************************************************/
+ *
+ *       Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
+ *       Orginal JurasicParkGateproject by 2015 Martin Mueller
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ *    License, or(at your option) any later version.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *     <http://www.gnu.org/licenses/>
+ *
+ ******************************************************************/
 
 #include "JurasicParkGate.h"
-
-#ifdef SUPPORT_OutputType_Servo_PCA9685
 
 #include <utility>
 #include <algorithm>
@@ -22,17 +21,19 @@ GNU General Public License for more details.
 
 #include "OutputServoPCA9685.hpp"
 
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 c_OutputServoPCA9685::c_OutputServoPCA9685 (c_OutputMgr::e_OutputChannelIds OutputChannelId,
-                                gpio_num_t outputGpio,
-                                uart_port_t uart,
-                                c_OutputMgr::e_OutputType outputType) :
-    c_OutputCommon(OutputChannelId, outputGpio, uart, outputType)
+                                            gpio_num_t                      outputGpio,
+                                            uart_port_t                     uart,
+                                            c_OutputMgr::e_OutputType       outputType) :
+    c_OutputCommon (OutputChannelId, outputGpio, uart, outputType)
 {
     // DEBUG_START;
 
+    I2C_Address = PCA9685_I2C_ADDRESS + OutputChannelId;
+
     uint32_t id = 0;
-    for (ServoPCA9685Channel_t &currentServoPCA9685Channel : OutputList)
+    for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
     {
         currentServoPCA9685Channel.Id               = id++;
         currentServoPCA9685Channel.Enabled          = false;
@@ -46,63 +47,64 @@ c_OutputServoPCA9685::c_OutputServoPCA9685 (c_OutputMgr::e_OutputChannelIds Outp
     }
 
     // DEBUG_END;
-} // c_OutputServoPCA9685
+}  // c_OutputServoPCA9685
 
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 c_OutputServoPCA9685::~c_OutputServoPCA9685 ()
 {
     // DEBUG_START;
 
-    if(nullptr != pwm)
+    if (nullptr != pwm)
     {
         // DEBUG_V();
         delete pwm;
     }
 
     // DEBUG_END;
-} // ~c_OutputServoPCA9685
+}  // ~c_OutputServoPCA9685
 
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 void c_OutputServoPCA9685::Begin ()
 {
     // DEBUG_START;
 
-    if(!HasBeenInitialized)
+    if (!HasBeenInitialized)
     {
         // DEBUG_V("Allocate PWM");
-        pwm = new Adafruit_PWMServoDriver();
+        pwm = new Adafruit_PWMServoDriver (I2C_Address);
 
-        SetOutputBufferSize(Num_Channels);
+        SetOutputBufferSize (Num_Channels);
 
-        pwm->begin();
-        pwm->setPWMFreq(UpdateFrequency);
+        pwm->begin ();
+        pwm->setPWMFreq (UpdateFrequency);
 
-        validate();
+        validate ();
 
         HasBeenInitialized = true;
     }
 
     // DEBUG_END;
-} // Begin
+}  // Begin
 
 #ifdef UseCustomClearBuffer
-//-----------------------------------------------------------------------------
-void c_OutputServoPCA9685::ClearBuffer ()
-{
-    // DEBUG_START;
-
-    // memset(GetBufferAddress(), 0x00, GetBufferUsedSize());
-    for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
+    // -----------------------------------------------------------------------------
+    void c_OutputServoPCA9685::ClearBuffer ()
     {
-        GetBufferAddress()[currentServoPCA9685Channel.Id] =
-            currentServoPCA9685Channel.HomeValue;
-    }
+        // DEBUG_START;
 
-    // DEBUG_END;
-} // ClearBuffer
+        // memset(GetBufferAddress(), 0x00, GetBufferUsedSize());
+        for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
+        {
+            GetBufferAddress ()[currentServoPCA9685Channel.Id] =
+                currentServoPCA9685Channel.HomeValue;
+        }
+
+        // DEBUG_END;
+    }  // ClearBuffer
+
 #endif // def UseCustomClearBuffer
 
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 bool c_OutputServoPCA9685::validate ()
 {
     // DEBUG_START;
@@ -111,15 +113,15 @@ bool c_OutputServoPCA9685::validate ()
     if ((Num_Channels > OM_SERVO_PCA9685_CHANNEL_LIMIT) || (Num_Channels < 1))
     {
         logcon (CN_stars + String (MN_01) + OM_SERVO_PCA9685_CHANNEL_LIMIT + " " + CN_stars);
-        Num_Channels = OM_SERVO_PCA9685_CHANNEL_LIMIT;
-        response = false;
+        Num_Channels    = OM_SERVO_PCA9685_CHANNEL_LIMIT;
+        response        = false;
     }
 
     if (Num_Channels < OM_SERVO_PCA9685_CHANNEL_LIMIT)
     {
         logcon (CN_stars + String (MN_02) + CN_stars);
 
-        for (int ChannelIndex = OM_SERVO_PCA9685_CHANNEL_LIMIT - 1; ChannelIndex > Num_Channels; ChannelIndex--)
+        for (int ChannelIndex = OM_SERVO_PCA9685_CHANNEL_LIMIT - 1;ChannelIndex > Num_Channels;ChannelIndex--)
         {
             logcon (CN_stars + String (MN_03) + String (ChannelIndex + 1) + "' " + CN_stars);
             OutputList[ChannelIndex].Enabled = false;
@@ -131,31 +133,30 @@ bool c_OutputServoPCA9685::validate ()
     SetOutputBufferSize (Num_Channels);
 
     /*
-    uint8_t CurrentServoPCA9685ChanIndex = 0;
-    for (ServoPCA9685Channel_t & currentServoPCA9685 : OutputList)
-    {
-
-    } // for each output channel
-    */
+      *    uint8_t CurrentServoPCA9685ChanIndex = 0;
+      *    for (ServoPCA9685Channel_t & currentServoPCA9685 : OutputList)
+      *    {
+      *
+      *    } // for each output channel
+      */
     // DEBUG_END;
     return response;
+}  // validate
 
-} // validate
-
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 /* Process the config
-*
-*   needs
-*       reference to string to process
-*   returns
-*       true - config has been accepted
-*       false - Config rejected. Using defaults for invalid settings
-*/
+  *
+  *   needs
+  *       reference to string to process
+  *   returns
+  *       true - config has been accepted
+  *       false - Config rejected. Using defaults for invalid settings
+  */
 bool c_OutputServoPCA9685::SetConfig (ArduinoJson::JsonObject & jsonConfig)
 {
     // DEBUG_START;
 
-    do // once
+    do  // once
     {
         // extern void PrettyPrint (JsonObject & jsonStuff, String Name);
 
@@ -170,6 +171,7 @@ bool c_OutputServoPCA9685::SetConfig (ArduinoJson::JsonObject & jsonConfig)
             logcon (MN_04);
             break;
         }
+
         JsonArray JsonChannelList = jsonConfig[OM_SERVO_PCA9685_CHANNELS_NAME];
 
         for (JsonVariant JsonChannelData : JsonChannelList)
@@ -181,26 +183,25 @@ bool c_OutputServoPCA9685::SetConfig (ArduinoJson::JsonObject & jsonConfig)
             if (ChannelId >= OM_SERVO_PCA9685_CHANNEL_LIMIT)
             {
                 // if not, flag an error and stop processing this channel
-                logcon (String(MN_05) + String(ChannelId) + "'");
+                logcon (String (MN_05) + String (ChannelId) + "'");
                 continue;
             }
 
             ServoPCA9685Channel_t * CurrentOutputChannel = & OutputList[ChannelId];
 
-            setFromJSON (CurrentOutputChannel->Enabled,    JsonChannelData, OM_SERVO_PCA9685_CHANNEL_ENABLED_NAME);
-            setFromJSON (CurrentOutputChannel->MinLevel,   JsonChannelData, OM_SERVO_PCA9685_CHANNEL_MINLEVEL_NAME);
-            setFromJSON (CurrentOutputChannel->MaxLevel,   JsonChannelData, OM_SERVO_PCA9685_CHANNEL_MAXLEVEL_NAME);
-            setFromJSON (CurrentOutputChannel->IsReversed, JsonChannelData, OM_SERVO_PCA9685_CHANNEL_REVERSED);
-            setFromJSON (CurrentOutputChannel->Is16Bit,    JsonChannelData, OM_SERVO_PCA9685_CHANNEL_16BITS);
-            setFromJSON (CurrentOutputChannel->IsScaled,   JsonChannelData, OM_SERVO_PCA9685_CHANNEL_SCALED);
-            setFromJSON (CurrentOutputChannel->HomeValue,  JsonChannelData, OM_SERVO_PCA9685_CHANNEL_HOME);
+            setFromJSON (   CurrentOutputChannel->Enabled,      JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_ENABLED_NAME);
+            setFromJSON (   CurrentOutputChannel->MinLevel,     JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_MINLEVEL_NAME);
+            setFromJSON (   CurrentOutputChannel->MaxLevel,     JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_MAXLEVEL_NAME);
+            setFromJSON (   CurrentOutputChannel->IsReversed,   JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_REVERSED);
+            setFromJSON (   CurrentOutputChannel->Is16Bit,      JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_16BITS);
+            setFromJSON (   CurrentOutputChannel->IsScaled,     JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_SCALED);
+            setFromJSON (   CurrentOutputChannel->HomeValue,    JsonChannelData,    OM_SERVO_PCA9685_CHANNEL_HOME);
 
             // DEBUG_V (String ("ChannelId: ") + String (ChannelId));
             // DEBUG_V (String ("  Enabled: ") + String (CurrentOutputChannel->Enabled));
             // DEBUG_V (String (" MinLevel: ") + String (CurrentOutputChannel->MinLevel));
             // DEBUG_V (String (" MaxLevel: ") + String (CurrentOutputChannel->MaxLevel));
         }
-
     } while (false);
 
     bool response = validate ();
@@ -210,10 +211,9 @@ bool c_OutputServoPCA9685::SetConfig (ArduinoJson::JsonObject & jsonConfig)
 
     // DEBUG_END;
     return response;
+}  // SetConfig
 
-} // SetConfig
-
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 void c_OutputServoPCA9685::GetConfig (ArduinoJson::JsonObject & jsonConfig)
 {
     // DEBUG_START;
@@ -248,16 +248,15 @@ void c_OutputServoPCA9685::GetConfig (ArduinoJson::JsonObject & jsonConfig)
     // PrettyPrint(jsonConfig, "Servo");
 
     // DEBUG_END;
-} // GetConfig
+}  // GetConfig
 
-//----------------------------------------------------------------------------
-void  c_OutputServoPCA9685::GetDriverName (String & sDriverName)
+// ----------------------------------------------------------------------------
+void c_OutputServoPCA9685::GetDriverName (String & sDriverName)
 {
     sDriverName = CN_Servo_PCA9685;
+}  // GetDriverName
 
-} // GetDriverName
-
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 uint32_t c_OutputServoPCA9685::Poll ()
 {
     // DEBUG_START;
@@ -271,11 +270,11 @@ uint32_t c_OutputServoPCA9685::Poll ()
         // DEBUG_V (String ("       Enabled: ") + String (currentServoPCA9685.Enabled));
         if (currentServoPCA9685.Enabled)
         {
-            uint16_t MaxScaledValue = 255;
-            uint16_t MinScaledValue = 0;
-            uint16_t newOutputValue = pOutputBuffer[OutputDataIndex];
+            uint16_t    MaxScaledValue  = 255;
+            uint16_t    MinScaledValue  = 0;
+            uint16_t    newOutputValue  = pOutputBuffer[OutputDataIndex];
 
-            if(0 == newOutputValue)
+            if (0 == newOutputValue)
             {
                 newOutputValue = currentServoPCA9685.HomeValue;
             }
@@ -284,8 +283,8 @@ uint32_t c_OutputServoPCA9685::Poll ()
             {
                 // DEBUG_V ("16 Bit Mode");
                 newOutputValue  = (pOutputBuffer[(OutputDataIndex * 2) + 0] << 0);
-                newOutputValue += (pOutputBuffer[(OutputDataIndex * 2) + 1] << 8);
-                MaxScaledValue = uint16_t (-1);
+                newOutputValue  += (pOutputBuffer[(OutputDataIndex * 2) + 1] << 8);
+                MaxScaledValue  = uint16_t (-1);
             }
 
             // DEBUG_V (String ("newOutputValue: ") + String (newOutputValue));
@@ -301,8 +300,8 @@ uint32_t c_OutputServoPCA9685::Poll ()
                 if (currentServoPCA9685.IsReversed)
                 {
                     // DEBUG_V (String("Reverse Lookup"));
-                    MinScaledValue = MaxScaledValue;
-                    MaxScaledValue = 0;
+                    MinScaledValue  = MaxScaledValue;
+                    MaxScaledValue  = 0;
                 }
 
                 uint16_t Final_value = newOutputValue;
@@ -315,24 +314,24 @@ uint32_t c_OutputServoPCA9685::Poll ()
                     // DEBUG_V (String ("MinScaledValue: ") + String (MinScaledValue));
                     // DEBUG_V (String ("MaxScaledValue: ") + String (MaxScaledValue));
 
-                    uint16_t pulse_width = map (newOutputValue,
-                                                MinScaledValue,
-                                                MaxScaledValue,
-                                                currentServoPCA9685.MinLevel,
-                                                currentServoPCA9685.MaxLevel);
+                    uint16_t pulse_width = map (
+                        newOutputValue,
+                        MinScaledValue,
+                        MaxScaledValue,
+                        currentServoPCA9685.MinLevel,
+                        currentServoPCA9685.MaxLevel);
                     Final_value = int((float(pulse_width) / float(MicroSecondsInASecond)) * float(UpdateFrequency) * 4096.0);
                     // DEBUG_V (String ("pulse_width: ") + String (pulse_width));
                     // DEBUG_V (String ("Final_value: ") + String (Final_value));
                 }
+
                 pwm->setPWM (OutputDataIndex, 0, Final_value);
             }
         }
+
         ++OutputDataIndex;
     }
 
     // DEBUG_END;
     return 0;
-
-} // render
-
-#endif // def SUPPORT_OutputType_Servo_PCA9685
+}  // render
