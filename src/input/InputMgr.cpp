@@ -40,18 +40,18 @@
 // -----------------------------------------------------------------------------
 typedef struct
 {
-    c_InputMgr::e_InputType         id;
-    String                          name;
-    c_InputMgr::e_InputChannelIds   ChannelId;
+    c_InputMgr::e_InputType       id;
+    String                        name;
+    c_InputMgr::e_InputChannelIds ChannelId;
 } InputTypeXlateMap_t;
 
 static const InputTypeXlateMap_t InputTypeXlateMap[c_InputMgr::e_InputType::InputType_End] =
 {
-    {c_InputMgr::e_InputType::InputType_Buttons,  "Buttons",  c_InputMgr::e_InputChannelIds::InputPrimaryChannelId            },
-    {c_InputMgr::e_InputType::InputType_Effects,  "Effects",  c_InputMgr::e_InputChannelIds::InputSecondaryChannelId          },
-    {c_InputMgr::e_InputType::InputType_MQTT,     "MQTT",     c_InputMgr::e_InputChannelIds::InputSecondaryChannelId          },
-    {c_InputMgr::e_InputType::InputType_Alexa,    "Alexa",    c_InputMgr::e_InputChannelIds::InputSecondaryChannelId          },
-    {c_InputMgr::e_InputType::InputType_Disabled, "Disabled", c_InputMgr::e_InputChannelIds::InputChannelId_ALL               }
+    {c_InputMgr::e_InputType::InputType_Buttons,  "Buttons",  c_InputMgr::e_InputChannelIds::InputPrimaryChannelId                },
+    {c_InputMgr::e_InputType::InputType_Effects,  "Effects",  c_InputMgr::e_InputChannelIds::InputSecondaryChannelId              },
+    {c_InputMgr::e_InputType::InputType_MQTT,     "MQTT",     c_InputMgr::e_InputChannelIds::InputSecondaryChannelId              },
+    {c_InputMgr::e_InputType::InputType_Alexa,    "Alexa",    c_InputMgr::e_InputChannelIds::InputSecondaryChannelId              },
+    {c_InputMgr::e_InputType::InputType_Disabled, "Disabled", c_InputMgr::e_InputChannelIds::InputChannelId_ALL                   }
 };
 
 // -----------------------------------------------------------------------------
@@ -66,8 +66,8 @@ c_InputMgr::c_InputMgr ()
     int pInputChannelDriversIndex = 0;
     for (auto & CurrentInput : InputChannelDrivers)
     {
-        CurrentInput.pInputChannelDriver    = nullptr;
-        CurrentInput.DriverId               = pInputChannelDriversIndex;
+        CurrentInput.pInputChannelDriver = nullptr;
+        CurrentInput.DriverId            = pInputChannelDriversIndex;
 
         EffectEngineIsConfiguredToRun[pInputChannelDriversIndex] = false;
         ++pInputChannelDriversIndex;
@@ -181,8 +181,8 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         }
 
         // save the name as the selected channel type
-        uint32_t    DriverType      = int( CurrentChannel.pInputChannelDriver->GetInputType () );
-        String      DriverTypeStr   = String (DriverType);
+        uint32_t DriverType    = int( CurrentChannel.pInputChannelDriver->GetInputType () );
+        String   DriverTypeStr = String (DriverType);
         // DEBUG_V(String("DriverTypeId: ") + DriverTypeStr);
         String DriverNameStr;
         CurrentChannel.pInputChannelDriver->GetDriverName (DriverNameStr);
@@ -332,7 +332,7 @@ bool c_InputMgr::InputTypeIsAllowedOnChannel (e_InputType type, e_InputChannelId
             // DEBUG_V ("");
             // is the input allowed on the desired channel?
             if ( (currentInputType.ChannelId == ChannelId) ||
-                (currentInputType.ChannelId == InputChannelId_ALL) )
+                 (currentInputType.ChannelId == InputChannelId_ALL) )
             {
                 // DEBUG_V ("Allowed");
                 response = true;
@@ -532,11 +532,11 @@ void c_InputMgr::LoadConfig ()
     if ( !FileMgr.LoadConfigFile (
         ConfigFileName,
         [this] (DynamicJsonDocument & JsonConfigDoc)
-        {
+    {
             // DEBUG_V ("");
-            JsonObject JsonConfig = JsonConfigDoc.as <JsonObject>();
+        JsonObject JsonConfig = JsonConfigDoc.as <JsonObject>();
             // DEBUG_V ("");
-            this->ProcessJsonConfig (JsonConfig);
+        this->ProcessJsonConfig (JsonConfig);
             // DEBUG_V ("");
         }) )
     {
@@ -570,8 +570,8 @@ void c_InputMgr::Process ()
 
         if (true == configLoadNeeded)
         {
-            configLoadNeeded    = false;
-            configInProgress    = true;
+            configLoadNeeded = false;
+            configInProgress = true;
             // DEBUG_V ("Reload the config");
             LoadConfig ();
             // DEBUG_V ("End Save Config");

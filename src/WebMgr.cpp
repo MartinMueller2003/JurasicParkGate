@@ -43,8 +43,8 @@ const uint8_t HTTP_PORT = 80;      ///< Default web server port
 
 static Espalexa espalexa;
 static EFUpdate efupdate;                       /// EFU Update Handler
-static AsyncWebServer   webServer (HTTP_PORT);  // Web Server
-static AsyncWebSocket   webSocket ("/ws");      // Web Socket Plugin
+static AsyncWebServer webServer (HTTP_PORT);    // Web Server
+static AsyncWebSocket webSocket ("/ws");        // Web Socket Plugin
 
 // -----------------------------------------------------------------------------
 void PrettyPrint (DynamicJsonDocument & jsonStuff, String Name)
@@ -102,9 +102,9 @@ void c_WebMgr::Begin (config_t * /* NewConfig */)
         #ifdef BOARD_HAS_PSRAM
             // DEBUG_V(String(F("Total PSRAM: ")) + String(ESP.getPsramSize()));
             // DEBUG_V(String(F(" Free PSRAM: ")) + String(ESP.getFreePsram()));
-            pWebSocketFrameCollectionBuffer = (char *)ps_malloc (WebSocketFrameCollectionBufferSize + 1);
+        pWebSocketFrameCollectionBuffer = (char *)ps_malloc (WebSocketFrameCollectionBufferSize + 1);
         #else  // Use Heap
-            pWebSocketFrameCollectionBuffer = (char *)malloc (WebSocketFrameCollectionBufferSize + 1);
+        pWebSocketFrameCollectionBuffer = (char *)malloc (WebSocketFrameCollectionBufferSize + 1);
         #endif // def BOARD_HAS_PSRAM
         if (nullptr == pWebSocketFrameCollectionBuffer)
         {
@@ -166,9 +166,9 @@ void c_WebMgr::init ()
             "/reboot",
             HTTP_GET,
             [] (AsyncWebServerRequest * request)
-            {
-                reboot = true;
-                request->send (200, CN_textSLASHplain, "Rebooting");
+        {
+            reboot = true;
+            request->send (200, CN_textSLASHplain, "Rebooting");
             });
 
         // Heap status handler
@@ -176,8 +176,8 @@ void c_WebMgr::init ()
             "/heap",
             HTTP_GET,
             [] (AsyncWebServerRequest * request)
-            {
-                request->send ( 200, CN_textSLASHplain, String ( ESP.getFreeHeap () ).c_str () );
+        {
+            request->send ( 200, CN_textSLASHplain, String ( ESP.getFreeHeap () ).c_str () );
             });
 
         // JSON Config Handler
@@ -187,10 +187,10 @@ void c_WebMgr::init ()
             "/conf",
             HTTP_GET,
             [this] (AsyncWebServerRequest * request)
-            {
+        {
                 // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
-                this->GetConfiguration ();
-                request->send (200, "text/json", pWebSocketFrameCollectionBuffer);
+            this->GetConfiguration ();
+            request->send (200, "text/json", pWebSocketFrameCollectionBuffer);
                 // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
             });
 
@@ -199,11 +199,11 @@ void c_WebMgr::init ()
             "/updatefw",
             HTTP_POST,
             [] (AsyncWebServerRequest * request)
-            {
-                webSocket.textAll ("X6");
+        {
+            webSocket.textAll ("X6");
             },
             [] (AsyncWebServerRequest * request, String filename, uint32_t index, uint8_t * data, uint32_t len, bool final) {
-                WebMgr.FirmwareUpload (request, filename, index, data, len, final);
+            WebMgr.FirmwareUpload (request, filename, index, data, len, final);
             }).setFilter (ON_STA_FILTER);
 
         // Static Handlers
@@ -240,35 +240,35 @@ void c_WebMgr::init ()
             "/download",
             HTTP_GET,
             [] (AsyncWebServerRequest * request)
-            {
+        {
                 // DEBUG_V (String ("url: ") + String (request->url ()));
-                String filename = request->url ().substring ( String ("/download").length () );
+            String filename = request->url ().substring ( String ("/download").length () );
                 // DEBUG_V (String ("filename: ") + String (filename));
 
-                AsyncWebServerResponse * response = new AsyncFileResponse (ESP_SDFS, filename, "application/octet-stream", true);
-                request->send (response);
+            AsyncWebServerResponse * response = new AsyncFileResponse (ESP_SDFS, filename, "application/octet-stream", true);
+            request->send (response);
 
                 // DEBUG_V ("Send File Done");
             });
 
         webServer.onNotFound (
             [this] (AsyncWebServerRequest * request)
-            {
+        {
                 // DEBUG_V ("onNotFound");
-                if ( true == this->IsAlexaCallbackValid () )
-                {
+            if ( true == this->IsAlexaCallbackValid () )
+            {
                     // DEBUG_V ("IsAlexaCallbackValid == true");
-                    if ( !espalexa.handleAlexaApiCall (request) )  // if you don't know the URI, ask espalexa whether it is an Alexa control request
-                    {
-                        // DEBUG_V ("Alexa Callback could not resolve the request");
-                        request->send (404, CN_textSLASHplain, "Page Not found");
-                    }
-                }
-                else
+                if ( !espalexa.handleAlexaApiCall (request) ) // if you don't know the URI, ask espalexa whether it is an Alexa control request
                 {
-                    // DEBUG_V ("IsAlexaCallbackValid == false");
+                                                              // DEBUG_V ("Alexa Callback could not resolve the request");
                     request->send (404, CN_textSLASHplain, "Page Not found");
                 }
+            }
+            else
+            {
+                    // DEBUG_V ("IsAlexaCallbackValid == false");
+                request->send (404, CN_textSLASHplain, "Page Not found");
+            }
             });
 
         // give espalexa a pointer to the server object so it can use your server instead of creating its own
@@ -279,8 +279,8 @@ void c_WebMgr::init ()
         pAlexaDevice = new EspalexaDevice (
             String ( F ("ESP") ),
             [this] (EspalexaDevice * pDevice)
-            {
-                this->onAlexaMessage (pDevice);
+        {
+            this->onAlexaMessage (pDevice);
             },
             EspalexaDeviceType::extendedcolor);
 
@@ -346,16 +346,16 @@ void c_WebMgr::GetDeviceOptions ()
     // DEBUG_START;
     #ifdef SUPPORT_DEVICE_OPTION_LIST
         // set up a framework to get the option data
-        WebJsonDoc->clear ();
+    WebJsonDoc->clear ();
 
-        if ( 0 == WebJsonDoc->capacity () )
-        {
-            logcon ( F ("ERROR: Failed to allocate memory for the GetDeviceOptions web request response.") );
-        }
+    if ( 0 == WebJsonDoc->capacity () )
+    {
+        logcon ( F ("ERROR: Failed to allocate memory for the GetDeviceOptions web request response.") );
+    }
 
         // DEBUG_V ("");
-        JsonObject  WebOptions          = WebJsonDoc->createNestedObject ( F ("options") );
-        JsonObject  JsonDeviceOptions   = WebOptions.createNestedObject (CN_device);
+    JsonObject WebOptions        = WebJsonDoc->createNestedObject ( F ("options") );
+    JsonObject JsonDeviceOptions = WebOptions.createNestedObject (CN_device);
         // DEBUG_V("");
 
         // PrettyPrint (WebOptions);
@@ -363,8 +363,8 @@ void c_WebMgr::GetDeviceOptions ()
         // PrettyPrint (WebOptions);
 
         // now make it something we can transmit
-        uint32_t msgOffset = strlen (WebSocketFrameCollectionBuffer);
-        serializeJson ( WebOptions, & pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
+    uint32_t msgOffset = strlen (WebSocketFrameCollectionBuffer);
+    serializeJson ( WebOptions, & pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
     #endif // def SUPPORT_DEVICE_OPTION_LIST
 
     // DEBUG_END;
@@ -597,16 +597,16 @@ void c_WebMgr::ProcessXARequest (AsyncWebSocketClient * client)
     WebJsonDoc->clear ();
     JsonObject jsonAdmin = WebJsonDoc->createNestedObject ( F ("admin") );
 
-    jsonAdmin[CN_version]       = VERSION;
-    jsonAdmin["built"]          = BUILD_DATE;
-    jsonAdmin["realflashsize"]  = String ( ESP.getFlashChipSize () );
-    jsonAdmin["BoardName"]      = String (BOARD_NAME);
+    jsonAdmin[CN_version]      = VERSION;
+    jsonAdmin["built"]         = BUILD_DATE;
+    jsonAdmin["realflashsize"] = String ( ESP.getFlashChipSize () );
+    jsonAdmin["BoardName"]     = String (BOARD_NAME);
     #ifdef ARDUINO_ARCH_ESP8266
-        jsonAdmin["arch"]           = CN_ESP8266;
-        jsonAdmin["flashchipid"]    = String (ESP.getChipId (), HEX);
+    jsonAdmin["arch"]        = CN_ESP8266;
+    jsonAdmin["flashchipid"] = String (ESP.getChipId (), HEX);
     #elif defined (ARDUINO_ARCH_ESP32)
-        jsonAdmin["arch"]           = CN_ESP32;
-        jsonAdmin["flashchipid"]    = int64String (ESP.getEfuseMac (), HEX);
+    jsonAdmin["arch"]        = CN_ESP32;
+    jsonAdmin["flashchipid"] = int64String (ESP.getEfuseMac (), HEX);
     #endif // ifdef ARDUINO_ARCH_ESP8266
 
     memset (pWebSocketFrameCollectionBuffer, 0x00, WebSocketFrameCollectionBufferSize);
@@ -626,13 +626,13 @@ void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient * client)
     // DEBUG_START;
 
     WebJsonDoc->clear ();
-    JsonObject  status  = WebJsonDoc->createNestedObject (CN_status);
-    JsonObject  system  = status.createNestedObject (CN_system);
+    JsonObject status = WebJsonDoc->createNestedObject (CN_status);
+    JsonObject system = status.createNestedObject (CN_system);
 
-    system[F ("freeheap")]          = ESP.getFreeHeap ();
-    system[F ("uptime")]            = millis ();
-    system[F ("SDinstalled")]       = FileMgr.SdCardIsInstalled ();
-    system[F ("DiscardedRxData")]   = DiscardedRxData;
+    system[F ("freeheap")]        = ESP.getFreeHeap ();
+    system[F ("uptime")]          = millis ();
+    system[F ("SDinstalled")]     = FileMgr.SdCardIsInstalled ();
+    system[F ("DiscardedRxData")] = DiscardedRxData;
 
     // DEBUG_V ("");
 
@@ -855,8 +855,8 @@ void c_WebMgr::processCmdGet (JsonObject & jsonCmd)
 
     do  // once
     {
-        uint32_t    bufferoffset    = strlen (pWebSocketFrameCollectionBuffer);
-        uint32_t    BufferFreeSize  = WebSocketFrameCollectionBufferSize - (bufferoffset + 3);
+        uint32_t bufferoffset   = strlen (pWebSocketFrameCollectionBuffer);
+        uint32_t BufferFreeSize = WebSocketFrameCollectionBufferSize - (bufferoffset + 3);
         // DEBUG_V (String ("bufferoffset: ") + bufferoffset);
         // DEBUG_V (String ("BufferFreeSize: ") + BufferFreeSize);
 
@@ -1002,7 +1002,7 @@ void c_WebMgr::processCmdSetTime (JsonObject & jsonCmd)
     setFromJSON ( TimeToSet, jsonCmd, F ("time_t") );
 
     struct timeval now =
-    {.tv_sec    = TimeToSet};
+    {.tv_sec = TimeToSet};
 
     settimeofday (& now, NULL);
 
@@ -1104,7 +1104,7 @@ void c_WebMgr::FirmwareUpload (AsyncWebServerRequest    * request,
         if (0 == index)
         {
             #ifdef ARDUINO_ARCH_ESP8266
-                WiFiUDP::stopAll ();
+            WiFiUDP::stopAll ();
             #else // ifdef ARDUINO_ARCH_ESP8266
                 // this is not supported for ESP32
             #endif // ifdef ARDUINO_ARCH_ESP8266

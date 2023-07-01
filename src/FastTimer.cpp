@@ -43,21 +43,25 @@ void FastTimer::StartTimer (uint32_t DurationMS)
 
     uint64_t now = uint64_t ( millis () );
 
-    EndTimeMS   = now + uint64_t (DurationMS);
-    offsetMS    = uint64_t ( ( EndTimeMS > uint32_t (-1) ) ? uint32_t (-1) : uint32_t (0) );
+    EndTimeMS = now + uint64_t (DurationMS);
+    offsetMS  = uint64_t ( ( EndTimeMS > uint32_t (-1) ) ? uint32_t (-1) : uint32_t (0) );
 
     // DEBUG_END;
 }  // StartTimer
 
 // -----------------------------------------------------------------------------
-bool FastTimer::IsExpired (){return ( uint64_t ( millis () ) + uint64_t (offsetMS) ) >= EndTimeMS;}  // IsExpired
+bool FastTimer::IsExpired (){
+    return ( uint64_t ( millis () ) + uint64_t (offsetMS) ) >= EndTimeMS;
+}                                                                                                    // IsExpired
 
 // -----------------------------------------------------------------------------
 void FastTimer::CancelTimer ()
 {
-    EndTimeMS   = millis ();
-    offsetMS    = 0;
+    EndTimeMS = millis ();
+    offsetMS  = 0;
 }  // CancelTimer
 
 // -----------------------------------------------------------------------------
-uint32_t FastTimer::GetTimeRemaining (){return ( IsExpired () ) ? 0 : uint32_t ( EndTimeMS - ( uint64_t ( millis () ) + uint64_t (offsetMS) ) );}  // GetTimeRemaining
+uint32_t FastTimer::GetTimeRemaining (){
+    return ( IsExpired () ) ? 0 : uint32_t ( EndTimeMS - ( uint64_t ( millis () ) + uint64_t (offsetMS) ) );
+}                                                                                                                                                  // GetTimeRemaining

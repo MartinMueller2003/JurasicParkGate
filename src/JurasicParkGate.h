@@ -32,8 +32,8 @@
 #error "Unsupported CPU type"
 #endif // if defined (ARDUINO_ARCH_ESP8266)
 
-#define ARDUINOJSON_USE_LONG_LONG           1
-#define ARDUINOJSON_DEFAULT_NESTING_LIMIT   15
+#define ARDUINOJSON_USE_LONG_LONG         1
+#define ARDUINOJSON_DEFAULT_NESTING_LIMIT 15
 
 #include <Ticker.h>
 #include <ArduinoJson.h>
@@ -43,36 +43,36 @@
 #include "GPIO_Defs.hpp"
 #include "FastTimer.hpp"
 
-#define REBOOT_DELAY    100     ///< Delay for rebooting once reboot flag is set
-#define LOG_PORT        Serial  ///< Serial port for console logging
-#define CLIENT_TIMEOUT  15      ///< In station/client mode try to connection for 15 seconds
-#define AP_TIMEOUT      120     ///< In AP mode, wait 120 seconds for a connection or reboot
+#define REBOOT_DELAY   100      ///< Delay for rebooting once reboot flag is set
+#define LOG_PORT       Serial   ///< Serial port for console logging
+#define CLIENT_TIMEOUT 15       ///< In station/client mode try to connection for 15 seconds
+#define AP_TIMEOUT     120      ///< In AP mode, wait 120 seconds for a connection or reboot
 
-#define MilliSecondsInASecond       1000
-#define MicroSecondsInAmilliSecond  1000
-#define MicroSecondsInASecond       (MicroSecondsInAmilliSecond * MilliSecondsInASecond)
-#define NanoSecondsInAMicroSecond   1000
-#define NanoSecondsInASecond        (MicroSecondsInASecond * NanoSecondsInAMicroSecond)
+#define MilliSecondsInASecond      1000
+#define MicroSecondsInAmilliSecond 1000
+#define MicroSecondsInASecond      (MicroSecondsInAmilliSecond * MilliSecondsInASecond)
+#define NanoSecondsInAMicroSecond  1000
+#define NanoSecondsInASecond       (MicroSecondsInASecond * NanoSecondsInAMicroSecond)
 
 #define CPU_ClockTimeNS ( ( 1.0 / float(F_CPU) ) * float(NanoSecondsInASecond) )
 
 // Macro strings
-#define STRINGIFY(X)    #X
-#define STRING(X)       STRINGIFY (X)
+#define STRINGIFY(X) #X
+#define STRING(X)    STRINGIFY (X)
 
 /// Core configuration structure
 typedef struct
 {
     // Device
-    String  id;
-    time_t  BlankDelay = time_t (5);
+    String id;
+    time_t BlankDelay = time_t (5);
 } config_t;
 
-String  serializeCore          (bool pretty = false);
-void    deserializeCoreHandler (DynamicJsonDocument & jsonDoc);
-bool    deserializeCore        (JsonObject & json);
-bool    dsDevice               (JsonObject & json);
-bool    dsNetwork              (JsonObject & json);
+String serializeCore          (bool pretty = false);
+void   deserializeCoreHandler (DynamicJsonDocument & jsonDoc);
+bool   deserializeCore        (JsonObject & json);
+bool   dsDevice               (JsonObject & json);
+bool   dsNetwork              (JsonObject & json);
 extern bool reboot;
 extern bool IsBooting;
 extern bool ResetWiFi;
@@ -117,12 +117,12 @@ bool setFromJSON (T & OutValue, J & Json, N Name)
 }
 
 #define logcon(msg) \
-{ \
-    String DN; \
-    GetDriverName (DN); \
-    extern void _logcon (String & DriverName, String Message); \
-    _logcon (DN, msg); \
-}
+        { \
+            String DN; \
+            GetDriverName (DN); \
+            extern void _logcon (String & DriverName, String Message); \
+            _logcon (DN, msg); \
+        }
 
 extern config_t config;
 extern bool ConfigSaveNeeded;

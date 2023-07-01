@@ -31,13 +31,13 @@ c_OutputCommon::c_OutputCommon (c_OutputMgr::e_OutputChannelIds _OutputChannelId
                                 c_OutputMgr::e_OutputType       outputType)
 {
     // remember what channel we are
-    HasBeenInitialized          = false;
-    OutputChannelId             = _OutputChannelId;
-    DataPin                     = outputGpio;
-    UartId                      = uart;
-    OutputType                  = outputType;
-    pOutputBuffer               = OutputMgr.GetBufferAddress ();
-    FrameStartTimeInMicroSec    = 0;
+    HasBeenInitialized       = false;
+    OutputChannelId          = _OutputChannelId;
+    DataPin                  = outputGpio;
+    UartId                   = uart;
+    OutputType               = outputType;
+    pOutputBuffer            = OutputMgr.GetBufferAddress ();
+    FrameStartTimeInMicroSec = 0;
 
     // logcon (String ("UartId:          '") + UartId + "'");
     // logcon (String ("OutputChannelId: '") + OutputChannelId + "'");
@@ -68,9 +68,9 @@ void c_OutputCommon::GetStatus (JsonObject & jsonStatus)
 {
     // DEBUG_START;
 
-    jsonStatus[CN_id]               = OutputChannelId;
-    jsonStatus["framerefreshrate"]  = (0 == FrameRefreshTimeInMicroSec) ? 0 : int(MicroSecondsInASecond / FrameDurationInMicroSec);
-    jsonStatus["FrameCount"]        = FrameCount;
+    jsonStatus[CN_id]              = OutputChannelId;
+    jsonStatus["framerefreshrate"] = (0 == FrameRefreshTimeInMicroSec) ? 0 : int(MicroSecondsInASecond / FrameDurationInMicroSec);
+    jsonStatus["FrameCount"]       = FrameCount;
 
     // jsonStatus["ActualFrameDurationMicroSec"] = ActualFrameDurationMicroSec;
     // jsonStatus["FrameDurationInMicroSec"]     = FrameDurationInMicroSec;
@@ -90,9 +90,9 @@ void c_OutputCommon::ReportNewFrame ()
 
     uint32_t Now = micros ();
 
-    FrameRefreshTimeInMicroSec  = Now - FrameStartTimeInMicroSec;
-    FrameStartTimeInMicroSec    = Now;
-    FrameEndTimeInMicroSec      = FrameStartTimeInMicroSec + FrameDurationInMicroSec;
+    FrameRefreshTimeInMicroSec = Now - FrameStartTimeInMicroSec;
+    FrameStartTimeInMicroSec   = Now;
+    FrameEndTimeInMicroSec     = FrameStartTimeInMicroSec + FrameDurationInMicroSec;
     FrameCount++;
 
     // DEBUG_END;

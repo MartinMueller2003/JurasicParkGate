@@ -187,4 +187,5 @@ void c_InputButtons::Process (void)
 }  // Poll
 
 /*****************************************************************************/
-void c_InputButtons::NetworkStateChanged (bool IsConnected) {}  // NetworkStateChanged
+void c_InputButtons::NetworkStateChanged (bool IsConnected) {
+}                                                               // NetworkStateChanged

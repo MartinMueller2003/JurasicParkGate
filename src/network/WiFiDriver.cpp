@@ -22,7 +22,7 @@
 #ifdef ARDUINO_ARCH_ESP8266
 #   include <eagle_soc.h>
 #   include <ets_sys.h>
-#else
+#else // ifdef ARDUINO_ARCH_ESP8266
 #   include <esp_wifi.h>
 #endif // def ARDUINO_ARCH_ESP8266
 
@@ -71,14 +71,14 @@ RF_PRE_INIT() {
 /*****************************************************************************/
 /* FSM                                                                       */
 /*****************************************************************************/
-fsm_WiFi_state_Boot                    fsm_WiFi_state_Boot_imp;
-fsm_WiFi_state_ConnectingUsingConfig   fsm_WiFi_state_ConnectingUsingConfig_imp;
+fsm_WiFi_state_Boot fsm_WiFi_state_Boot_imp;
+fsm_WiFi_state_ConnectingUsingConfig fsm_WiFi_state_ConnectingUsingConfig_imp;
 fsm_WiFi_state_ConnectingUsingDefaults fsm_WiFi_state_ConnectingUsingDefaults_imp;
-fsm_WiFi_state_ConnectedToAP           fsm_WiFi_state_ConnectedToAP_imp;
-fsm_WiFi_state_ConnectingAsAP          fsm_WiFi_state_ConnectingAsAP_imp;
-fsm_WiFi_state_ConnectedToSta          fsm_WiFi_state_ConnectedToSta_imp;
-fsm_WiFi_state_ConnectionFailed        fsm_WiFi_state_ConnectionFailed_imp;
-fsm_WiFi_state_Disabled                fsm_WiFi_state_Disabled_imp;
+fsm_WiFi_state_ConnectedToAP fsm_WiFi_state_ConnectedToAP_imp;
+fsm_WiFi_state_ConnectingAsAP fsm_WiFi_state_ConnectingAsAP_imp;
+fsm_WiFi_state_ConnectedToSta fsm_WiFi_state_ConnectedToSta_imp;
+fsm_WiFi_state_ConnectionFailed fsm_WiFi_state_ConnectionFailed_imp;
+fsm_WiFi_state_Disabled fsm_WiFi_state_Disabled_imp;
 
 //-----------------------------------------------------------------------------
 ///< Start up the driver and put it into a safe mode
@@ -163,21 +163,33 @@ void c_WiFiDriver::Begin ()
 
 #elif defined(ARDUINO_ARCH_ESP32)
     esp_wifi_set_ps (WIFI_PS_NONE);
-#endif
+#endif // ifdef ARDUINO_ARCH_ESP8266
 
     // DEBUG_V ("");
 
     // Setup WiFi Handlers
 #ifdef ARDUINO_ARCH_ESP8266
-    wifiConnectHandler    = WiFi.onStationModeGotIP        ([this](const WiFiEventStationModeGotIP& event) {this->onWiFiConnect (event); });
-    wifiDisconnectHandler = WiFi.onStationModeDisconnected ([this](const WiFiEventStationModeDisconnected& event) {this->onWiFiDisconnect (event); });
-#else
-    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {this->onWiFiStaConn (event, info); }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
-    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {this->onWiFiStaDisc (event, info); }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+    wifiConnectHandler = WiFi.onStationModeGotIP        ([this](const WiFiEventStationModeGotIP& event) {
+        this->onWiFiConnect (event);
+                                                                                                                                         });
+    wifiDisconnectHandler = WiFi.onStationModeDisconnected ([this](const WiFiEventStationModeDisconnected& event) {
+        this->onWiFiDisconnect (event);
+                                                                                                                                                   });
+#else // ifdef ARDUINO_ARCH_ESP8266
+    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {
+        this->onWiFiStaConn (event, info);
+                                                                                                           }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
+    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {
+        this->onWiFiStaDisc (event, info);
+                                                                                                           }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
-    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {this->onWiFiConnect    (event, info);}, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
-    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {this->onWiFiDisconnect (event, info);}, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
-#endif
+    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {
+        this->onWiFiConnect    (event, info);
+                                                                                                             }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+    WiFi.onEvent ([this](WiFiEvent_t event, arduino_event_info_t info) {
+        this->onWiFiDisconnect (event, info);
+                                                                                                             }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+#endif // ifdef ARDUINO_ARCH_ESP8266
 
     // set up the poll interval
     NextPoll.StartTimer(PollInterval);
@@ -225,7 +237,7 @@ void c_WiFiDriver::connectWifi (const String & current_ssid, const String & curr
             WiFi.hostname(Hostname);
         }
         // DEBUG_V("");
-#else
+#else // ifdef ARDUINO_ARCH_ESP8266
         WiFi.persistent(false);
         // DEBUG_V("");
         WiFi.disconnect(true);
@@ -242,12 +254,12 @@ void c_WiFiDriver::connectWifi (const String & current_ssid, const String & curr
         // DEBUG_V();
         WiFi.enableSTA(true);
 
-#endif
-        // DEBUG_V (String ("      ssid: ") + current_ssid);
-        // DEBUG_V (String ("passphrase: ") + current_passphrase);
-        // DEBUG_V (String ("  hostname: ") + Hostname);
+#endif // ifdef ARDUINO_ARCH_ESP8266
+       // DEBUG_V (String ("      ssid: ") + current_ssid);
+       // DEBUG_V (String ("passphrase: ") + current_passphrase);
+       // DEBUG_V (String ("  hostname: ") + Hostname);
 
-    	logcon (String(F ("Connecting to '")) +
+        logcon (String(F ("Connecting to '")) +
                current_ssid +
                String(F("' as ")) +
                Hostname);
@@ -303,18 +315,18 @@ void c_WiFiDriver::GetConfig (JsonObject& json)
 {
     // DEBUG_START;
 
-    json[CN_ssid] = ssid;
+    json[CN_ssid]       = ssid;
     json[CN_passphrase] = passphrase;
 
 #ifdef ARDUINO_ARCH_ESP8266
     IPAddress Temp = ip;
-    json[CN_ip] = Temp.toString ();
-    Temp = netmask;
+    json[CN_ip]      = Temp.toString ();
+    Temp             = netmask;
     json[CN_netmask] = Temp.toString ();
-    Temp = gateway;
+    Temp             = gateway;
     json[CN_gateway] = Temp.toString ();
-#else
-    json[CN_ip] = ip.toString ();
+#else // ifdef ARDUINO_ARCH_ESP8266
+    json[CN_ip]      = ip.toString ();
     json[CN_netmask] = netmask.toString ();
     json[CN_gateway] = gateway.toString ();
 #endif // !def ARDUINO_ARCH_ESP8266
@@ -335,7 +347,7 @@ void c_WiFiDriver::GetHostname (String & name)
 {
 #ifdef ARDUINO_ARCH_ESP8266
     name = WiFi.hostname ();
-#else
+#else // ifdef ARDUINO_ARCH_ESP8266
     name = WiFi.getHostname ();
 #endif // def ARDUINO_ARCH_ESP8266
 
@@ -349,11 +361,11 @@ void c_WiFiDriver::GetStatus (JsonObject& jsonStatus)
     GetHostname (Hostname);
     jsonStatus[CN_hostname] = Hostname;
 
-    jsonStatus[CN_rssi] = WiFi.RSSI ();
-    jsonStatus[CN_ip] = getIpAddress ().toString ();
-    jsonStatus[CN_subnet] = getIpSubNetMask ().toString ();
-    jsonStatus[CN_mac] = WiFi.macAddress ();
-    jsonStatus[CN_ssid] = WiFi.SSID ();
+    jsonStatus[CN_rssi]      = WiFi.RSSI ();
+    jsonStatus[CN_ip]        = getIpAddress ().toString ();
+    jsonStatus[CN_subnet]    = getIpSubNetMask ().toString ();
+    jsonStatus[CN_mac]       = WiFi.macAddress ();
+    jsonStatus[CN_ssid]      = WiFi.SSID ();
     jsonStatus[CN_connected] = IsWiFiConnected ();
 
     // DEBUG_END;
@@ -380,11 +392,11 @@ void c_WiFiDriver::onWiFiStaDisc (const WiFiEvent_t event, const WiFiEventInfo_t
 #ifdef ARDUINO_ARCH_ESP8266
 void c_WiFiDriver::onWiFiConnect (const WiFiEventStationModeGotIP& event)
 {
-#else
+#else // ifdef ARDUINO_ARCH_ESP8266
 void c_WiFiDriver::onWiFiConnect (const WiFiEvent_t event, const WiFiEventInfo_t info)
 {
-#endif
-    // DEBUG_START;
+#endif // ifdef ARDUINO_ARCH_ESP8266
+       // DEBUG_START;
 
     pCurrentFsmState->OnConnect ();
 
@@ -397,11 +409,11 @@ void c_WiFiDriver::onWiFiConnect (const WiFiEvent_t event, const WiFiEventInfo_t
 /** Attempt to re-connect every 2 seconds */
 void c_WiFiDriver::onWiFiDisconnect (const WiFiEventStationModeDisconnected & event)
 {
-#else
+#else // ifdef ARDUINO_ARCH_ESP8266
 void c_WiFiDriver::onWiFiDisconnect (const WiFiEvent_t event, const WiFiEventInfo_t info)
 {
-#endif
-    // DEBUG_START;
+#endif // ifdef ARDUINO_ARCH_ESP8266
+       // DEBUG_START;
 
     pCurrentFsmState->OnDisconnect ();
 
@@ -462,7 +474,7 @@ bool c_WiFiDriver::SetConfig (JsonObject & json)
 
     bool ConfigChanged = false;
 
-    String sIp = ip.toString ();
+    String sIp      = ip.toString ();
     String sGateway = gateway.toString ();
     String sNetmask = netmask.toString ();
 
@@ -660,7 +672,7 @@ void fsm_WiFi_state_ConnectingUsingConfig::Poll ()
 void fsm_WiFi_state_ConnectingUsingConfig::Init ()
 {
     // DEBUG_START;
-    String CurrentSsid = pWiFiDriver->GetConfig_ssid ();
+    String CurrentSsid       = pWiFiDriver->GetConfig_ssid ();
     String CurrentPassphrase = pWiFiDriver->GetConfig_passphrase ();
     // DEBUG_V (String ("this: ") + String (uint32_t (this), HEX));
 

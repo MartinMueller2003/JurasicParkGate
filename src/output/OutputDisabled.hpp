@@ -28,21 +28,26 @@ class c_OutputDisabled : public c_OutputCommon
 {
 public:
     // These functions are inherited from c_OutputCommon
-    c_OutputDisabled (
-                      c_OutputMgr::e_OutputChannelIds   OutputChannelId,
-                      gpio_num_t                        outputGpio,
-                      uart_port_t                       uart,
-                      c_OutputMgr::e_OutputType         outputType);
-    virtual~c_OutputDisabled ();
+c_OutputDisabled (
+    c_OutputMgr::e_OutputChannelIds   OutputChannelId,
+    gpio_num_t                        outputGpio,
+    uart_port_t                       uart,
+    c_OutputMgr::e_OutputType         outputType);
+virtual~c_OutputDisabled ();
 
-    // functions to be provided by the derived class
-    void        Begin ();                                           ///< set up the operating environment based on the current config (or defaults)
-    bool        SetConfig (ArduinoJson::JsonObject & jsonConfig);   ///< Set a new config in the driver
-    void        GetConfig (ArduinoJson::JsonObject & jsonConfig);   ///< Get the current config used by the driver
-    uint32_t    Poll ();                                            ///< Call from loop(),  renders output data
-    void        GetDriverName (String & sDriverName)    {sDriverName = CN_Disabled;}
-    uint32_t    GetNumOutputBufferBytesNeeded ()        {return 0;}
-    uint32_t    GetNumOutputBufferChannelsServiced ()   {return 0;}
-
+                                                           // functions to be provided by the derived class
+void     Begin ();                                         ///< set up the operating environment based on the current config (or defaults)
+bool     SetConfig (ArduinoJson::JsonObject & jsonConfig); ///< Set a new config in the driver
+void     GetConfig (ArduinoJson::JsonObject & jsonConfig); ///< Get the current config used by the driver
+uint32_t Poll ();                                          ///< Call from loop(),  renders output data
+void        GetDriverName (String & sDriverName)    {
+    sDriverName = CN_Disabled;
+}
+uint32_t    GetNumOutputBufferBytesNeeded ()        {
+    return 0;
+}
+uint32_t    GetNumOutputBufferChannelsServiced ()   {
+    return 0;
+}
 private:
 }; // c_OutputDisabled

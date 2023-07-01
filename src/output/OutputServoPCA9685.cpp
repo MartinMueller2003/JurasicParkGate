@@ -35,15 +35,15 @@ c_OutputServoPCA9685::c_OutputServoPCA9685 (c_OutputMgr::e_OutputChannelIds Outp
     uint32_t id = 0;
     for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
     {
-        currentServoPCA9685Channel.Id               = id++;
-        currentServoPCA9685Channel.Enabled          = false;
-        currentServoPCA9685Channel.MinLevel         = SERVO_PCA9685_OUTPUT_MIN_PULSE_WIDTH;
-        currentServoPCA9685Channel.MaxLevel         = SERVO_PCA9685_OUTPUT_MAX_PULSE_WIDTH;
-        currentServoPCA9685Channel.PreviousValue    = 0;
-        currentServoPCA9685Channel.IsReversed       = false;
-        currentServoPCA9685Channel.Is16Bit          = false;
-        currentServoPCA9685Channel.IsScaled         = true;
-        currentServoPCA9685Channel.HomeValue        = 0;
+        currentServoPCA9685Channel.Id            = id++;
+        currentServoPCA9685Channel.Enabled       = false;
+        currentServoPCA9685Channel.MinLevel      = SERVO_PCA9685_OUTPUT_MIN_PULSE_WIDTH;
+        currentServoPCA9685Channel.MaxLevel      = SERVO_PCA9685_OUTPUT_MAX_PULSE_WIDTH;
+        currentServoPCA9685Channel.PreviousValue = 0;
+        currentServoPCA9685Channel.IsReversed    = false;
+        currentServoPCA9685Channel.Is16Bit       = false;
+        currentServoPCA9685Channel.IsScaled      = true;
+        currentServoPCA9685Channel.HomeValue     = 0;
     }
 
     // DEBUG_END;
@@ -88,19 +88,19 @@ void c_OutputServoPCA9685::Begin ()
 
 #ifdef UseCustomClearBuffer
     // -----------------------------------------------------------------------------
-    void c_OutputServoPCA9685::ClearBuffer ()
-    {
+void c_OutputServoPCA9685::ClearBuffer ()
+{
         // DEBUG_START;
 
         // memset(GetBufferAddress(), 0x00, GetBufferUsedSize());
-        for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
-        {
-            GetBufferAddress ()[currentServoPCA9685Channel.Id] =
-                currentServoPCA9685Channel.HomeValue;
-        }
+    for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
+    {
+        GetBufferAddress ()[currentServoPCA9685Channel.Id] =
+            currentServoPCA9685Channel.HomeValue;
+    }
 
-        // DEBUG_END;
-    }  // ClearBuffer
+       // DEBUG_END;
+}      // ClearBuffer
 
 #endif // def UseCustomClearBuffer
 
@@ -113,8 +113,8 @@ bool c_OutputServoPCA9685::validate ()
     if ( (Num_Channels > OM_SERVO_PCA9685_CHANNEL_LIMIT) || (Num_Channels < 1) )
     {
         logcon (CN_stars + String (MN_01) + OM_SERVO_PCA9685_CHANNEL_LIMIT + " " + CN_stars);
-        Num_Channels    = OM_SERVO_PCA9685_CHANNEL_LIMIT;
-        response        = false;
+        Num_Channels = OM_SERVO_PCA9685_CHANNEL_LIMIT;
+        response     = false;
     }
 
     if (Num_Channels < OM_SERVO_PCA9685_CHANNEL_LIMIT)
@@ -251,7 +251,9 @@ void c_OutputServoPCA9685::GetConfig (ArduinoJson::JsonObject & jsonConfig)
 }  // GetConfig
 
 // ----------------------------------------------------------------------------
-void c_OutputServoPCA9685::GetDriverName (String & sDriverName){sDriverName = CN_Servo_PCA9685;}  // GetDriverName
+void c_OutputServoPCA9685::GetDriverName (String & sDriverName){
+    sDriverName = CN_Servo_PCA9685;
+}                                                                                                 // GetDriverName
 
 // ----------------------------------------------------------------------------
 uint32_t c_OutputServoPCA9685::Poll ()
@@ -267,9 +269,9 @@ uint32_t c_OutputServoPCA9685::Poll ()
         // DEBUG_V (String ("       Enabled: ") + String (currentServoPCA9685.Enabled));
         if (currentServoPCA9685.Enabled)
         {
-            uint16_t    MaxScaledValue  = 255;
-            uint16_t    MinScaledValue  = 0;
-            uint16_t    newOutputValue  = pOutputBuffer[OutputDataIndex];
+            uint16_t MaxScaledValue = 255;
+            uint16_t MinScaledValue = 0;
+            uint16_t newOutputValue = pOutputBuffer[OutputDataIndex];
 
             if (0 == newOutputValue)
             {
@@ -280,7 +282,7 @@ uint32_t c_OutputServoPCA9685::Poll ()
             {
                 // DEBUG_V ("16 Bit Mode");
                 newOutputValue  = (pOutputBuffer[(OutputDataIndex * 2) + 0] << 0);
-                newOutputValue  += (pOutputBuffer[(OutputDataIndex * 2) + 1] << 8);
+                newOutputValue += (pOutputBuffer[(OutputDataIndex * 2) + 1] << 8);
                 MaxScaledValue  = uint16_t (-1);
             }
 
@@ -297,8 +299,8 @@ uint32_t c_OutputServoPCA9685::Poll ()
                 if (currentServoPCA9685.IsReversed)
                 {
                     // DEBUG_V (String("Reverse Lookup"));
-                    MinScaledValue  = MaxScaledValue;
-                    MaxScaledValue  = 0;
+                    MinScaledValue = MaxScaledValue;
+                    MaxScaledValue = 0;
                 }
 
                 uint16_t Final_value = newOutputValue;

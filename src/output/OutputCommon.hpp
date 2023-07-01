@@ -30,76 +30,96 @@
 class c_OutputCommon
 {
 public:
-    c_OutputCommon (
-                    c_OutputMgr::e_OutputChannelIds OutputChannelId,
-                    gpio_num_t                      outputGpio,
-                    uart_port_t                     uart,
-                    c_OutputMgr::e_OutputType       outputType);
-    virtual~c_OutputCommon ();
+c_OutputCommon (
+    c_OutputMgr::e_OutputChannelIds OutputChannelId,
+    gpio_num_t                      outputGpio,
+    uart_port_t                     uart,
+    c_OutputMgr::e_OutputType       outputType);
+virtual~c_OutputCommon ();
 
-    typedef  c_OutputMgr::e_OutputChannelIds    OID_t;
-    typedef  c_OutputMgr::e_OutputType          OTYPE_t;
+typedef  c_OutputMgr::e_OutputChannelIds OID_t;
+typedef  c_OutputMgr::e_OutputType       OTYPE_t;
 
-    // functions to be provided by the derived class
-    virtual void        Begin () {}                                             ///< set up the operating environment based on the current config (or defaults)
-    virtual bool        SetConfig (ArduinoJson::JsonObject & jsonConfig);       ///< Set a new config in the driver
-    virtual void        GetConfig (ArduinoJson::JsonObject & jsonConfig);       ///< Get the current config used by the driver
-    virtual uint32_t    Poll ()                                 = 0;            ///< Call from loop(),  renders output data
-    virtual void        GetDriverName (String & sDriverName)    = 0;            ///< get the name for the instantiated driver
-    OID_t               GetOutputChannelId ()   {return OutputChannelId;}       ///< return the output channel number
-    uint8_t             * GetBufferAddress ()   {return pOutputBuffer;}         ///< Get the address of the buffer into which the E1.31 handler will stuff data
-    uint32_t            GetBufferUsedSize ()    {return OutputBufferSize;}      ///< Get the address of the buffer into which the E1.31 handler will stuff data
-    gpio_num_t          GetOutputGpio ()        {return DataPin;}
-    OTYPE_t             GetOutputType ()        {return OutputType;}            ///< Have the instance report its type.
-    virtual void        GetStatus (ArduinoJson::JsonObject & jsonStatus);
-    void                SetOutputBufferAddress (uint8_t * pNewOutputBuffer) {pOutputBuffer = pNewOutputBuffer;}
-    virtual void        SetOutputBufferSize (uint32_t NewOutputBufferSize)  {OutputBufferSize = NewOutputBufferSize;}
-    virtual uint32_t    GetNumOutputBufferBytesNeeded ()        = 0;
-    virtual uint32_t    GetNumOutputBufferChannelsServiced ()   = 0;
-    virtual void        PauseOutput (bool State) {}
-    virtual void        ClearBuffer ();
-    virtual void        WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCount, byte * pSourceData);
-    virtual void        ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCount, byte * pTargetData);
-    virtual bool        ValidateGpio (gpio_num_t ConsoleTxGpio, gpio_num_t ConsoleRxGpio);
-    virtual bool        DriverIsSendingIntensityData () {return false;}
-    virtual uint32_t    GetFrameTimeMs ()               {return 1 + (ActualFrameDurationMicroSec / 1000);}
+                                                                   // functions to be provided by the derived class
+virtual void        Begin () {
+}                                                                  ///< set up the operating environment based on the current config (or defaults)
+virtual bool     SetConfig (ArduinoJson::JsonObject & jsonConfig); ///< Set a new config in the driver
+virtual void     GetConfig (ArduinoJson::JsonObject & jsonConfig); ///< Get the current config used by the driver
+virtual uint32_t Poll ()                              = 0;         ///< Call from loop(),  renders output data
+virtual void     GetDriverName (String & sDriverName) = 0;         ///< get the name for the instantiated driver
+OID_t               GetOutputChannelId ()   {
+    return OutputChannelId;
+}                                                                               ///< return the output channel number
+uint8_t             * GetBufferAddress ()   {
+    return pOutputBuffer;
+}                                                                               ///< Get the address of the buffer into which the E1.31 handler will stuff data
+uint32_t            GetBufferUsedSize ()    {
+    return OutputBufferSize;
+}                                                                               ///< Get the address of the buffer into which the E1.31 handler will stuff data
+gpio_num_t          GetOutputGpio ()        {
+    return DataPin;
+}
+OTYPE_t             GetOutputType ()        {
+    return OutputType;
+}                                                                               ///< Have the instance report its type.
+virtual void GetStatus (ArduinoJson::JsonObject & jsonStatus);
+void                SetOutputBufferAddress (uint8_t * pNewOutputBuffer) {
+    pOutputBuffer = pNewOutputBuffer;
+}
+virtual void        SetOutputBufferSize (uint32_t NewOutputBufferSize)  {
+    OutputBufferSize = NewOutputBufferSize;
+}
+virtual uint32_t GetNumOutputBufferBytesNeeded ()      = 0;
+virtual uint32_t GetNumOutputBufferChannelsServiced () = 0;
+virtual void        PauseOutput (bool State) {
+}
+virtual void ClearBuffer ();
+virtual void WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCount, byte * pSourceData);
+virtual void ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCount, byte * pTargetData);
+virtual bool ValidateGpio (gpio_num_t ConsoleTxGpio, gpio_num_t ConsoleRxGpio);
+virtual bool        DriverIsSendingIntensityData () {
+    return false;
+}
+virtual uint32_t    GetFrameTimeMs ()               {
+    return 1 + (ActualFrameDurationMicroSec / 1000);
+}
 protected:
 
-    gpio_num_t  DataPin                     = gpio_num_t (-1);
-    uart_port_t UartId                      = uart_port_t (-1);
-    OTYPE_t     OutputType                  = OTYPE_t::OutputType_Disabled;
-    OID_t       OutputChannelId             = OID_t::OutputChannelId_End;
-    bool        HasBeenInitialized          = false;
-    uint32_t    FrameDurationInMicroSec     = 25000;
-    uint32_t    ActualFrameDurationMicroSec = 50000; // Default time for relays is every 50ms
-    uint8_t     * pOutputBuffer             = nullptr;
-    uint32_t    OutputBufferSize            = 0;
-    uint32_t    FrameCount                  = 0;
+gpio_num_t  DataPin                     = gpio_num_t (-1);
+uart_port_t UartId                      = uart_port_t (-1);
+OTYPE_t     OutputType                  = OTYPE_t::OutputType_Disabled;
+OID_t       OutputChannelId             = OID_t::OutputChannelId_End;
+bool        HasBeenInitialized          = false;
+uint32_t    FrameDurationInMicroSec     = 25000;
+uint32_t    ActualFrameDurationMicroSec = 50000;     // Default time for relays is every 50ms
+uint8_t   * pOutputBuffer               = nullptr;
+uint32_t    OutputBufferSize            = 0;
+uint32_t    FrameCount                  = 0;
 
-    void ReportNewFrame ();
+void ReportNewFrame ();
 
-    inline bool canRefresh ()
+inline bool canRefresh ()
+{
+    bool response = false;
+    uint32_t Now  = micros ();
+    FrameTimeDeltaInMicroSec = Now - FrameStartTimeInMicroSec; // how many us since the frame started
+
+                                                               // did the counter wrap?
+    if (Now < FrameStartTimeInMicroSec)
     {
-        bool response   = false;
-        uint32_t Now    = micros ();
-        FrameTimeDeltaInMicroSec = Now - FrameStartTimeInMicroSec;  // how many us since the frame started
-
-        // did the counter wrap?
-        if (Now < FrameStartTimeInMicroSec)
-        {
-            FrameTimeDeltaInMicroSec = Now + (0 - FrameStartTimeInMicroSec);
-        }
-
-        if (FrameTimeDeltaInMicroSec > FrameDurationInMicroSec)
-        {
-            response = true;
-        }
-
-        return response;
+        FrameTimeDeltaInMicroSec = Now + (0 - FrameStartTimeInMicroSec);
     }
+
+    if (FrameTimeDeltaInMicroSec > FrameDurationInMicroSec)
+    {
+        response = true;
+    }
+
+    return response;
+}
 private:
-    uint32_t    FrameRefreshTimeInMicroSec  = 0;
-    uint32_t    FrameStartTimeInMicroSec    = 0;
-    uint32_t    FrameEndTimeInMicroSec      = 0;
-    uint32_t    FrameTimeDeltaInMicroSec    = 0;
+uint32_t FrameRefreshTimeInMicroSec = 0;
+uint32_t FrameStartTimeInMicroSec   = 0;
+uint32_t FrameEndTimeInMicroSec     = 0;
+uint32_t FrameTimeDeltaInMicroSec   = 0;
 }; // c_OutputCommon

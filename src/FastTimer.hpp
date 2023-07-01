@@ -23,18 +23,18 @@
 class FastTimer
 {
 public:
-    FastTimer ();
-    virtual~FastTimer ();
+FastTimer ();
+virtual~FastTimer ();
 
-    void        StartTimer (uint32_t durationMS);
-    bool        IsExpired ();
-    void        CancelTimer ();
-    uint32_t    GetTimeRemaining ();
+void     StartTimer (uint32_t durationMS);
+bool     IsExpired ();
+void     CancelTimer ();
+uint32_t GetTimeRemaining ();
 
 private:
 
-    uint64_t    EndTimeMS   = 0;
-    uint32_t    offsetMS    = 0;
+uint64_t EndTimeMS = 0;
+uint32_t offsetMS  = 0;
 
 protected:
 }; // FastTimer

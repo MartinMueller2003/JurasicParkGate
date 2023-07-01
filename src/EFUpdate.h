@@ -20,74 +20,76 @@
 #ifndef EFUPDATE_H_
 #define EFUPDATE_H_
 
-#define EFUPDATE_ERROR_OK   (0)
-#define EFUPDATE_ERROR_SIG  (100)
-#define EFUPDATE_ERROR_REC  (101)
+#define EFUPDATE_ERROR_OK  (0)
+#define EFUPDATE_ERROR_SIG (100)
+#define EFUPDATE_ERROR_REC (101)
 
 class EFUpdate
 {
 public:
-    EFUpdate () {}
-    virtual~EFUpdate () {}
+EFUpdate () {
+}
+virtual~EFUpdate () {
+}
+const uint32_t EFU_ID = 0x00554645;      // 'E', 'F', 'U', 0x00
 
-    const uint32_t EFU_ID = 0x00554645;  // 'E', 'F', 'U', 0x00
-
-    void    begin ();
-    bool    process (uint8_t * data, uint32_t len);
-    bool    hasError ();
-    uint8_t getError ();
-    bool    end ();
-    void    GetDriverName (String & name) {name = String ( F ("EFUPD") );}
-
+void    begin ();
+bool    process (uint8_t * data, uint32_t len);
+bool    hasError ();
+uint8_t getError ();
+bool    end ();
+void    GetDriverName (String & name) {
+    name = String ( F ("EFUPD") );
+}
 private:
     /* Record types */
-    enum class RecordType : uint16_t
-    {
-        NULL_RECORD,
-        SKETCH_IMAGE,
-        FS_IMAGE,
-        EEPROM_IMAGE
-    };
+enum class RecordType : uint16_t
+{
+    NULL_RECORD,
+    SKETCH_IMAGE,
+    FS_IMAGE,
+    EEPROM_IMAGE
+};
 
     /* Update State */
-    enum class State : uint8_t
-    {
-        HEADER,
-        RECORD,
-        DATA,
-        FAIL
-    };
+enum class State : uint8_t
+{
+    HEADER,
+    RECORD,
+    DATA,
+    FAIL
+};
 
     /* EFU Header */
-    typedef union
+typedef union
+{
+    struct
     {
-        struct
-        {
-            uint32_t    signature;
-            uint16_t    version;
-        } __attribute__ ( (packed) );
+        uint32_t signature;
+        uint16_t version;
+    } __attribute__ ( (packed) );
 
-        uint8_t raw[6];
-    } efuheader_t;
+    uint8_t raw[6];
+} efuheader_t;
 
     /* EFU Record */
-    typedef union
+typedef union
+{
+    struct
     {
-        struct
-        {
-            RecordType  type;
-            uint32_t    size;
-        } __attribute__ ( (packed) );
+        RecordType type;
+        uint32_t   size;
+    } __attribute__ ( (packed) );
 
-        uint8_t raw[6];
-    } efurecord_t;
+    uint8_t raw[6];
+} efurecord_t;
 
-    State       _state  = State::FAIL;
-    uint32_t    _loc    = 0;
-    efuheader_t _header;
-    efurecord_t _record;
-    uint32_t    _maxSketchSpace;
-    uint8_t     _error;
+State       _state = State::FAIL;
+uint32_t    _loc   = 0;
+efuheader_t _header;
+efurecord_t _record;
+uint32_t    _maxSketchSpace;
+uint8_t     _error;
 }; // class EFUpdate
 
 #endif /* EFUPDATE_H_ */

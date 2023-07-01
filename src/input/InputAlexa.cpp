@@ -29,9 +29,9 @@
 
 // -----------------------------------------------------------------------------
 c_InputAlexa::c_InputAlexa (
-                            c_InputMgr::e_InputChannelIds   NewInputChannelId,
-                            c_InputMgr::e_InputType         NewChannelType,
-                            uint32_t                        BufferSize) :
+    c_InputMgr::e_InputChannelIds   NewInputChannelId,
+    c_InputMgr::e_InputType         NewChannelType,
+    uint32_t                        BufferSize) :
     c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
 
 {
@@ -73,7 +73,9 @@ void c_InputAlexa::Begin ()
     pEffectsEngine = new c_InputEffectEngine (c_InputMgr::e_InputChannelIds::InputSecondaryChannelId, c_InputMgr::e_InputType::InputType_Effects, InputDataBufferSize);
     pEffectsEngine->SetOperationalState (false);
 
-    WebMgr.RegisterAlexaCallback ([this] (EspalexaDevice * pDevice) {this->onMessage (pDevice);});
+    WebMgr.RegisterAlexaCallback ([this] (EspalexaDevice * pDevice) {
+        this->onMessage (pDevice);
+                                                                                               });
 
     pEffectsEngine->Begin ();
 

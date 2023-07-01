@@ -38,18 +38,18 @@ c_InputMQTT::c_InputMQTT (c_InputMgr::e_InputChannelIds NewInputChannelId,
 
     String Hostname;
     NetworkMgr.GetHostname (Hostname);
-    topic       = String ( F ("MartnMueller2003/") ) + Hostname;
-    lwtTopic    = topic + CN_slashstatus;
+    topic    = String ( F ("MartnMueller2003/") ) + Hostname;
+    lwtTopic = topic + CN_slashstatus;
 
     // Effect config defaults
-    effectConfig.effect         = "Solid";
-    effectConfig.mirror         = false;
-    effectConfig.allLeds        = false;
-    effectConfig.brightness     = 255;
-    effectConfig.whiteChannel   = false;
-    effectConfig.color.r        = 183;
-    effectConfig.color.g        = 0;
-    effectConfig.color.b        = 255;
+    effectConfig.effect       = "Solid";
+    effectConfig.mirror       = false;
+    effectConfig.allLeds      = false;
+    effectConfig.brightness   = 255;
+    effectConfig.whiteChannel = false;
+    effectConfig.color.r      = 183;
+    effectConfig.color.g      = 0;
+    effectConfig.color.b      = 255;
 
     // Set LWT - Must be set before mqtt connect()
     mqtt.setWill (lwtTopic.c_str (), 1, true, LWT_OFFLINE);
@@ -295,14 +295,14 @@ void c_InputMQTT::onMqttConnect (bool sessionPresent)
     // DEBUG_END;
 }  // onMqttConnect
 
-static const char   DisconnectReason0[] = "TCP_DISCONNECTED";
-static const char   DisconnectReason1[] = "UNACCEPTABLE_PROTOCOL_VERSION";
-static const char   DisconnectReason2[] = "IDENTIFIER_REJECTED";
-static const char   DisconnectReason3[] = "SERVER_UNAVAILABLE";
-static const char   DisconnectReason4[] = "MALFORMED_CREDENTIALS";
-static const char   DisconnectReason5[] = "NOT_AUTHORIZED";
-static const char   DisconnectReason6[] = "NOT_ENOUGH_SPACE";
-static const char   DisconnectReason7[] = "TLS_BAD_FINGERPRINT";
+static const char DisconnectReason0[] = "TCP_DISCONNECTED";
+static const char DisconnectReason1[] = "UNACCEPTABLE_PROTOCOL_VERSION";
+static const char DisconnectReason2[] = "IDENTIFIER_REJECTED";
+static const char DisconnectReason3[] = "SERVER_UNAVAILABLE";
+static const char DisconnectReason4[] = "MALFORMED_CREDENTIALS";
+static const char DisconnectReason5[] = "NOT_AUTHORIZED";
+static const char DisconnectReason6[] = "NOT_ENOUGH_SPACE";
+static const char DisconnectReason7[] = "TLS_BAD_FINGERPRINT";
 
 static const char * DisconnectReasons[] =
 {
@@ -345,12 +345,12 @@ void c_InputMQTT::onMqttDisconnect (AsyncMqttClientDisconnectReason reason)
 
 // -----------------------------------------------------------------------------
 void c_InputMQTT::onMqttMessage (
-                                 char                               * RcvTopic,
-                                 char                               * payload,
-                                 AsyncMqttClientMessageProperties   properties,
-                                 uint32_t                           len,
-                                 uint32_t                           index,
-                                 uint32_t                           total)
+    char                               * RcvTopic,
+    char                               * payload,
+    AsyncMqttClientMessageProperties   properties,
+    uint32_t                           len,
+    uint32_t                           index,
+    uint32_t                           total)
 {
     // DEBUG_START;
 
@@ -367,7 +367,7 @@ void c_InputMQTT::onMqttMessage (
         // DEBUG_V (String ("   l/i/t: ") + String (len) + " / " + String(index) + " / " + String(total));
 
         if ( (String (RcvTopic) != topic) &&
-            (String (RcvTopic) != topic + CN_slashset) )
+             (String (RcvTopic) != topic + CN_slashset) )
         {
             // DEBUG_V ("Not our topic");
             return;
@@ -479,11 +479,11 @@ void c_InputMQTT::GetEngineConfig (JsonObject & JsonConfig)
         // DEBUG_V ("Effects engine not running");
     }
 
-    JsonConfig[CN_effect]               = effectConfig.effect;
-    JsonConfig[CN_mirror]               = effectConfig.mirror;
-    JsonConfig[CN_allleds]              = effectConfig.allLeds;
-    JsonConfig[CN_brightness]           = effectConfig.brightness;
-    JsonConfig[CN_EffectWhiteChannel]   = effectConfig.whiteChannel;
+    JsonConfig[CN_effect]             = effectConfig.effect;
+    JsonConfig[CN_mirror]             = effectConfig.mirror;
+    JsonConfig[CN_allleds]            = effectConfig.allLeds;
+    JsonConfig[CN_brightness]         = effectConfig.brightness;
+    JsonConfig[CN_EffectWhiteChannel] = effectConfig.whiteChannel;
 
     JsonObject color = JsonConfig.createNestedObject (CN_color);
     color[CN_r] = effectConfig.color.r;
@@ -530,9 +530,9 @@ void c_InputMQTT::publishHA ()
 
     // Setup HA discovery
     #ifdef ARDUINO_ARCH_ESP8266
-        String chipId = String (ESP.getChipId (), HEX);
+    String chipId = String (ESP.getChipId (), HEX);
     #else // ifdef ARDUINO_ARCH_ESP8266
-        String chipId = int64String (ESP.getEfuseMac (), HEX);
+    String chipId = int64String (ESP.getEfuseMac (), HEX);
     #endif // ifdef ARDUINO_ARCH_ESP8266
     String ha_config = haprefix + F ("/light/") + chipId + F ("/config");
 
@@ -545,13 +545,13 @@ void c_InputMQTT::publishHA ()
         DynamicJsonDocument root (1024);
         JsonObject JsonConfig = root.to <JsonObject>();
 
-        JsonConfig[F ("platform")]              = F ("MQTT");
-        JsonConfig[CN_name]                     = config.id;
-        JsonConfig[F ("schema")]                = F ("json");
-        JsonConfig[F ("state_topic")]           = topic;
-        JsonConfig[F ("command_topic")]         = topic + CN_slashset;
-        JsonConfig[F ("availability_topic")]    = lwtTopic;
-        JsonConfig[F ("rgb")]                   = CN_true;
+        JsonConfig[F ("platform")]           = F ("MQTT");
+        JsonConfig[CN_name]                  = config.id;
+        JsonConfig[F ("schema")]             = F ("json");
+        JsonConfig[F ("state_topic")]        = topic;
+        JsonConfig[F ("command_topic")]      = topic + CN_slashset;
+        JsonConfig[F ("availability_topic")] = lwtTopic;
+        JsonConfig[F ("rgb")]                = CN_true;
 
         GetEffectList (JsonConfig);
 
@@ -563,11 +563,11 @@ void c_InputMQTT::publishHA ()
         JsonConfig[F ("unique_id")] = CN_JurasicParkGate + chipId;
 
         JsonObject device = JsonConfig.createNestedObject (CN_device);
-        device[F ("identifiers")]   = WiFi.macAddress ();
-        device[F ("manufacturer")]  = F ("MartnMueller2003");
-        device[F ("model")]         = CN_JurasicParkGate;
-        device[CN_name]             = config.id;
-        device[F ("sw_version")]    = String (CN_JurasicParkGate) + " v" + VERSION;
+        device[F ("identifiers")]  = WiFi.macAddress ();
+        device[F ("manufacturer")] = F ("MartnMueller2003");
+        device[F ("model")]        = CN_JurasicParkGate;
+        device[CN_name]            = config.id;
+        device[F ("sw_version")]   = String (CN_JurasicParkGate) + " v" + VERSION;
 
         String HaJsonConfig;
         serializeJson (JsonConfig, HaJsonConfig);
@@ -610,7 +610,9 @@ void c_InputMQTT::publishState ()
 }  // publishState
 
 // -----------------------------------------------------------------------------
-void c_InputMQTT::NetworkStateChanged (bool IsConnected) {NetworkStateChanged (IsConnected, false);}  // NetworkStateChanged
+void c_InputMQTT::NetworkStateChanged (bool IsConnected) {
+    NetworkStateChanged (IsConnected, false);
+}                                                                                                     // NetworkStateChanged
 
 // -----------------------------------------------------------------------------
 void c_InputMQTT::NetworkStateChanged (bool IsConnected, bool ReBootAllowed)

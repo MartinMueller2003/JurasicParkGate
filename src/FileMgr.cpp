@@ -35,7 +35,8 @@ static const uint32_t FileUploadBufferSize = HTML_TRANSFER_BLOCK_SIZE * NumBlock
 // -----------------------------------------------------------------------------
 ///< Start up the driver and put it into a safe mode
 c_FileMgr::c_FileMgr ()
-{}  // c_FileMgr
+{
+}   // c_FileMgr
 
 // -----------------------------------------------------------------------------
 ///< deallocate any resources and put the output channels into a safe state
@@ -63,9 +64,9 @@ void c_FileMgr::Begin ()
         else
         {
             #ifdef ARDUINO_ARCH_ESP32
-                logcon (    String ( F ("Flash file system initialized. Used = ") ) + String ( LittleFS.usedBytes () ) + String ( F (" out of ") ) + String ( LittleFS.totalBytes () ) );
+            logcon (    String ( F ("Flash file system initialized. Used = ") ) + String ( LittleFS.usedBytes () ) + String ( F (" out of ") ) + String ( LittleFS.totalBytes () ) );
             #else // ifdef ARDUINO_ARCH_ESP32
-                logcon (    String ( F ("Flash file system initialized.") ) );
+            logcon (    String ( F ("Flash file system initialized.") ) );
             #endif // def ARDUINO_ARCH_ESP32
 
             // listDir (LittleFS, String ("/"), 3);
@@ -87,10 +88,10 @@ bool c_FileMgr::SetConfig (JsonObject & json)
     {
         JsonObject JsonDeviceConfig = json[CN_device];
 
-        ConfigChanged   |= setFromJSON (miso_pin, JsonDeviceConfig, CN_miso_pin);
-        ConfigChanged   |= setFromJSON (mosi_pin, JsonDeviceConfig, CN_mosi_pin);
-        ConfigChanged   |= setFromJSON (clk_pin,  JsonDeviceConfig, CN_clock_pin);
-        ConfigChanged   |= setFromJSON (cs_pin,   JsonDeviceConfig, CN_cs_pin);
+        ConfigChanged |= setFromJSON (miso_pin, JsonDeviceConfig, CN_miso_pin);
+        ConfigChanged |= setFromJSON (mosi_pin, JsonDeviceConfig, CN_mosi_pin);
+        ConfigChanged |= setFromJSON (clk_pin,  JsonDeviceConfig, CN_clock_pin);
+        ConfigChanged |= setFromJSON (cs_pin,   JsonDeviceConfig, CN_cs_pin);
     }
     else
     {
@@ -114,10 +115,10 @@ void c_FileMgr::GetConfig (JsonObject & json)
 {
     // DEBUG_START;
 
-    json[CN_miso_pin]   = miso_pin;
-    json[CN_mosi_pin]   = mosi_pin;
-    json[CN_clock_pin]  = clk_pin;
-    json[CN_cs_pin]     = cs_pin;
+    json[CN_miso_pin]  = miso_pin;
+    json[CN_mosi_pin]  = mosi_pin;
+    json[CN_clock_pin] = clk_pin;
+    json[CN_cs_pin]    = cs_pin;
 
     // DEBUG_END;
 }  // GetConfig
@@ -128,8 +129,8 @@ void c_FileMgr::GetStatus (JsonObject & json)
     // DEBUG_START;
 
     #ifdef ARDUINO_ARCH_ESP32
-        json[F ("size")]    = LittleFS.totalBytes ();
-        json[F ("used")]    = LittleFS.usedBytes ();
+    json[F ("size")] = LittleFS.totalBytes ();
+    json[F ("used")] = LittleFS.usedBytes ();
     #endif // def ARDUINO_ARCH_ESP32
 
     // DEBUG_END;
@@ -140,28 +141,28 @@ void c_FileMgr::SetSpiIoPins ()
 {
     // DEBUG_START;
     #if defined (SUPPORT_SD) || defined (SUPPORT_SD_MMC)
-        if (SdCardInstalled)
-        {
+    if (SdCardInstalled)
+    {
             // DEBUG_V("Terminate current SD session");
-            ESP_SD.end ();
-        }
+        ESP_SD.end ();
+    }
 
         #ifdef ARDUINO_ARCH_ESP32
-            try
+    try
         #endif // def ARDUINO_ARCH_ESP32
-        {
+    {
             #ifdef SUPPORT_SD_MMC
                 // DEBUG_V (String ("  Data 0: ") + String (SD_CARD_DATA_0));
                 // DEBUG_V (String ("  Data 1: ") + String (SD_CARD_DATA_1));
                 // DEBUG_V (String ("  Data 2: ") + String (SD_CARD_DATA_2));
                 // DEBUG_V (String ("  Data 3: ") + String (SD_CARD_DATA_3));
 
-                pinMode (   SD_CARD_DATA_0, PULLUP);
-                pinMode (   SD_CARD_DATA_1, PULLUP);
-                pinMode (   SD_CARD_DATA_2, PULLUP);
-                pinMode (   SD_CARD_DATA_3, PULLUP);
+        pinMode (   SD_CARD_DATA_0, PULLUP);
+        pinMode (   SD_CARD_DATA_1, PULLUP);
+        pinMode (   SD_CARD_DATA_2, PULLUP);
+        pinMode (   SD_CARD_DATA_3, PULLUP);
 
-                if ( !ESP_SD.begin () )
+        if ( !ESP_SD.begin () )
             #else // ! SUPPORT_SD_MMC
                 #ifdef ARDUINO_ARCH_ESP32
                     // DEBUG_V (String ("miso_pin: ") + String (miso_pin));
@@ -169,47 +170,47 @@ void c_FileMgr::SetSpiIoPins ()
                     // DEBUG_V (String (" clk_pin: ") + String (clk_pin));
                     // DEBUG_V (String ("  cs_pin: ") + String (cs_pin));
 
-                    SPI.end ();
-                        pinMode (cs_pin, OUTPUT);
+        SPI.end ();
+        pinMode (cs_pin, OUTPUT);
                     #ifdef USE_MISO_PULLUP
                         // DEBUG_V("USE_MISO_PULLUP");
                         // on some hardware MISO is missing a required pull-up resistor, use internal pull-up.
-                        pinMode (   miso_pin,   INPUT_PULLUP);
+        pinMode (   miso_pin,   INPUT_PULLUP);
                     #else // ifdef USE_MISO_PULLUP
-                        pinMode (   miso_pin,   INPUT);
+        pinMode (   miso_pin,   INPUT);
                     #endif // def USE_MISO_PULLUP
 
-                    SPI.begin (clk_pin, miso_pin, mosi_pin, cs_pin);
+        SPI.begin (clk_pin, miso_pin, mosi_pin, cs_pin);
                     // DEBUG_V();
-                    ResetSdCard ();
+        ResetSdCard ();
 
-                    if ( !ESP_SD.begin (cs_pin) )
+        if ( !ESP_SD.begin (cs_pin) )
                 #else  // ! ARDUINO_ARCH_ESP32
-                    if ( !ESP_SD.begin (SD_CARD_CS_PIN, SD_CARD_CLK_MHZ) )
+        if ( !ESP_SD.begin (SD_CARD_CS_PIN, SD_CARD_CLK_MHZ) )
                 #endif // ! ARDUINO_ARCH_ESP32
             #endif // !def SUPPORT_SD_MMC
-            {
+        {
                 // DEBUG_V();
-                logcon ( String ( F ("No SD card installed") ) );
-                SdCardInstalled = false;
-            }
-            else
-            {
-                // DEBUG_V();
-                SdCardInstalled = true;
-                DescribeSdCardToUser ();
-            }
+            logcon ( String ( F ("No SD card installed") ) );
+            SdCardInstalled = false;
         }
+        else
+        {
+                // DEBUG_V();
+            SdCardInstalled = true;
+            DescribeSdCardToUser ();
+        }
+    }
         #ifdef ARDUINO_ARCH_ESP32
-            catch (const std::exception & e)
-            {
-                logcon ( String ( F ("ERROR: Could not init the SD Card: ") ) + e.what () );
-                SdCardInstalled = false;
-            }
+    catch (const std::exception & e)
+    {
+        logcon ( String ( F ("ERROR: Could not init the SD Card: ") ) + e.what () );
+        SdCardInstalled = false;
+    }
         #endif // def ARDUINO_ARCH_ESP32
 
     #else // no sd defined
-        SdCardInstalled = false;
+    SdCardInstalled = false;
     #endif // defined (SUPPORT_SD) || defined(SUPPORT_SD_MMC)
 
     // DEBUG_END;
@@ -594,8 +595,8 @@ void c_FileMgr::InitSdFileList ()
     int index = 0;
     for (auto & currentFileListEntry : FileList)
     {
-        currentFileListEntry.handle     = 0;
-        currentFileListEntry.entryId    = index++;
+        currentFileListEntry.handle  = 0;
+        currentFileListEntry.entryId = index++;
     }
 
     // DEBUG_END;
@@ -631,8 +632,8 @@ c_FileMgr::FileId c_FileMgr::CreateSdFileHandle ()
 {
     // DEBUG_START;
 
-    FileId  response    = 0;
-    FileId  FileHandle  = millis ();
+    FileId response   = 0;
+    FileId FileHandle = millis ();
 
     // create a unique handle
     while ( -1 != FileListFindSdFileHandle (FileHandle) )
@@ -690,9 +691,9 @@ void c_FileMgr::DescribeSdCardToUser ()
     // DEBUG_START;
 
     #ifdef ARDUINO_ARCH_ESP32
-        uint64_t cardSize = ESP_SD.cardSize () / (1024 * 1024);
+    uint64_t cardSize = ESP_SD.cardSize () / (1024 * 1024);
     #else // ifdef ARDUINO_ARCH_ESP32
-        uint64_t cardSize = ESP_SD.size64 () / (1024 * 1024);
+    uint64_t cardSize = ESP_SD.size64 () / (1024 * 1024);
     #endif // def ARDUINO_ARCH_ESP32
 
     logcon (String ( F ("SD Card Size: ") ) + int64String (cardSize) + "MB");
@@ -729,9 +730,9 @@ void c_FileMgr::GetListOfSdFiles (String & Response)
         }
 
         #ifdef ARDUINO_ARCH_ESP32
-            ResponseJsonDoc[F ("totalBytes")] = ESP_SD.cardSize ();
+        ResponseJsonDoc[F ("totalBytes")] = ESP_SD.cardSize ();
         #else // ifdef ARDUINO_ARCH_ESP32
-            ResponseJsonDoc[F ("totalBytes")] = ESP_SD.size64 ();
+        ResponseJsonDoc[F ("totalBytes")] = ESP_SD.size64 ();
         #endif // ifdef ARDUINO_ARCH_ESP32
         uint64_t usedBytes = 0;
 
@@ -755,15 +756,15 @@ void c_FileMgr::GetListOfSdFiles (String & Response)
             // DEBUG_V ("EntryName.length(): " + String(EntryName.length ()));
 
             if ( ( 0 != EntryName.length () ) &&
-                ( EntryName != String ( F ("System Volume Information") ) ) &&
-                ( 0 != entry.size () ) )
+                 ( EntryName != String ( F ("System Volume Information") ) ) &&
+                 ( 0 != entry.size () ) )
             {
                 // DEBUG_V ("Adding File: '" + EntryName + "'");
 
                 JsonObject CurrentFile = FileArray.createNestedObject ();
-                CurrentFile[CN_name]        = EntryName;
-                CurrentFile[F ("date")]     = entry.getLastWrite ();
-                CurrentFile[F ("length")]   = entry.size ();
+                CurrentFile[CN_name]      = EntryName;
+                CurrentFile[F ("date")]   = entry.getLastWrite ();
+                CurrentFile[F ("length")] = entry.size ();
             }
 
             entry.close ();
@@ -812,8 +813,8 @@ void c_FileMgr::GetListOfSdFiles (std::vector <String> & Response)
             // DEBUG_V ("EntryName.length(): " + String(EntryName.length ()));
 
             if ( ( 0 != EntryName.length () ) &&
-                ( EntryName != String ( F ("System Volume Information") ) ) &&
-                ( 0 != entry.size () ) )
+                 ( EntryName != String ( F ("System Volume Information") ) ) &&
+                 ( 0 != entry.size () ) )
             {
                 // DEBUG_V ("Adding File: '" + EntryName + "'");
                 Response.push_back (EntryName);
@@ -982,8 +983,8 @@ bool c_FileMgr::ReadSdFile (const String & FileName, String & FileData)
 {
     // DEBUG_START;
 
-    bool GotFileData    = false;
-    FileId FileHandle   = 0;
+    bool GotFileData  = false;
+    FileId FileHandle = 0;
 
     // DEBUG_V (String("File '") + FileName + "' is being opened.");
     if ( true == OpenSdFile (FileName, FileMode::FileRead, FileHandle) )
@@ -1018,8 +1019,8 @@ bool c_FileMgr::ReadSdFile (const String & FileName, JsonDocument & FileData)
 {
     // DEBUG_START;
 
-    bool GotFileData    = false;
-    FileId FileHandle   = 0;
+    bool GotFileData  = false;
+    FileId FileHandle = 0;
 
     // DEBUG_V (String("File '") + FileName + "' is being opened.");
     if ( true == OpenSdFile (FileName, FileMode::FileRead, FileHandle) )
@@ -1075,8 +1076,8 @@ size_t c_FileMgr::ReadSdFile (const FileId & FileHandle, byte * FileData, size_t
     int FileListIndex;
     if ( -1 != ( FileListIndex = FileListFindSdFileHandle (FileHandle) ) )
     {
-        size_t  BytesRemaining      = size_t(FileList[FileListIndex].size - StartingPosition);
-        size_t  ActualBytesToRead   = min (NumBytesToRead, BytesRemaining);
+        size_t BytesRemaining    = size_t(FileList[FileListIndex].size - StartingPosition);
+        size_t ActualBytesToRead = min (NumBytesToRead, BytesRemaining);
         // DEBUG_V(String("   BytesRemaining: ") + String(BytesRemaining));
         // DEBUG_V(String("ActualBytesToRead: ") + String(ActualBytesToRead));
         if ( !FileList[FileListIndex].info.seek (StartingPosition, SeekSet) )
@@ -1186,8 +1187,8 @@ size_t c_FileMgr::WriteSdFile (const FileId & FileHandle, byte * FileData, size_
 // -----------------------------------------------------------------------------
 size_t c_FileMgr::GetSdFileSize (const String & FileName)
 {
-    size_t  response = 0;
-    FileId  Handle;
+    size_t response = 0;
+    FileId Handle;
     if ( OpenSdFile (FileName,   FileMode::FileRead, Handle) )
     {
         response = GetSdFileSize (Handle);
@@ -1220,12 +1221,12 @@ size_t c_FileMgr::GetSdFileSize (const FileId & FileHandle)
 
 // -----------------------------------------------------------------------------
 void c_FileMgr::handleFileUpload (
-                                  const String  & filename,
-                                  size_t        index,
-                                  uint8_t       * data,
-                                  size_t        len,
-                                  bool final,
-                                  uint32_t      totalLen)
+    const String  & filename,
+    size_t        index,
+    uint8_t       * data,
+    size_t        len,
+    bool final,
+    uint32_t      totalLen)
 {
     // DEBUG_START;
 
@@ -1254,7 +1255,7 @@ void c_FileMgr::handleFileUpload (
         {
             // is there space in the buffer for this chunk?
             if ( ( (len + FileUploadBufferOffset) >= FileUploadBufferSize ) &&
-                (0 != FileUploadBufferOffset) )
+                 (0 != FileUploadBufferOffset) )
             {
                 // DEBUG_V ("write out the buffer");
                 WriteSdFile (fsUploadFile, FileUploadBuffer, FileUploadBufferOffset);
@@ -1300,8 +1301,8 @@ void c_FileMgr::handleFileUpload (
         {
             // DEBUG_V (String (" Free Upload Buffer. Heap: ") + String (ESP.getFreeHeap ()));
             free (FileUploadBuffer);
-            FileUploadBuffer        = nullptr;
-            FileUploadBufferOffset  = 0;
+            FileUploadBuffer       = nullptr;
+            FileUploadBufferOffset = 0;
             // DEBUG_V (String ("Freed Upload Buffer. Heap: ") + String (ESP.getFreeHeap ()));
         }
     }

@@ -44,22 +44,22 @@
 // -----------------------------------------------------------------------------
 typedef struct
 {
-    c_OutputMgr::e_OutputType   id;
-    String                      name;
+    c_OutputMgr::e_OutputType id;
+    String                    name;
 } OutputTypeXlateMap_t;
 
 static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::OutputType_End] =
 {
-    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"          },
-    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"               },
+    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"               },
+    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"                    },
 };
 
 // -----------------------------------------------------------------------------
 typedef struct
 {
-    gpio_num_t                  GpioPin;
-    uart_port_t                 PortId;
-    c_OutputMgr::OM_PortType_t  PortType;
+    gpio_num_t                 GpioPin;
+    uart_port_t                PortId;
+    c_OutputMgr::OM_PortType_t PortType;
 } OutputChannelIdToGpioAndPortEntry_t;
 
 // -----------------------------------------------------------------------------
@@ -127,8 +127,8 @@ void c_OutputMgr::Begin ()
         HasBeenInitialized = true;
 
         #ifdef LED_FLASH_GPIO
-            pinMode (LED_FLASH_GPIO, OUTPUT);
-            digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
+        pinMode (LED_FLASH_GPIO, OUTPUT);
+        digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
         #endif // def LED_FLASH_GPIO
 
         // make sure the pointers are set up properly
@@ -271,8 +271,8 @@ void c_OutputMgr::CreateNewConfig ()
     JsonObject JsonConfig = JsonConfigDoc.createNestedObject (CN_output_config);
     // DEBUG_V ();
 
-    JsonConfig[CN_cfgver]       = CurrentConfigVersion;
-    JsonConfig[CN_MaxChannels]  = sizeof (OutputBuffer);
+    JsonConfig[CN_cfgver]      = CurrentConfigVersion;
+    JsonConfig[CN_MaxChannels] = sizeof (OutputBuffer);
 
     // Collect the all ports disabled config first
     CreateJsonConfig (JsonConfig);
@@ -529,17 +529,17 @@ void c_OutputMgr::LoadConfig ()
     if ( !FileMgr.LoadConfigFile (
         ConfigFileName,
         [this] (DynamicJsonDocument & JsonConfigDoc)
-        {
+    {
             // extern void PrettyPrint(DynamicJsonDocument & jsonStuff, String Name);
             // PrettyPrint(JsonConfigDoc, "OM Load Config");
 
             // DEBUG_V ();
-            JsonObject JsonConfig = JsonConfigDoc.as <JsonObject>();
+        JsonObject JsonConfig = JsonConfigDoc.as <JsonObject>();
 
             // extern void PrettyPrint(JsonObject & jsonStuff, String Name);
             // PrettyPrint(JsonConfig, "OM Load Config");
             // DEBUG_V ();
-            this->ProcessJsonConfig (JsonConfig);
+        this->ProcessJsonConfig (JsonConfig);
             // DEBUG_V ();
         }) )
     {
@@ -757,8 +757,8 @@ void c_OutputMgr::Poll ()
     // //DEBUG_START;
 
     #ifdef LED_FLASH_GPIO
-        pinMode (LED_FLASH_GPIO, OUTPUT);
-        digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
+    pinMode (LED_FLASH_GPIO, OUTPUT);
+    digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
     #endif // def LED_FLASH_GPIO
 
     // do we need to save the current config?
@@ -795,8 +795,8 @@ void c_OutputMgr::UpdateDisplayBufferReferences (void)
       *     The virtual buffer size is the one we give to the input
       *     processing engine
       */
-    uint32_t    OutputBufferOffset  = 0;    // offset into the raw data in the output buffer
-    uint32_t    OutputChannelOffset = 0;    // Virtual channel offset to the output buffer.
+    uint32_t OutputBufferOffset  = 0;       // offset into the raw data in the output buffer
+    uint32_t OutputChannelOffset = 0;       // Virtual channel offset to the output buffer.
 
     // DEBUG_V (String ("        BufferSize: ") + String (sizeof(OutputBuffer)));
     // DEBUG_V (String ("OutputBufferOffset: ") + String (OutputBufferOffset));
@@ -808,12 +808,12 @@ void c_OutputMgr::UpdateDisplayBufferReferences (void)
         // DEBUG_V(String("Name: ") + DriverName);
         // DEBUG_V(String("PortId: ") + String(OutputChannel.pOutputChannelDriver->GetOutputChannelId()) );
 
-        OutputChannel.OutputBufferStartingOffset    = OutputBufferOffset;
-        OutputChannel.OutputChannelStartingOffset   = OutputChannelOffset;
+        OutputChannel.OutputBufferStartingOffset  = OutputBufferOffset;
+        OutputChannel.OutputChannelStartingOffset = OutputChannelOffset;
         OutputChannel.pOutputChannelDriver->SetOutputBufferAddress (& OutputBuffer[OutputBufferOffset]);
 
-        uint32_t    OutputBufferDataBytesNeeded         = OutputChannel.pOutputChannelDriver->GetNumOutputBufferBytesNeeded ();
-        uint32_t    VirtualOutputBufferDataBytesNeeded  = OutputChannel.pOutputChannelDriver->GetNumOutputBufferChannelsServiced ();
+        uint32_t OutputBufferDataBytesNeeded        = OutputChannel.pOutputChannelDriver->GetNumOutputBufferBytesNeeded ();
+        uint32_t VirtualOutputBufferDataBytesNeeded = OutputChannel.pOutputChannelDriver->GetNumOutputBufferChannelsServiced ();
 
         uint32_t AvailableChannels = sizeof (OutputBuffer) - OutputBufferOffset;
 
@@ -829,14 +829,14 @@ void c_OutputMgr::UpdateDisplayBufferReferences (void)
         // DEBUG_V (String ("    ChannelsNeeded: ") + String (OutputBufferDataBytesNeeded));
         // DEBUG_V (String (" AvailableChannels: ") + String (AvailableChannels));
 
-        OutputBufferOffset                  += OutputBufferDataBytesNeeded;
+        OutputBufferOffset                 += OutputBufferDataBytesNeeded;
         OutputChannel.OutputBufferDataSize  = OutputBufferDataBytesNeeded;
         OutputChannel.OutputBufferEndOffset = OutputBufferOffset - 1;
         OutputChannel.pOutputChannelDriver->SetOutputBufferSize (OutputBufferDataBytesNeeded);
 
-        OutputChannelOffset                     += VirtualOutputBufferDataBytesNeeded;
-        OutputChannel.OutputChannelSize         = VirtualOutputBufferDataBytesNeeded;
-        OutputChannel.OutputChannelEndOffset    = OutputChannelOffset;
+        OutputChannelOffset                 += VirtualOutputBufferDataBytesNeeded;
+        OutputChannel.OutputChannelSize      = VirtualOutputBufferDataBytesNeeded;
+        OutputChannel.OutputChannelEndOffset = OutputChannelOffset;
 
         // DEBUG_V (String("OutputChannel.GetBufferUsedSize: ") + String(OutputChannel.pOutputChannelDriver->GetBufferUsedSize()));
         // DEBUG_V (String ("OutputBufferOffset: ") + String(OutputBufferOffset));
@@ -904,9 +904,9 @@ void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCou
 
             // Serial.print('5');
 
-            uint32_t    lastChannelToSet        = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
-            uint32_t    ChannelsToSet           = lastChannelToSet - StartChannelId;
-            uint32_t    RelativeStartChannelId  = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
+            uint32_t lastChannelToSet       = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
+            uint32_t ChannelsToSet          = lastChannelToSet - StartChannelId;
+            uint32_t RelativeStartChannelId = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
             // DEBUG_V (String("               StartChannelId: 0x") + String(StartChannelId, HEX));
             // DEBUG_V (String("                 EndChannelId: 0x") + String(EndChannelId, HEX));
             // DEBUG_V (String("             lastChannelToSet: 0x") + String(lastChannelToSet, HEX));
@@ -916,8 +916,8 @@ void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCou
                 currentOutputChannelDriver.pOutputChannelDriver->WriteChannelData (RelativeStartChannelId, ChannelsToSet, pSourceData);
             }
 
-            StartChannelId  += ChannelsToSet;
-            pSourceData     += ChannelsToSet;
+            StartChannelId += ChannelsToSet;
+            pSourceData    += ChannelsToSet;
             // memcpy(&OutputBuffer[StartChannelId], pSourceData, ChannelCount);
         }
     } while (false);
@@ -964,16 +964,16 @@ void c_OutputMgr::ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCoun
 
             // Serial.print('5');
 
-            uint32_t    lastChannelToSet        = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
-            uint32_t    ChannelsToSet           = lastChannelToSet - StartChannelId;
-            uint32_t    RelativeStartChannelId  = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
+            uint32_t lastChannelToSet       = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
+            uint32_t ChannelsToSet          = lastChannelToSet - StartChannelId;
+            uint32_t RelativeStartChannelId = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
             // DEBUG_V (String("               StartChannelId: 0x") + String(StartChannelId, HEX));
             // DEBUG_V (String("                 EndChannelId: 0x") + String(EndChannelId, HEX));
             // DEBUG_V (String("             lastChannelToSet: 0x") + String(lastChannelToSet, HEX));
             // DEBUG_V (String("                ChannelsToSet: 0x") + String(ChannelsToSet, HEX));
             currentOutputChannelDriver.pOutputChannelDriver->ReadChannelData (RelativeStartChannelId, ChannelsToSet, pTargetData);
-            StartChannelId  += ChannelsToSet;
-            pTargetData     += ChannelsToSet;
+            StartChannelId += ChannelsToSet;
+            pTargetData    += ChannelsToSet;
             // memcpy(&OutputBuffer[StartChannelId], pTargetData, ChannelCount);
         }
     } while (false);

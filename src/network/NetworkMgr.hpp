@@ -31,39 +31,44 @@
 class c_NetworkMgr
 {
 public:
-    c_NetworkMgr ();
-    virtual~c_NetworkMgr ();
+c_NetworkMgr ();
+virtual~c_NetworkMgr ();
 
-    void    Begin                ();
-    void    GetConfig            (JsonObject & json);
-    void    GetStatus            (JsonObject & json);
-    bool    SetConfig            (JsonObject & json);
-    void    Poll                 ();
-    void    GetDriverName        (String & Name) {Name = "NetworkMgr";}
+void Begin                ();
+void GetConfig            (JsonObject & json);
+void GetStatus            (JsonObject & json);
+bool SetConfig            (JsonObject & json);
+void Poll                 ();
+void    GetDriverName        (String & Name) {
+    Name = "NetworkMgr";
+}
+void SetWiFiIsConnected     (bool newState);
+void SetEthernetIsConnected (bool newState);
 
-    void    SetWiFiIsConnected     (bool newState);
-    void    SetEthernetIsConnected (bool newState);
-
-    bool        IsConnected ()              {return IsWiFiConnected || IsEthernetConnected;}
-    void        GetHostname (String & name) {name = hostname;}
-    IPAddress   GetlocalIP ();
+bool        IsConnected ()              {
+    return IsWiFiConnected || IsEthernetConnected;
+}
+void        GetHostname (String & name) {
+    name = hostname;
+}
+IPAddress GetlocalIP ();
 
 private:
-    bool    Validate ();
-    void    AdvertiseNewState ();
-    void    SetWiFiEnable ();
+bool Validate ();
+void AdvertiseNewState ();
+void SetWiFiEnable ();
 
-    c_WiFiDriver            WiFiDriver;
+c_WiFiDriver     WiFiDriver;
     #ifdef SUPPORT_ETHERNET
-        c_EthernetDriver    EthernetDriver;
+c_EthernetDriver EthernetDriver;
     #endif // def SUPPORT_ETHERNET
 
-    String                  hostname;
-    bool                    HasBeenInitialized              = false;
-    bool                    IsWiFiConnected                 = false;
-    bool                    IsEthernetConnected             = false;
-    bool                    PreviousState                   = false;
-    bool                    AllowWiFiAndEthUpSimultaneously = true;
+String           hostname;
+bool             HasBeenInitialized              = false;
+bool             IsWiFiConnected                 = false;
+bool             IsEthernetConnected             = false;
+bool             PreviousState                   = false;
+bool             AllowWiFiAndEthUpSimultaneously = true;
 }; // c_NetworkMgr
 
 extern c_NetworkMgr NetworkMgr;

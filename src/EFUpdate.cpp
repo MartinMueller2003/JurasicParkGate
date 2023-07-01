@@ -53,8 +53,8 @@ void EFUpdate::begin ()
 bool EFUpdate::process (uint8_t * data, uint32_t len)
 {
     // DEBUG_START;
-    uint32_t index      = 0;
-    bool ConfigChanged  = true;
+    uint32_t index     = 0;
+    bool ConfigChanged = true;
 
     while (index < len)
     {
@@ -75,14 +75,14 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                         // DEBUG_V ();
                         _header.version = ntohs (_header.version);
                         memset ( & _record, 0, sizeof (efurecord_t) );
-                        _loc    = 0;
-                        _state  = State::RECORD;
+                        _loc   = 0;
+                        _state = State::RECORD;
                     }
                     else
                     {
                         // DEBUG_V ();
-                        _state  = State::FAIL;
-                        _error  = EFUPDATE_ERROR_SIG;
+                        _state = State::FAIL;
+                        _error = EFUPDATE_ERROR_SIG;
                     }
                 }
 
@@ -97,9 +97,9 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                 if ( _loc == sizeof (efurecord_t) )
                 {
                     // DEBUG_V ();
-                    _record.type    = RecordType ( ntohs ( (uint16_t)_record.type ) );
-                    _record.size    = ntohl (_record.size);
-                    _loc            = 0;
+                    _record.type = RecordType ( ntohs ( (uint16_t)_record.type ) );
+                    _record.size = ntohl (_record.size);
+                    _loc         = 0;
                     // DEBUG_V (String("_record.type: ") + uint32_t(_record.type));
                     // DEBUG_V (String("_record.size: ") + _record.size);
                     if (_record.type == RecordType::SKETCH_IMAGE)
@@ -109,8 +109,8 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                         if ( !Update.begin (_record.size, U_FLASH) )
                         {
                             // DEBUG_V ("Update.begin FAIL");
-                            _state  = State::FAIL;
-                            _error  = Update.getError ();
+                            _state = State::FAIL;
+                            _error = Update.getError ();
                         }
                         else
                         {
@@ -119,7 +119,7 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                         }
 
                         #ifdef ARDUINO_ARCH_ESP8266
-                            Update.runAsync (true);
+                        Update.runAsync (true);
                         #endif // ifdef ARDUINO_ARCH_ESP8266
                         // DEBUG_V ();
                     }
@@ -128,14 +128,14 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                         logcon ("Starting FS IMAGE");
                         // Begin file system update
                         #ifdef ARDUINO_ARCH_ESP8266
-                            LittleFS.end ();
+                        LittleFS.end ();
                         #endif // ifdef ARDUINO_ARCH_ESP8266
                         // DEBUG_V ();
                         if ( !Update.begin (_record.size, U_SPIFFS) )
                         {
                             // DEBUG_V ("begin U_SPIFFS failed");
-                            _state  = State::FAIL;
-                            _error  = Update.getError ();
+                            _state = State::FAIL;
+                            _error = Update.getError ();
                             // DEBUG_V ();
                         }
                         else
@@ -145,14 +145,14 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                         }
 
                         #ifdef ARDUINO_ARCH_ESP8266
-                            Update.runAsync (true);
+                        Update.runAsync (true);
                         #endif // ifdef ARDUINO_ARCH_ESP8266
                     }
                     else
                     {
                         logcon ("Unknown Record Type");
-                        _state  = State::FAIL;
-                        _error  = EFUPDATE_ERROR_REC;
+                        _state = State::FAIL;
+                        _error = EFUPDATE_ERROR_REC;
                     }
                 }
 
@@ -173,8 +173,8 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
 
                 Update.write (& data[index], toWrite);
                 // DEBUG_V ("write done");
-                index   = index + toWrite;
-                _loc    = _loc + toWrite;
+                index = index + toWrite;
+                _loc  = _loc + toWrite;
 
                 if (_record.size == _loc)
                 {
@@ -182,8 +182,8 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                     Update.end (true);
                     logcon ("Data Transfer Complete");
                     memset ( & _record, 0, sizeof (efurecord_t) );
-                    _loc    = 0;
-                    _state  = State::RECORD;
+                    _loc   = 0;
+                    _state = State::RECORD;
                 }
 
                 // DEBUG_V ();
@@ -193,8 +193,8 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
             case State::FAIL:
             {
                 // DEBUG_V ("FAIL");
-                index           = len;
-                ConfigChanged   = false;
+                index         = len;
+                ConfigChanged = false;
                 break;
             }
         } // switch

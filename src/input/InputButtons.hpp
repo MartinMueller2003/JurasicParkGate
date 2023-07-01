@@ -26,30 +26,32 @@
 class c_InputButtons : public c_InputCommon
 {
 public:
-    c_InputButtons (
-                    c_InputMgr::e_InputChannelIds   NewInputChannelId,
-                    c_InputMgr::e_InputType         NewChannelType,
-                    uint32_t                        BufferSize);
+c_InputButtons (
+    c_InputMgr::e_InputChannelIds   NewInputChannelId,
+    c_InputMgr::e_InputType         NewChannelType,
+    uint32_t                        BufferSize);
 
-    enum InputValue_t
-    {
-        off = 0,        // input is off
-        shortOn,        // input was on for <N MS
-        longOn          // input was on for <N MS
-    };
+enum InputValue_t
+{
+    off = 0,            // input is off
+    shortOn,            // input was on for <N MS
+    longOn              // input was on for <N MS
+};
 
-    void    Begin ();                               ///< set up the operating environment based on the current config (or defaults)
-    bool    SetConfig (JsonObject & jsonConfig);    ///< Set a new config in the driver
-    void    GetConfig (JsonObject & jsonConfig);    ///< Get the current config used by the driver
-    void    GetStatus (JsonObject & jsonStatus);
-    void    Process ();                             ///< Call from loop(),  renders Input data
-    void    GetDriverName (String & sDriverName) {sDriverName = F ("Buttons");} ///< get the name for the instantiated driver
-    void    SetBufferInfo (uint32_t BufferSize);
-    void    NetworkStateChanged (bool IsConnected); // used by poorly designed rx functions
+void Begin ();                                      ///< set up the operating environment based on the current config (or defaults)
+bool SetConfig (JsonObject & jsonConfig);           ///< Set a new config in the driver
+void GetConfig (JsonObject & jsonConfig);           ///< Get the current config used by the driver
+void GetStatus (JsonObject & jsonStatus);
+void Process ();                                    ///< Call from loop(),  renders Input data
+void    GetDriverName (String & sDriverName) {
+    sDriverName = F ("Buttons");
+}                                                   ///< get the name for the instantiated driver
+void SetBufferInfo (uint32_t BufferSize);
+void NetworkStateChanged (bool IsConnected);        // used by poorly designed rx functions
 
     #define NumButtons 5
 
 protected:
 
-    c_InputButton Buttons[NumButtons];
+c_InputButton Buttons[NumButtons];
 }; // c_InputButtons

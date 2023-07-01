@@ -28,8 +28,8 @@
 
 fsm_InputButton_boot fsm_InputButton_boot_imp;
 fsm_InputButton_off_state fsm_InputButton_off_state_imp;
-fsm_InputButton_on_wait_long_state  fsm_InputButton_on_wait_long_state_imp;
-fsm_InputButton_wait_for_off_state  fsm_InputButton_wait_for_off_state_imp;
+fsm_InputButton_on_wait_long_state fsm_InputButton_on_wait_long_state_imp;
+fsm_InputButton_wait_for_off_state fsm_InputButton_wait_for_off_state_imp;
 
 /*****************************************************************************/
 /* Code                                                                      */
@@ -57,12 +57,12 @@ void c_InputButton::GetConfig (JsonObject & JsonData)
 {
     // DEBUG_START;
 
-    JsonData[M_IO_ENABLED]  = Enabled;
-    JsonData[M_NAME]        = Name;
-    JsonData[M_ID]          = GpioId;
-    JsonData[M_POLARITY]    = (Polarity_t::ActiveHigh == polarity) ? CN_ActiveHigh : CN_ActiveLow;
-    JsonData[CN_channels]   = TriggerChannel;
-    JsonData[CN_long]       = LongPushDelayMS;
+    JsonData[M_IO_ENABLED] = Enabled;
+    JsonData[M_NAME]       = Name;
+    JsonData[M_ID]         = GpioId;
+    JsonData[M_POLARITY]   = (Polarity_t::ActiveHigh == polarity) ? CN_ActiveHigh : CN_ActiveLow;
+    JsonData[CN_channels]  = TriggerChannel;
+    JsonData[CN_long]      = LongPushDelayMS;
 
     // DEBUG_V (String ("GpioId: ") + String (GpioId));
 
@@ -74,9 +74,9 @@ void c_InputButton::GetStatus (JsonObject & JsonData)
 {
     // DEBUG_START;
 
-    JsonData[M_NAME]    = Name;
-    JsonData[M_ID]      = GpioId;
-    JsonData[M_STATE]   = ( ReadInput () ) ? CN_on : CN_off;
+    JsonData[M_NAME]  = Name;
+    JsonData[M_ID]    = GpioId;
+    JsonData[M_STATE] = ( ReadInput () ) ? CN_on : CN_off;
 
     // DEBUG_END;
 }  // GetStatistics
@@ -141,7 +141,8 @@ bool c_InputButton::ReadInput (void)
 }  // ReadInput
 
 // -----------------------------------------------------------------------------
-void c_InputButton::NetworkStateChanged (bool IsConnected) {}  // NetworkStateChanged
+void c_InputButton::NetworkStateChanged (bool IsConnected) {
+}                                                              // NetworkStateChanged
 
 /*****************************************************************************/
 /*	FSM                                                                      */
