@@ -48,12 +48,12 @@ void c_NetworkMgr::AdvertiseNewState ()
 {
     // DEBUG_START;
 
-    if (PreviousState != IsConnected ())
+    if ( PreviousState != IsConnected () )
     {
         // DEBUG_V ("Sending Advertisments");
         PreviousState = IsConnected ();
-        InputMgr.NetworkStateChanged (IsConnected ());
-        WebMgr.NetworkStateChanged (IsConnected ());
+        InputMgr.NetworkStateChanged ( IsConnected () );
+        WebMgr.NetworkStateChanged ( IsConnected () );
     }
 
     // DEBUG_END;
@@ -156,9 +156,9 @@ bool c_NetworkMgr::SetConfig (JsonObject & json)
 
     do  // once
     {
-        if (!json.containsKey (CN_network))
+        if ( !json.containsKey (CN_network) )
         {
-            logcon (String (F ("No network config found. Use default settings")));
+            logcon ( String ( F ("No network config found. Use default settings") ) );
             // request config save
             ConfigSaveNeeded = true;
             break;
@@ -171,7 +171,7 @@ bool c_NetworkMgr::SetConfig (JsonObject & json)
         HostnameChanged = setFromJSON (hostname, network, CN_hostname);
         // DEBUG_V("");
 
-        if (network.containsKey (CN_wifi))
+        if ( network.containsKey (CN_wifi) )
         {
             // DEBUG_V("");
             JsonObject networkWiFi = network[CN_wifi];
@@ -181,30 +181,30 @@ bool c_NetworkMgr::SetConfig (JsonObject & json)
         {
             // DEBUG_V("");
             // this may be an old style config
-            if (network.containsKey (CN_ssid))
+            if ( network.containsKey (CN_ssid) )
             {
-                logcon (String (F ("Using old style WiFi Settings")));
+                logcon ( String ( F ("Using old style WiFi Settings") ) );
                 // request config save
                 ConfigSaveNeeded    = true;
                 ConfigChanged       |= WiFiDriver.SetConfig (network);
             }
             else
             {
-                logcon (String (F ("No network WiFi settings found. Using default WiFi Settings")));
+                logcon ( String ( F ("No network WiFi settings found. Using default WiFi Settings") ) );
             }
         }
 
         #ifdef SUPPORT_ETHERNET
             ConfigChanged = setFromJSON (AllowWiFiAndEthUpSimultaneously, network, CN_weus);
 
-            if (network.containsKey (CN_eth))
+            if ( network.containsKey (CN_eth) )
             {
                 JsonObject networkEth = network[CN_eth];
                 ConfigChanged |= EthernetDriver.SetConfig (networkEth);
             }
             else
             {
-                logcon (String (F ("No network Ethernet settings found. Using default Ethernet Settings")));
+                logcon ( String ( F ("No network Ethernet settings found. Using default Ethernet Settings") ) );
             }
 
             // DEBUG_V (String ("            IsEthernetConnected: ") + String (IsEthernetConnected));
@@ -243,7 +243,7 @@ bool c_NetworkMgr::Validate ()
     bool Changed = false;
 
     // DEBUG_V (String ("hostname: \"") + hostname + "\"");
-    if (0 == hostname.length ())
+    if ( 0 == hostname.length () )
     {
         #ifdef ARDUINO_ARCH_ESP8266
             String chipId = String (ESP.getChipId (), HEX);

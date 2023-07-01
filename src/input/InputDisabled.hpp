@@ -44,4 +44,4 @@ public:
     void    SetBufferInfo (uint32_t BufferSize)     {}
 
 private:
-};  // c_InputDisabled
+}; // c_InputDisabled

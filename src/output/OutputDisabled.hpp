@@ -45,4 +45,4 @@ public:
     uint32_t    GetNumOutputBufferChannelsServiced ()   {return 0;}
 
 private:
-};  // c_OutputDisabled
+}; // c_OutputDisabled

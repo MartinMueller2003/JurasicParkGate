@@ -101,4 +101,4 @@ private:
     void    publishHA ();                                                                                                                               // updateConfig
     void    publishState ();                                                                                                                            // onMqttConnect, onMqttMessage, procT,
                                                                                                                                                         //    updateConfig
-}; // class c_InputMQTT
+};                                                                                                                                                      // class c_InputMQTT

@@ -33,7 +33,7 @@ public:
     virtual~c_InputCommon ();
 
     // functions to be provided by the derived class
-    virtual void    Begin ()                                            = 0; ///< set up the operating environment based on the current config (or defaults)
+    virtual void    Begin ()                                            = 0;    ///< set up the operating environment based on the current config (or defaults)
     virtual bool    SetConfig (ArduinoJson::JsonObject & jsonConfig)    = 0;    ///< Set a new config in the driver
     virtual void    GetConfig (ArduinoJson::JsonObject & jsonConfig)    = 0;    ///< Get the current config used by the driver
     virtual void    GetStatus (JsonObject & jsonStatus)                 = 0;
@@ -55,4 +55,4 @@ protected:
     c_InputMgr::e_InputType         ChannelType             = c_InputMgr::e_InputType::InputType_Disabled;
 
 private:
-};  // c_InputCommon
+}; // c_InputCommon

@@ -110,6 +110,6 @@ private:
     #endif // def BOARD_HAS_PSRAM
 
     WebJsonDocument * WebJsonDoc = nullptr;
-};  // c_WebMgr
+}; // c_WebMgr
 
 extern c_WebMgr WebMgr;

@@ -58,7 +58,7 @@
 
         String StateName;
         pCurrentFsmState->GetStateName (StateName);
-        logcon (String (F ("Entering State: ")) + StateName);
+        logcon (String ( F ("Entering State: ") ) + StateName);
 
         // DEBUG_END;
     }  // AnnounceState
@@ -77,15 +77,15 @@
         fsm_Eth_state_DeviceInitFailed_imp.SetParent (this);
 
         #ifdef testEth
-            logcon (String ("Start IP ") + GetIpAddress ().toString ());
-            if (false == ETH.begin (phy_addr, power_pin /*gpio_num_t(-1)*/, mdc_pin, mdio_pin, phy_type, clk_mode))
+            logcon ( String ("Start IP ") + GetIpAddress ().toString () );
+            if ( false == ETH.begin (phy_addr, power_pin /*gpio_num_t(-1)*/, mdc_pin, mdio_pin, phy_type, clk_mode) )
             {
-                logcon (String ("Failed IP ") + GetIpAddress ().toString ());
+                logcon ( String ("Failed IP ") + GetIpAddress ().toString () );
             }
 
-            while (!GetIpAddress ()) {}
+            while ( !GetIpAddress () ) {}
 
-            logcon (String ("After IP ") + GetIpAddress ().toString ());
+            logcon ( String ("After IP ") + GetIpAddress ().toString () );
         #endif // def testEth
 
         // this gets called pre-setup so there is nothing we can do here.
@@ -109,15 +109,15 @@
         NetworkMgr.GetHostname (Hostname);
 
         // DEBUG_V (String ("Hostname: ") + Hostname);
-        if (0 != Hostname.length ())
+        if ( 0 != Hostname.length () )
         {
             // DEBUG_V (String ("Setting ETH hostname: ") + Hostname);
 
             // ETH.config (INADDR_NONE, INADDR_NONE, INADDR_NONE);
-            ETH.setHostname (Hostname.c_str ());
+            ETH.setHostname ( Hostname.c_str () );
         }
 
-        logcon (String (F ("Ethernet Connecting as ")) + Hostname);
+        logcon (String ( F ("Ethernet Connecting as ") ) + Hostname);
 
         // DEBUG_END;
     }  // StartEth
@@ -265,7 +265,7 @@
     {
         // DEBUG_START;
 
-        if (NextPollTimer.IsExpired ())
+        if ( NextPollTimer.IsExpired () )
         {
             // DEBUG_V ("Polling");
             NextPollTimer.StartTimer (PollInterval);
@@ -280,14 +280,14 @@
     {
         // DEBUG_START;
 
-        logcon (F ("Ethernet Reset has been requested"));
+        logcon ( F ("Ethernet Reset has been requested") );
 
         NetworkStateChanged (false);
         #ifdef ETH_stop
             // Disconnect Ethernet if connected
             if (ETH.stop () != ESP_OK)
             {
-                logcon (F ("Could not disconnect Ethernet"));
+                logcon ( F ("Could not disconnect Ethernet") );
             }
 
         #endif // def ETH.stop
@@ -338,7 +338,7 @@
         // Eth Driver does not support config updates while it is running.
         if (ConfigChanged && HasBeenPreviouslyConfigured)
         {
-            logcon (F ("Configuration change requires system reboot."));
+            logcon ( F ("Configuration change requires system reboot.") );
             reboot = true;
         }
 
@@ -358,7 +358,7 @@
 
             if (true == UseDhcp)
             {
-                logcon (F ("Connecting to Ethernet using DHCP"));
+                logcon ( F ("Connecting to Ethernet using DHCP") );
                 // ETH.config (temp, temp, temp, temp);
 
                 break;
@@ -368,13 +368,13 @@
 
             if (temp == ip)
             {
-                logcon (F ("NETWORK: ERROR: STATIC SELECTED WITHOUT IP. Using DHCP assigned address"));
+                logcon ( F ("NETWORK: ERROR: STATIC SELECTED WITHOUT IP. Using DHCP assigned address") );
                 break;
             }
 
-            if ((ip == ETH.localIP ()) &&
-                (netmask == ETH.subnetMask ()) &&
-                (gateway == ETH.gatewayIP ()))
+            if ( ( ip == ETH.localIP () ) &&
+                ( netmask == ETH.subnetMask () ) &&
+                ( gateway == ETH.gatewayIP () ) )
             {
                 // DEBUG_V ("correct IP is already set");
                 break;
@@ -387,7 +387,7 @@
             // We didn't use DNS, so just set it to our configured gateway
             ETH.config (ip, gateway, netmask, gateway);
 
-            logcon (F ("Connecting to Ethernet with Static IP"));
+            logcon ( F ("Connecting to Ethernet with Static IP") );
         } while (false);
 
         // DEBUG_END;
@@ -400,8 +400,8 @@
 
         // if (!eth_connected)
         // esp_eth_disable();
-        logcon (String ("ETH IP Before Start: ") + ETH.localIP ().toString ());
-        if (false == ETH.begin (phy_addr, power_pin /*gpio_num_t(-1)*/, mdc_pin, mdio_pin, phy_type, clk_mode))
+        logcon ( String ("ETH IP Before Start: ") + ETH.localIP ().toString () );
+        if ( false == ETH.begin (phy_addr, power_pin /*gpio_num_t(-1)*/, mdc_pin, mdio_pin, phy_type, clk_mode) )
         // if (false == ETH.begin(phy_addr, power_pin, mdc_pin, mdio_pin, phy_type, clk_mode))
         {
             fsm_Eth_state_DeviceInitFailed_imp.Init ();
@@ -448,7 +448,7 @@
 
         // DEBUG_V(String("pEthernetDriver: 0x") + String(uint32_t(pEthernetDriver), HEX));
 
-        if (pEthernetDriver->GetFsmTimer ().IsExpired ())
+        if ( pEthernetDriver->GetFsmTimer ().IsExpired () )
         {
             // DEBUG_V("Start trying to connect");
             fsm_Eth_state_PoweringUp_imp.Init ();
@@ -465,7 +465,7 @@
 
         pEthernetDriver->SetFsmState (this);
         pEthernetDriver->AnnounceState ();
-        pEthernetDriver->GetFsmTimer ().StartTimer (pEthernetDriver->GetPowerPinActiveDelayMs ());
+        pEthernetDriver->GetFsmTimer ().StartTimer ( pEthernetDriver->GetPowerPinActiveDelayMs () );
 
         pEthernetDriver->InitPowerPin ();
 
@@ -477,7 +477,7 @@
     {
         // DEBUG_START;
 
-        if (pEthernetDriver->GetFsmTimer ().IsExpired ())
+        if ( pEthernetDriver->GetFsmTimer ().IsExpired () )
         {
             // Start trying to connect to based on input config
             fsm_Eth_state_ConnectingToEth_imp.Init ();
@@ -507,7 +507,7 @@
     {
         // DEBUG_START;
 
-        if (ETH.localIP ())
+        if ( ETH.localIP () )
         {
             // LOG_PORT.println(String("Got ETH IP: ") + ETH.localIP().toString());
             OnGotIp ();
@@ -581,7 +581,7 @@
         pEthernetDriver->AnnounceState ();
         pEthernetDriver->NetworkStateChanged (true);
 
-        logcon (String (F ("Ethernet Connected with IP: ")) + pEthernetDriver->GetIpAddress ().toString ());
+        logcon ( String ( F ("Ethernet Connected with IP: ") ) + pEthernetDriver->GetIpAddress ().toString () );
         // DEBUG_V (String (" gateway: ") + pEthernetDriver->GetIpGateway ().toString ());
         // DEBUG_V (String (" netmask: ") + pEthernetDriver->GetIpSubNetMask ().toString ());
 

@@ -41,7 +41,7 @@ public:
         virtual void    OnDisconnect (void)             = 0;
         void            SetParent (c_EthernetDriver * parent)   {pEthernetDriver = parent;}
         void            GetDriverName (String & value)          {value = CN_EthDrv;}
-    };  // fsm_Eth_state
+    }; // fsm_Eth_state
 
     class c_EthernetDriver
     {
@@ -106,7 +106,7 @@ protected:
         friend class fsm_Eth_state;
         fsm_Eth_state   * pCurrentFsmState = nullptr;
         FastTimer       FsmTimer;
-    };  // c_EthernetDriver
+    }; // c_EthernetDriver
 
     /*****************************************************************************/
     /*
@@ -127,7 +127,7 @@ public:
         virtual void    OnConnect (void)                { /* ignore */}
         virtual void    OnGotIp (void)                  { /* ignore */}
         virtual void    OnDisconnect (void)             { /* ignore */}
-    };  // fsm_Eth_state_Boot
+    }; // fsm_Eth_state_Boot
 
     /*****************************************************************************/
     class fsm_Eth_state_PoweringUp : public fsm_Eth_state
@@ -142,7 +142,7 @@ public:
         virtual void    OnConnect (void)                {}
         virtual void    OnGotIp (void)                  {}
         virtual void    OnDisconnect (void)             {}
-    };  // fsm_Eth_state_PoweringUp
+    }; // fsm_Eth_state_PoweringUp
 
     /*****************************************************************************/
     class fsm_Eth_state_ConnectingToEth : public fsm_Eth_state
@@ -157,7 +157,7 @@ public:
         virtual void    OnConnect (void);
         virtual void    OnGotIp (void);
         virtual void    OnDisconnect (void) {}
-    };  // fsm_Eth_state_ConnectingToEth
+    }; // fsm_Eth_state_ConnectingToEth
 
     /*****************************************************************************/
     class fsm_Eth_state_WaitForIP : public fsm_Eth_state
@@ -172,7 +172,7 @@ public:
         virtual void    OnConnect (void)                {}
         virtual void    OnGotIp (void);
         virtual void    OnDisconnect (void);
-    };  // fsm_Eth_state_WaitForIP
+    }; // fsm_Eth_state_WaitForIP
 
     /*****************************************************************************/
     class fsm_Eth_state_GotIp : public fsm_Eth_state
@@ -187,7 +187,7 @@ public:
         virtual void    OnConnect (void)                {}
         virtual void    OnGotIp (void)                  {}
         virtual void    OnDisconnect (void);
-    };  // fsm_Eth_state_GotIp
+    }; // fsm_Eth_state_GotIp
 
     /*****************************************************************************/
     class fsm_Eth_state_DeviceInitFailed : public fsm_Eth_state
@@ -202,7 +202,7 @@ public:
         virtual void    OnConnect (void)                {}
         virtual void    OnGotIp (void)                  {}
         virtual void    OnDisconnect (void)             {}
-    };  // fsm_Eth_state_DeviceInitFailed
+    }; // fsm_Eth_state_DeviceInitFailed
 
     extern c_EthernetDriver EthernetDriver;
 

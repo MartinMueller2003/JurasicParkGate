@@ -110,7 +110,7 @@ bool c_OutputServoPCA9685::validate ()
     // DEBUG_START;
     bool response = true;
 
-    if ((Num_Channels > OM_SERVO_PCA9685_CHANNEL_LIMIT) || (Num_Channels < 1))
+    if ( (Num_Channels > OM_SERVO_PCA9685_CHANNEL_LIMIT) || (Num_Channels < 1) )
     {
         logcon (CN_stars + String (MN_01) + OM_SERVO_PCA9685_CHANNEL_LIMIT + " " + CN_stars);
         Num_Channels    = OM_SERVO_PCA9685_CHANNEL_LIMIT;
@@ -165,7 +165,7 @@ bool c_OutputServoPCA9685::SetConfig (ArduinoJson::JsonObject & jsonConfig)
         pwm->setPWMFreq (UpdateFrequency);
 
         // do we have a channel configuration array?
-        if (false == jsonConfig.containsKey (OM_SERVO_PCA9685_CHANNELS_NAME))
+        if ( false == jsonConfig.containsKey (OM_SERVO_PCA9685_CHANNELS_NAME) )
         {
             // if not, flag an error and stop processing
             logcon (MN_04);
@@ -251,10 +251,7 @@ void c_OutputServoPCA9685::GetConfig (ArduinoJson::JsonObject & jsonConfig)
 }  // GetConfig
 
 // ----------------------------------------------------------------------------
-void c_OutputServoPCA9685::GetDriverName (String & sDriverName)
-{
-    sDriverName = CN_Servo_PCA9685;
-}  // GetDriverName
+void c_OutputServoPCA9685::GetDriverName (String & sDriverName){sDriverName = CN_Servo_PCA9685;}  // GetDriverName
 
 // ----------------------------------------------------------------------------
 uint32_t c_OutputServoPCA9685::Poll ()
@@ -320,7 +317,7 @@ uint32_t c_OutputServoPCA9685::Poll ()
                         MaxScaledValue,
                         currentServoPCA9685.MinLevel,
                         currentServoPCA9685.MaxLevel);
-                    Final_value = int((float(pulse_width) / float(MicroSecondsInASecond)) * float(UpdateFrequency) * 4096.0);
+                    Final_value = int( ( float(pulse_width) / float(MicroSecondsInASecond) ) * float(UpdateFrequency) * 4096.0 );
                     // DEBUG_V (String ("pulse_width: ") + String (pulse_width));
                     // DEBUG_V (String ("Final_value: ") + String (Final_value));
                 }

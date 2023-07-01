@@ -47,11 +47,11 @@ typedef struct
 
 static const InputTypeXlateMap_t InputTypeXlateMap[c_InputMgr::e_InputType::InputType_End] =
 {
-    {c_InputMgr::e_InputType::InputType_Buttons,  "Buttons",  c_InputMgr::e_InputChannelIds::InputPrimaryChannelId        },
-    {c_InputMgr::e_InputType::InputType_Effects,  "Effects",  c_InputMgr::e_InputChannelIds::InputSecondaryChannelId      },
-    {c_InputMgr::e_InputType::InputType_MQTT,     "MQTT",     c_InputMgr::e_InputChannelIds::InputSecondaryChannelId      },
-    {c_InputMgr::e_InputType::InputType_Alexa,    "Alexa",    c_InputMgr::e_InputChannelIds::InputSecondaryChannelId      },
-    {c_InputMgr::e_InputType::InputType_Disabled, "Disabled", c_InputMgr::e_InputChannelIds::InputChannelId_ALL           }
+    {c_InputMgr::e_InputType::InputType_Buttons,  "Buttons",  c_InputMgr::e_InputChannelIds::InputPrimaryChannelId            },
+    {c_InputMgr::e_InputType::InputType_Effects,  "Effects",  c_InputMgr::e_InputChannelIds::InputSecondaryChannelId          },
+    {c_InputMgr::e_InputType::InputType_MQTT,     "MQTT",     c_InputMgr::e_InputChannelIds::InputSecondaryChannelId          },
+    {c_InputMgr::e_InputType::InputType_Alexa,    "Alexa",    c_InputMgr::e_InputChannelIds::InputSecondaryChannelId          },
+    {c_InputMgr::e_InputType::InputType_Disabled, "Disabled", c_InputMgr::e_InputChannelIds::InputChannelId_ALL               }
 };
 
 // -----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ static const InputTypeXlateMap_t InputTypeXlateMap[c_InputMgr::e_InputType::Inpu
 ///< Start up the driver and put it into a safe mode
 c_InputMgr::c_InputMgr ()
 {
-    ConfigFileName = String (F ("/")) + String (CN_input_config) + F (".json");
+    ConfigFileName = String ( F ("/") ) + String (CN_input_config) + F (".json");
 
     // this gets called pre-setup so there is nothing we can do here.
     int pInputChannelDriversIndex = 0;
@@ -141,7 +141,7 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
 
     // add the channels header
     JsonObject InputMgrChannelsData;
-    if (true == jsonConfig.containsKey (CN_channels))
+    if ( true == jsonConfig.containsKey (CN_channels) )
     {
         // DEBUG_V ("");
         InputMgrChannelsData = jsonConfig[CN_channels];
@@ -166,9 +166,9 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         // DEBUG_V (String("Create Section in Config file for the Input channel: '") + CurrentChannel.pInputChannelDriver->GetInputChannelId() + "'");
         // create a record for this channel
         JsonObject ChannelConfigData;
-        String sChannelId = String (CurrentChannel.pInputChannelDriver->GetInputChannelId ());
+        String sChannelId = String ( CurrentChannel.pInputChannelDriver->GetInputChannelId () );
         // DEBUG_V (String("sChannelId: '") + String(sChannelId) + "'");
-        if (true == InputMgrChannelsData.containsKey (sChannelId))
+        if ( true == InputMgrChannelsData.containsKey (sChannelId) )
         {
             // DEBUG_V ("");
             ChannelConfigData = InputMgrChannelsData[sChannelId];
@@ -181,7 +181,7 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         }
 
         // save the name as the selected channel type
-        uint32_t    DriverType      = int(CurrentChannel.pInputChannelDriver->GetInputType ());
+        uint32_t    DriverType      = int( CurrentChannel.pInputChannelDriver->GetInputType () );
         String      DriverTypeStr   = String (DriverType);
         // DEBUG_V(String("DriverTypeId: ") + DriverTypeStr);
         String DriverNameStr;
@@ -191,7 +191,7 @@ void c_InputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         ChannelConfigData[CN_type] = DriverType;
 
         JsonObject ChannelConfigByTypeData;
-        if (true == ChannelConfigData.containsKey (String (DriverTypeStr)))
+        if ( true == ChannelConfigData.containsKey ( String (DriverTypeStr) ) )
         {
             ChannelConfigByTypeData = ChannelConfigData[DriverTypeStr];
             // DEBUG_V ("");
@@ -229,7 +229,7 @@ void c_InputMgr::CreateNewConfig ()
 {
     // DEBUG_START;
 
-    logcon (String (F ("--- WARNING: Creating a new Input Manager configuration Data set ---")));
+    logcon ( String ( F ("--- WARNING: Creating a new Input Manager configuration Data set ---") ) );
 
     // create a place to save the config
     // DEBUG_V(String("Heap: ") + String(ESP.getFreeHeap()));
@@ -294,7 +294,7 @@ void c_InputMgr::GetStatus (JsonObject & jsonStatus)
 {
     // _ DEBUG_START;
 
-    JsonArray InputStatus = jsonStatus.createNestedArray (F ("input"));
+    JsonArray InputStatus = jsonStatus.createNestedArray ( F ("input") );
     for (auto & CurrentInput : InputChannelDrivers)
     {
         JsonObject channelStatus = InputStatus.createNestedObject ();
@@ -331,8 +331,8 @@ bool c_InputMgr::InputTypeIsAllowedOnChannel (e_InputType type, e_InputChannelId
         {
             // DEBUG_V ("");
             // is the input allowed on the desired channel?
-            if ((currentInputType.ChannelId == ChannelId) ||
-                (currentInputType.ChannelId == InputChannelId_ALL))
+            if ( (currentInputType.ChannelId == ChannelId) ||
+                (currentInputType.ChannelId == InputChannelId_ALL) )
             {
                 // DEBUG_V ("Allowed");
                 response = true;
@@ -388,7 +388,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             // DEBUG_V (String ("rebootNeeded: ") + String (rebootNeeded));
             if (!IsBooting)
             {
-                logcon (String (F ("Shutting Down '")) + DriverName + String (F ("' on Input: ")) + String (ChannelIndex));
+                logcon ( String ( F ("Shutting Down '") ) + DriverName + String ( F ("' on Input: ") ) + String (ChannelIndex) );
             }
 
             // DEBUG_V ("Delete old driver instance");
@@ -405,7 +405,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             case e_InputType::InputType_Disabled:
             {
                 // DEBUG_V ("InputType_Disabled: Start");
-                logcon (String (F ("Disabled Input type for channel '")) + ChannelIndex + "'.");
+                logcon (String ( F ("Disabled Input type for channel '") ) + ChannelIndex + "'.");
                 InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 // DEBUG_V ("InputType_Disabled: End");
                 break;
@@ -414,9 +414,9 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             case e_InputType::InputType_Buttons:
             {
                 // DEBUG_V ("InputType_Button: Start");
-                if (InputTypeIsAllowedOnChannel (InputType_Buttons, ChannelIndex))
+                if ( InputTypeIsAllowedOnChannel (InputType_Buttons, ChannelIndex) )
                 {
-                    logcon (String (F ("Starting Button for channel '")) + ChannelIndex + "'.");
+                    logcon (String ( F ("Starting Button for channel '") ) + ChannelIndex + "'.");
                     // DEBUG_V ("c_InputButtons");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputButtons (ChannelIndex, InputType_Buttons, InputDataBufferSize);
                     // DEBUG_V ("c_InputButtons");
@@ -434,9 +434,9 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             case e_InputType::InputType_Effects:
             {
                 // DEBUG_V ("InputType_Effects: Start");
-                if (InputTypeIsAllowedOnChannel (InputType_Effects, ChannelIndex))
+                if ( InputTypeIsAllowedOnChannel (InputType_Effects, ChannelIndex) )
                 {
-                    logcon (String (F ("Starting Effects Engine for channel '")) + ChannelIndex + "'.");
+                    logcon (String ( F ("Starting Effects Engine for channel '") ) + ChannelIndex + "'.");
                     // DEBUG_V ("c_InputEffectEngine");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputEffectEngine (ChannelIndex, InputType_Effects, InputDataBufferSize);
                     // DEBUG_V ("");
@@ -454,9 +454,9 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             case e_InputType::InputType_MQTT:
             {
                 // DEBUG_V ("InputType_MQTT: Start");
-                if (InputTypeIsAllowedOnChannel (InputType_MQTT, ChannelIndex))
+                if ( InputTypeIsAllowedOnChannel (InputType_MQTT, ChannelIndex) )
                 {
-                    logcon (String (F ("Starting MQTT for channel '")) + ChannelIndex + "'.");
+                    logcon (String ( F ("Starting MQTT for channel '") ) + ChannelIndex + "'.");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputMQTT (ChannelIndex, InputType_MQTT, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
@@ -473,9 +473,9 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             case e_InputType::InputType_Alexa:
             {
                 // DEBUG_V ("InputType_Alexa: Start");
-                if (InputTypeIsAllowedOnChannel (InputType_Alexa, ChannelIndex))
+                if ( InputTypeIsAllowedOnChannel (InputType_Alexa, ChannelIndex) )
                 {
-                    logcon (String (F ("Starting Alexa for channel '")) + ChannelIndex + "'.");
+                    logcon (String ( F ("Starting Alexa for channel '") ) + ChannelIndex + "'.");
                     InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputAlexa (ChannelIndex, InputType_Alexa, InputDataBufferSize);
                     // DEBUG_V ("");
                 }
@@ -491,7 +491,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
 
             default:
             {
-                logcon (CN_stars + String (F (" Unknown Input type for channel '")) + ChannelIndex + String (F ("'. Using disabled. ")) + CN_stars);
+                logcon (CN_stars + String ( F (" Unknown Input type for channel '") ) + ChannelIndex + String ( F ("'. Using disabled. ") ) + CN_stars);
                 InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputDisabled (ChannelIndex, InputType_Disabled, InputDataBufferSize);
                 // DEBUG_V ("");
                 break;
@@ -529,7 +529,7 @@ void c_InputMgr::LoadConfig ()
     // DEBUG_START;
 
     // try to load and process the config file
-    if (!FileMgr.LoadConfigFile (
+    if ( !FileMgr.LoadConfigFile (
         ConfigFileName,
         [this] (DynamicJsonDocument & JsonConfigDoc)
         {
@@ -538,11 +538,11 @@ void c_InputMgr::LoadConfig ()
             // DEBUG_V ("");
             this->ProcessJsonConfig (JsonConfig);
             // DEBUG_V ("");
-        }))
+        }) )
     {
         if (!IsBooting)
         {
-            logcon (CN_stars + String (F (" Error loading Input Manager Config File ")) + CN_stars);
+            logcon (CN_stars + String ( F (" Error loading Input Manager Config File ") ) + CN_stars);
         }
 
         // create a config file with default values
@@ -584,7 +584,7 @@ void c_InputMgr::Process ()
             // _ DEBUG_V("");
             CurrentInput.pInputChannelDriver->Process ();
 
-            if (!BlankTimerHasExpired (CurrentInput.pInputChannelDriver->GetInputChannelId ()))
+            if ( !BlankTimerHasExpired ( CurrentInput.pInputChannelDriver->GetInputChannelId () ) )
             {
                 // _ DEBUG_V (String ("Blank Timer is running: ") + String (CurrentInput.pInputChannelDriver->GetInputChannelId ()));
                 aBlankTimerIsRunning = true;
@@ -592,7 +592,7 @@ void c_InputMgr::Process ()
             }
         }
 
-        if ((false == aBlankTimerIsRunning) && (config.BlankDelay != 0))
+        if ( (false == aBlankTimerIsRunning) && (config.BlankDelay != 0) )
         {
             // _ DEBUG_V("Clear Input Buffer");
             OutputMgr.ClearBuffer ();
@@ -623,11 +623,11 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
 
     do  // once
     {
-        if (false == jsonConfig.containsKey (CN_input_config))
+        if ( false == jsonConfig.containsKey (CN_input_config) )
         {
-            logcon (String (F ("No Input Interface Settings Found. Using Defaults")));
+            logcon ( String ( F ("No Input Interface Settings Found. Using Defaults") ) );
             extern void PrettyPrint (JsonObject & jsonStuff, String Name);
-            PrettyPrint (jsonConfig, String (F ("c_InputMgr::ProcessJsonConfig")));
+            PrettyPrint ( jsonConfig, String ( F ("c_InputMgr::ProcessJsonConfig") ) );
             break;
         }
 
@@ -644,15 +644,15 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
 
         if (TempVersion != CurrentConfigVersion)
         {
-            logcon (String (F ("InputMgr: Incorrect Version found. Using existing/default config.")));
+            logcon ( String ( F ("InputMgr: Incorrect Version found. Using existing/default config.") ) );
             // break;
         }
 
         // do we have a channel configuration array?
-        if (false == InputChannelMgrData.containsKey (CN_channels))
+        if ( false == InputChannelMgrData.containsKey (CN_channels) )
         {
             // if not, flag an error and stop processing
-            logcon (String (F ("No Input Channel Settings Found. Using Defaults")));
+            logcon ( String ( F ("No Input Channel Settings Found. Using Defaults") ) );
             break;
         }
 
@@ -665,10 +665,10 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
              ChannelIndex++)
         {
             // get access to the channel config
-            if (false == InputChannelArray.containsKey (String (ChannelIndex)))
+            if ( false == InputChannelArray.containsKey ( String (ChannelIndex) ) )
             {
                 // if not, flag an error and stop processing
-                logcon (String (F ("No Input Settings Found for Channel '")) + ChannelIndex + String (F ("'. Using Defaults")));
+                logcon ( String ( F ("No Input Settings Found for Channel '") ) + ChannelIndex + String ( F ("'. Using Defaults") ) );
                 continue;
             }
 
@@ -681,10 +681,10 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             // DEBUG_V ("");
 
             // is it a valid / supported channel type
-            if (/*(ChannelType < uint32_t (InputType_Start)) ||*/ (ChannelType >= uint32_t (InputType_End)))
+            if ( /*(ChannelType < uint32_t (InputType_Start)) ||*/ ( ChannelType >= uint32_t (InputType_End) ) )
             {
                 // if not, flag an error and move on to the next channel
-                logcon (String (F ("Invalid Channel Type in config '")) + ChannelType + String (F ("'. Specified for channel '")) + ChannelIndex + "'. Disabling channel");
+                logcon (String ( F ("Invalid Channel Type in config '") ) + ChannelType + String ( F ("'. Specified for channel '") ) + ChannelIndex + "'. Disabling channel");
                 InstantiateNewInputChannel (e_InputChannelIds (ChannelIndex), e_InputType::InputType_Disabled);
                 continue;
             }
@@ -692,10 +692,10 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             // DEBUG_V ("");
 
             // do we have a configuration for the channel type?
-            if (false == InputChannelConfig.containsKey (String (ChannelType)))
+            if ( false == InputChannelConfig.containsKey ( String (ChannelType) ) )
             {
                 // if not, flag an error and stop processing
-                logcon (String (F ("No Input Settings Found for Channel '")) + ChannelIndex + String (F ("'. Using Defaults")));
+                logcon ( String ( F ("No Input Settings Found for Channel '") ) + ChannelIndex + String ( F ("'. Using Defaults") ) );
                 InstantiateNewInputChannel (e_InputChannelIds (ChannelIndex), e_InputType::InputType_Disabled);
                 continue;
             }
@@ -704,10 +704,10 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             // DEBUG_V ("");
 
             // make sure the proper Input type is running
-            InstantiateNewInputChannel (e_InputChannelIds (ChannelIndex), e_InputType (ChannelType));
+            InstantiateNewInputChannel ( e_InputChannelIds (ChannelIndex), e_InputType (ChannelType) );
             // DEBUG_V (String ("Response: ") + Response);
 
-            EffectEngineIsConfiguredToRun[ChannelIndex] = (e_InputType::InputType_Effects == InputChannelDrivers[ChannelIndex].pInputChannelDriver->GetInputType ()) ? true : false;
+            EffectEngineIsConfiguredToRun[ChannelIndex] = ( e_InputType::InputType_Effects == InputChannelDrivers[ChannelIndex].pInputChannelDriver->GetInputType () ) ? true : false;
 
             // send the config to the driver. At this level we have no idea what is in it
             InputChannelDrivers[ChannelIndex].pInputChannelDriver->SetConfig (InputChannelDriverConfig);
@@ -740,7 +740,7 @@ void c_InputMgr::SetConfig (const char * NewConfigData)
 {
     // DEBUG_START;
 
-    if (true == FileMgr.SaveConfigFile (ConfigFileName, NewConfigData))
+    if ( true == FileMgr.SaveConfigFile (ConfigFileName, NewConfigData) )
     {
         // DEBUG_V (String("NewConfigData: ") + NewConfigData);
         // FileMgr logs for us
@@ -750,7 +750,7 @@ void c_InputMgr::SetConfig (const char * NewConfigData)
     }  // end we saved the config
     else
     {
-        logcon (CN_stars + String (F (" Error Saving Input Manager Config File ")) + CN_stars);
+        logcon (CN_stars + String ( F (" Error Saving Input Manager Config File ") ) + CN_stars);
     }
 
     // DEBUG_END;
@@ -765,7 +765,7 @@ void c_InputMgr::SetConfig (JsonDocument & NewConfigData)
 {
     // DEBUG_START;
 
-    if (true == FileMgr.SaveConfigFile (ConfigFileName, NewConfigData))
+    if ( true == FileMgr.SaveConfigFile (ConfigFileName, NewConfigData) )
     {
         // FileMgr logs for us
         // logcon (CN_stars + String (F (" Saved Input Manager Config File. ")) + CN_stars);
@@ -774,7 +774,7 @@ void c_InputMgr::SetConfig (JsonDocument & NewConfigData)
     }  // end we saved the config
     else
     {
-        logcon (CN_stars + String (F (" Error Saving Input Manager Config File ")) + CN_stars);
+        logcon (CN_stars + String ( F (" Error Saving Input Manager Config File ") ) + CN_stars);
     }
 
     // DEBUG_END;

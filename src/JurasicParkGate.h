@@ -54,7 +54,7 @@
 #define NanoSecondsInAMicroSecond   1000
 #define NanoSecondsInASecond        (MicroSecondsInASecond * NanoSecondsInAMicroSecond)
 
-#define CPU_ClockTimeNS ((1.0 / float(F_CPU)) * float(NanoSecondsInASecond))
+#define CPU_ClockTimeNS ( ( 1.0 / float(F_CPU) ) * float(NanoSecondsInASecond) )
 
 // Macro strings
 #define STRINGIFY(X)    #X
@@ -85,7 +85,7 @@ bool setFromJSON (float & OutValue, J & Json, N Name)
 {
     bool HasBeenModified = false;
 
-    if (true == Json.containsKey (Name))
+    if ( true == Json.containsKey (Name) )
     {
         float temp = Json[Name];
         if (fabs (temp - OutValue) > 0.000005F)
@@ -103,7 +103,7 @@ bool setFromJSON (T & OutValue, J & Json, N Name)
 {
     bool HasBeenModified = false;
 
-    if (true == Json.containsKey (Name))
+    if ( true == Json.containsKey (Name) )
     {
         T temp = Json[Name];
         if (temp != OutValue)

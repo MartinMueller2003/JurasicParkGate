@@ -68,13 +68,13 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                 // DEBUG_V ("Process HEADER record");
                 _header.raw[_loc++] = data[index++];
                 // DEBUG_V ();
-                if (_loc == sizeof (efuheader_t))
+                if ( _loc == sizeof (efuheader_t) )
                 {
                     if (_header.signature == EFU_ID)
                     {
                         // DEBUG_V ();
                         _header.version = ntohs (_header.version);
-                        memset (& _record, 0, sizeof (efurecord_t));
+                        memset ( & _record, 0, sizeof (efurecord_t) );
                         _loc    = 0;
                         _state  = State::RECORD;
                     }
@@ -94,10 +94,10 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
             {
                 // DEBUG_V ("Process Data RECORD Type");
                 _record.raw[_loc++] = data[index++];
-                if (_loc == sizeof (efurecord_t))
+                if ( _loc == sizeof (efurecord_t) )
                 {
                     // DEBUG_V ();
-                    _record.type    = RecordType (ntohs ((uint16_t)_record.type));
+                    _record.type    = RecordType ( ntohs ( (uint16_t)_record.type ) );
                     _record.size    = ntohl (_record.size);
                     _loc            = 0;
                     // DEBUG_V (String("_record.type: ") + uint32_t(_record.type));
@@ -106,7 +106,7 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                     {
                         logcon ("Starting Sketch Image");
                         // Begin sketch update
-                        if (!Update.begin (_record.size, U_FLASH))
+                        if ( !Update.begin (_record.size, U_FLASH) )
                         {
                             // DEBUG_V ("Update.begin FAIL");
                             _state  = State::FAIL;
@@ -131,7 +131,7 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                             LittleFS.end ();
                         #endif // ifdef ARDUINO_ARCH_ESP8266
                         // DEBUG_V ();
-                        if (!Update.begin (_record.size, U_SPIFFS))
+                        if ( !Update.begin (_record.size, U_SPIFFS) )
                         {
                             // DEBUG_V ("begin U_SPIFFS failed");
                             _state  = State::FAIL;
@@ -181,7 +181,7 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
                     // DEBUG_V ("Call Update.end");
                     Update.end (true);
                     logcon ("Data Transfer Complete");
-                    memset (& _record, 0, sizeof (efurecord_t));
+                    memset ( & _record, 0, sizeof (efurecord_t) );
                     _loc    = 0;
                     _state  = State::RECORD;
                 }

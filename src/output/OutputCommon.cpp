@@ -58,7 +58,7 @@ void c_OutputCommon::ClearBuffer ()
 {
     // DEBUG_START;
 
-    memset (GetBufferAddress (), 0x00, GetBufferUsedSize ());
+    memset ( GetBufferAddress (), 0x00, GetBufferUsedSize () );
 
     // DEBUG_END;
 }  // ClearBuffer
@@ -156,7 +156,7 @@ bool c_OutputCommon::ValidateGpio (gpio_num_t ConsoleTxGpio, gpio_num_t ConsoleR
 {
     // DEBUG_START;
 
-    bool response = ((ConsoleTxGpio == DataPin) || (ConsoleRxGpio == DataPin));
+    bool response = ( (ConsoleTxGpio == DataPin) || (ConsoleRxGpio == DataPin) );
 
     // DEBUG_END;
     return response;

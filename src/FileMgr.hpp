@@ -139,6 +139,6 @@ private:
     uint32_t        FileUploadBufferOffset  = 0;
 
 protected:
-};  // c_FileMgr
+}; // c_FileMgr
 
 extern c_FileMgr FileMgr;

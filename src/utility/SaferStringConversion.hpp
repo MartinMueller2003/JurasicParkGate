@@ -55,9 +55,9 @@ inline esp_err_t saferRgbToHtmlColorString (char(& output)[N], uint8_t r, uint8_
     // The output is formatted as "#RRGGBB", where RR, GG, and BB are two hex digits
     // for the red, green, and blue components, respectively.
     static_assert ( N >= 8);
-    static_assert ( sizeof (int) <= sizeof (size_t)); // casting non-negative int to size_t is safe
+    static_assert ( sizeof (int) <= sizeof (size_t) ); // casting non-negative int to size_t is safe
     int wouldHaveWrittenChars = snprintf (output, N, "#%02x%02x%02x", r, g, b);
-    if (likely ((wouldHaveWrittenChars > 0) && (((size_t)wouldHaveWrittenChars) < N)))
+    if ( likely ( (wouldHaveWrittenChars > 0) && ( ( (size_t)wouldHaveWrittenChars ) < N ) ) )
     {
         result = ESP_OK;
     }
@@ -87,11 +87,11 @@ inline esp_err_t saferSecondsToFormattedMinutesAndSecondsString (char(& output)[
     // therefore, minutes is in range [0..71582788] (eight characters).
     // seconds is always exactly two characters.
     static_assert ( N >= 12);
-    static_assert ( sizeof (int) <= sizeof (size_t)); // casting non-negative int to size_t is safe
+    static_assert ( sizeof (int) <= sizeof (size_t) ); // casting non-negative int to size_t is safe
     uint32_t    m               = seconds / 60u;
     uint8_t     s               = seconds % 60u;
     int wouldHaveWrittenChars   = snprintf (output, N, "%u:%02u", m, s);
-    if (likely ((wouldHaveWrittenChars > 0) && (((size_t)wouldHaveWrittenChars) < N)))
+    if ( likely ( (wouldHaveWrittenChars > 0) && ( ( (size_t)wouldHaveWrittenChars ) < N ) ) )
     {
         result = ESP_OK;
     }

@@ -52,4 +52,4 @@ public:
 protected:
 
     c_InputButton Buttons[NumButtons];
-};  // c_InputButtons
+}; // c_InputButtons

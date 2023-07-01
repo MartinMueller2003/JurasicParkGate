@@ -104,6 +104,6 @@ private:
     FastTimer   BlankEndTime[InputChannelId_End];
 
     #define IM_JSON_SIZE (5 * 1024)
-};  // c_InputMgr
+}; // c_InputMgr
 
 extern c_InputMgr InputMgr;

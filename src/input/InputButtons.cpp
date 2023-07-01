@@ -79,7 +79,7 @@ void c_InputButtons::GetConfig (JsonObject & JsonData)
     // DEBUG_START;
 
     // make sure an array exists
-    if (false == JsonData.containsKey (CN_buttons))
+    if ( false == JsonData.containsKey (CN_buttons) )
     {
         DEBUG_V ("Create Button array");
         JsonData.createNestedArray (CN_buttons);
@@ -142,7 +142,7 @@ bool c_InputButtons::SetConfig (JsonObject & JsonData)
 {
     // DEBUG_START;
 
-    if (false == JsonData.containsKey (CN_buttons))
+    if ( false == JsonData.containsKey (CN_buttons) )
     {
         DEBUG_V ("Create Button array");
         JsonData.createNestedArray (CN_buttons);
@@ -152,16 +152,16 @@ bool c_InputButtons::SetConfig (JsonObject & JsonData)
 
     for (JsonObject CurrentButtonJsonData : InputButtonArray)
     {
-        if (false == CurrentButtonJsonData.containsKey (CN_device))
+        if ( false == CurrentButtonJsonData.containsKey (CN_device) )
         {
-            logcon (F ("Missing ID in button config. Skipping entry"));
+            logcon ( F ("Missing ID in button config. Skipping entry") );
             continue;
         }
 
         uint32_t index = CurrentButtonJsonData[CN_device];
         if (index >= NumButtons)
         {
-            logcon (String (F ("Invalid button array entry ID: ")) + String (index));
+            logcon ( String ( F ("Invalid button array entry ID: ") ) + String (index) );
             continue;
         }
 

@@ -88,4 +88,4 @@ private:
     String                  OutputName;
     uint16_t                Num_Channels    = OM_SERVO_PCA9685_CHANNEL_LIMIT;
     uint8_t                 I2C_Address     = PCA9685_I2C_ADDRESS;
-};  // c_OutputServoPCA9685
+}; // c_OutputServoPCA9685

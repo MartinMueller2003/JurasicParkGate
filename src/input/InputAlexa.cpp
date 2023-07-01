@@ -47,7 +47,7 @@ c_InputAlexa::~c_InputAlexa ()
     {
         // allow the other input channels to run
         InputMgr.SetOperationalState (true);
-        WebMgr.RegisterAlexaCallback ((DeviceCallbackFunction)nullptr);
+        WebMgr.RegisterAlexaCallback ( (DeviceCallbackFunction)nullptr );
 
         if (pEffectsEngine)
         {
@@ -158,7 +158,7 @@ void c_InputAlexa::onMessage (EspalexaDevice * pDevice)
         OutputMgr.ClearBuffer ();
 
         char HexColor[8];
-        ESP_ERROR_CHECK (saferRgbToHtmlColorString (HexColor, pDevice->getR (), pDevice->getG (), pDevice->getB ()));
+        ESP_ERROR_CHECK ( saferRgbToHtmlColorString ( HexColor, pDevice->getR (), pDevice->getG (), pDevice->getB () ) );
 
         // DEBUG_V (String ("pDevice->getR: ") + String (pDevice->getR ()));
         // DEBUG_V (String ("pDevice->getG: ") + String (pDevice->getG ()));
@@ -177,9 +177,9 @@ void c_InputAlexa::onMessage (EspalexaDevice * pDevice)
         // DEBUG_V (String ("CN_EffectBrightness: ") + String (pDevice->getValue ()));
         // DEBUG_V (String ("getState: ") + String (pDevice->getState ()));
 
-        InputMgr.SetOperationalState (!(pDevice->getState ()));
-        SetOperationalState (pDevice->getState ());
-        pEffectsEngine->SetOperationalState (pDevice->getState ());
+        InputMgr.SetOperationalState ( !( pDevice->getState () ) );
+        SetOperationalState ( pDevice->getState () );
+        pEffectsEngine->SetOperationalState ( pDevice->getState () );
         pEffectsEngine->SetConfig (JsonConfig);
 
         // DEBUG_V ("");

@@ -66,7 +66,7 @@ protected:
     friend class fsm_InputButton_off_state;
     friend class fsm_InputButton_on_wait_long_state;
     friend class fsm_InputButton_wait_for_off_state;
-};  // c_InputButton
+}; // c_InputButton
 
 /*****************************************************************************/
 /*
@@ -81,7 +81,7 @@ public:
     virtual~fsm_InputButton_state () {}
 private:
     #define MIN_INPUT_STABLE_VALUE 50
-};  // fsm_InputButton_state
+}; // fsm_InputButton_state
 
 /*****************************************************************************/
 // input is unknown and unreachable
@@ -92,7 +92,7 @@ public:
     void    Poll (c_InputButton & pInputButton) override;
     void    Init (c_InputButton & pInputButton) override;
     ~fsm_InputButton_boot () override{}
-};  // fsm_InputButton_boot
+}; // fsm_InputButton_boot
 
 /*****************************************************************************/
 // input is off and stable
@@ -103,7 +103,7 @@ public:
     void    Poll (c_InputButton & pInputButton) override;
     void    Init (c_InputButton & pInputButton) override;
     ~fsm_InputButton_off_state () override{}
-};  // fsm_InputButton_off_state
+}; // fsm_InputButton_off_state
 
 /*****************************************************************************/
 // input is always reported as on
@@ -114,7 +114,7 @@ public:
     void    Poll (c_InputButton & pInputButton) override;
     void    Init (c_InputButton & pInputButton) override;
     ~fsm_InputButton_on_wait_long_state () override{}
-};  // fsm_InputButton_on_wait_long_state
+}; // fsm_InputButton_on_wait_long_state
 
 /*****************************************************************************/
 // input is always reported as on
@@ -125,4 +125,4 @@ public:
     void    Poll (c_InputButton & pInputButton) override;
     void    Init (c_InputButton & pInputButton) override;
     ~fsm_InputButton_wait_for_off_state () override{}
-};  // fsm_InputButton_wait_for_off_state
+}; // fsm_InputButton_wait_for_off_state

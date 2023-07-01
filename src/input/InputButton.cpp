@@ -76,7 +76,7 @@ void c_InputButton::GetStatus (JsonObject & JsonData)
 
     JsonData[M_NAME]    = Name;
     JsonData[M_ID]      = GpioId;
-    JsonData[M_STATE]   = (ReadInput ()) ? CN_on : CN_off;
+    JsonData[M_STATE]   = ( ReadInput () ) ? CN_on : CN_off;
 
     // DEBUG_END;
 }  // GetStatistics
@@ -99,7 +99,7 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
 
     polarity = (String (CN_ActiveHigh) == Polarity) ? ActiveHigh : ActiveLow;
 
-    if ((oldInputId != GpioId) || (false == Enabled))
+    if ( (oldInputId != GpioId) || (false == Enabled) )
     {
         pinMode (   oldInputId, INPUT);
         pinMode (   GpioId,     INPUT_PULLUP);
@@ -247,7 +247,7 @@ void fsm_InputButton_on_wait_long_state::Poll (c_InputButton & pInputButton)
     {
         // _ DEBUG_V("");
         // decrement the counter
-        if (pInputButton.InputHoldTimer.IsExpired ())
+        if ( pInputButton.InputHoldTimer.IsExpired () )
         {
             // we really are on
             fsm_InputButton_wait_for_off_state_imp.Init (pInputButton);

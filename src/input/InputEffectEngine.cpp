@@ -32,17 +32,17 @@ static const c_InputEffectEngine::EffectDescriptor_t ListOfEffects[] =
     //    name                              func                   htmlid               Color      Reverse
 
     // { "Disabled",     nullptr,                             "t_disabled",     1,    1,    1,    1,  "T0"     },
-    {"Solid",        & c_InputEffectEngine::effectSolidColor,        "t_static",             1,    0,    0,    0, "T1"  },
-    {"Blink",        & c_InputEffectEngine::effectBlink,             "t_blink",              1,    0,    0,    0, "T2"  },
-    {"Flash",        & c_InputEffectEngine::effectFlash,             "t_flash",              1,    0,    0,    0, "T3"  },
-    {"Rainbow",      & c_InputEffectEngine::effectRainbow,           "t_rainbow",            0,    1,    1,    1, "T5"  },
-    {"Chase",        & c_InputEffectEngine::effectChase,             "t_chase",              1,    1,    1,    0, "T4"  },
-    {"Fire flicker", & c_InputEffectEngine::effectFireFlicker,       "t_fireflicker",        1,    0,    0,    0, "T6"  },
-    {"Lightning",    & c_InputEffectEngine::effectLightning,         "t_lightning",          1,    0,    0,    0, "T7"  },
-    {"Breathe",      & c_InputEffectEngine::effectBreathe,           "t_breathe",            1,    0,    0,    0, "T8"  },
-    {"Random",       & c_InputEffectEngine::effectRandom,            "t_random",             0,    0,    0,    0, "T9"  },
-    {"Transition",   & c_InputEffectEngine::effectTransition,        "t_Transition",         0,    0,    0,    0, "T10" },
-    {"Marquee",      & c_InputEffectEngine::effectMarquee,           "t_Marquee",            0,    0,    0,    0, "T11" }
+    {"Solid",        & c_InputEffectEngine::effectSolidColor,        "t_static",                         1,    0,    0,    0, "T1"  },
+    {"Blink",        & c_InputEffectEngine::effectBlink,             "t_blink",                          1,    0,    0,    0, "T2"  },
+    {"Flash",        & c_InputEffectEngine::effectFlash,             "t_flash",                          1,    0,    0,    0, "T3"  },
+    {"Rainbow",      & c_InputEffectEngine::effectRainbow,           "t_rainbow",                        0,    1,    1,    1, "T5"  },
+    {"Chase",        & c_InputEffectEngine::effectChase,             "t_chase",                          1,    1,    1,    0, "T4"  },
+    {"Fire flicker", & c_InputEffectEngine::effectFireFlicker,       "t_fireflicker",                    1,    0,    0,    0, "T6"  },
+    {"Lightning",    & c_InputEffectEngine::effectLightning,         "t_lightning",                      1,    0,    0,    0, "T7"  },
+    {"Breathe",      & c_InputEffectEngine::effectBreathe,           "t_breathe",                        1,    0,    0,    0, "T8"  },
+    {"Random",       & c_InputEffectEngine::effectRandom,            "t_random",                         0,    0,    0,    0, "T9"  },
+    {"Transition",   & c_InputEffectEngine::effectTransition,        "t_Transition",                     0,    0,    0,    0, "T10" },
+    {"Marquee",      & c_InputEffectEngine::effectMarquee,           "t_Marquee",                        0,    0,    0,    0, "T11" }
 };
 
 static std::vector <c_InputEffectEngine::dCRGB> TransitionColorTable =
@@ -85,7 +85,7 @@ static std::vector <c_InputEffectEngine::MarqueeGroup> MarqueueGroupTable =
             255, 255, 255
         }, 100, 0
     },
-};  // MarqueueGroupTable
+}; // MarqueueGroupTable
 
 // -----------------------------------------------------------------------------
 c_InputEffectEngine::c_InputEffectEngine (c_InputMgr::e_InputChannelIds NewInputChannelId,
@@ -148,7 +148,7 @@ void c_InputEffectEngine::GetConfig (JsonObject & jsonConfig)
 {
     // DEBUG_START;
     char HexColor[8];
-    ESP_ERROR_CHECK (saferRgbToHtmlColorString (HexColor, EffectColor.r, EffectColor.g, EffectColor.b));
+    ESP_ERROR_CHECK ( saferRgbToHtmlColorString (HexColor, EffectColor.r, EffectColor.g, EffectColor.b) );
     // DEBUG_V ("");
 
     jsonConfig[CN_currenteffect]        = ActiveEffect->name;
@@ -244,7 +244,7 @@ void c_InputEffectEngine::GetStatus (JsonObject & jsonStatus)
 {
     // DEBUG_START;
 
-    JsonObject Status = jsonStatus.createNestedObject (F ("effects"));
+    JsonObject Status = jsonStatus.createNestedObject ( F ("effects") );
     Status[CN_currenteffect]    = ActiveEffect->name;
     Status[CN_id]               = InputChannelId;
 
@@ -280,7 +280,7 @@ void c_InputEffectEngine::NextEffect ()
 
     // DEBUG_V (String ("CurrentEffectIndex: ") + String(CurrentEffectIndex));
     setEffect (ListOfEffects[CurrentEffectIndex].name);
-    logcon (String (F ("Setting new effect: ")) + ActiveEffect->name);
+    logcon (String ( F ("Setting new effect: ") ) + ActiveEffect->name);
     // DEBUG_V (String ("ActiveEffect->name: ") + ActiveEffect->name);
 
     // DEBUG_END;
@@ -297,14 +297,14 @@ void c_InputEffectEngine::PollFlash ()
             break;
         }
 
-        if (!FlashInfo.delaytimer.IsExpired ())
+        if ( !FlashInfo.delaytimer.IsExpired () )
         {
             // not time to flash yet
             break;
         }
 
         // is the flash done?
-        if (FlashInfo.durationtimer.IsExpired ())
+        if ( FlashInfo.durationtimer.IsExpired () )
         {
             // set up the next flash
             uint32_t    NextDelay       = random (FlashInfo.MinDelayMS, FlashInfo.MaxDelayMS);
@@ -322,7 +322,7 @@ void c_InputEffectEngine::PollFlash ()
             break;
         }
 
-        uint8_t intensity = uint8_t (map (random (FlashInfo.MinIntensity, FlashInfo.MaxIntensity), 0, 100, 0, 255));
+        uint8_t intensity = uint8_t ( map (random (FlashInfo.MinIntensity, FlashInfo.MaxIntensity), 0, 100, 0, 255) );
         CRGB color;
         color.r = intensity;
         color.g = intensity;
@@ -348,14 +348,14 @@ void c_InputEffectEngine::Process ()
 
         // DEBUG_V ("Init OK");
 
-        if ((0 == PixelCount) || (StayDark))
+        if ( (0 == PixelCount) || (StayDark) )
         {
             break;
         }
 
         // DEBUG_V ("Pixel Count OK");
 
-        if (!EffectDelayTimer.IsExpired ())
+        if ( !EffectDelayTimer.IsExpired () )
         {
             PollFlash ();
             break;
@@ -363,10 +363,10 @@ void c_InputEffectEngine::Process ()
 
         // DEBUG_V ("Update output");
         uint32_t wait = (this->*ActiveEffect->func)();
-        EffectWait = max ((int)wait, MIN_EFFECT_DELAY);
+        EffectWait = max ( (int)wait, MIN_EFFECT_DELAY );
         EffectDelayTimer.StartTimer (EffectWait);
         EffectCounter++;
-        InputMgr.RestartBlankTimer (GetInputChannelId ());
+        InputMgr.RestartBlankTimer ( GetInputChannelId () );
 
         PollFlash ();
     } while (false);
@@ -428,7 +428,7 @@ bool c_InputEffectEngine::SetConfig (ArduinoJson::JsonObject & jsonConfig)
         FlashInfo.MinIntensity = FlashInfo.MaxIntensity;
     }
 
-    if (jsonConfig.containsKey (CN_transitions))
+    if ( jsonConfig.containsKey (CN_transitions) )
     {
         TransitionColorTable.clear ();
 
@@ -448,7 +448,7 @@ bool c_InputEffectEngine::SetConfig (ArduinoJson::JsonObject & jsonConfig)
         }
     }
 
-    if (jsonConfig.containsKey (CN_MarqueeGroups))
+    if ( jsonConfig.containsKey (CN_MarqueeGroups) )
     {
         MarqueueGroupTable.clear ();
 
@@ -549,7 +549,7 @@ void c_InputEffectEngine::setBrightness (float brightness)
 void c_InputEffectEngine::setSpeed (uint16_t speed)
 {
     EffectSpeed = speed;
-    setDelay (pow (10, (10 - speed) / 4.0 + 2));
+    setDelay ( pow (10, (10 - speed) / 4.0 + 2) );
 }
 
 // -----------------------------------------------------------------------------
@@ -574,10 +574,10 @@ void c_InputEffectEngine::setEffect (const String & effectName)
     int EffectIndex = 0;
     for (EffectDescriptor_t currentEffect : ListOfEffects)
     {
-        if (effectName.equalsIgnoreCase (currentEffect.name))
+        if ( effectName.equalsIgnoreCase (currentEffect.name) )
         {
             // DEBUG_V ("Found desired effect");
-            if (!ActiveEffect->name.equalsIgnoreCase (currentEffect.name))
+            if ( !ActiveEffect->name.equalsIgnoreCase (currentEffect.name) )
             {
                 // DEBUG_V ("Starting Effect");
                 ActiveEffect = & ListOfEffects[EffectIndex];
@@ -608,9 +608,9 @@ void c_InputEffectEngine::setColor (String & NewColor)
     uint32_t intValue = strtoul (NewColor.substring (1).c_str (), nullptr, 16);
     // DEBUG_V (String ("intValue: ") + String (intValue, 16));
 
-    EffectColor.r   = uint8_t ((intValue >> 16) & 0xFF);
-    EffectColor.g   = uint8_t ((intValue >> 8) & 0xFF);
-    EffectColor.b   = uint8_t ((intValue >> 0) & 0xFF);
+    EffectColor.r   = uint8_t ( (intValue >> 16) & 0xFF );
+    EffectColor.g   = uint8_t ( (intValue >> 8) & 0xFF );
+    EffectColor.b   = uint8_t ( (intValue >> 0) & 0xFF );
 
     // DEBUG_END;
 }  // setColor
@@ -624,7 +624,7 @@ void c_InputEffectEngine::setPixel (uint16_t pixelId, CRGB color)
     // DEBUG_V (String ("pixelId: ") + pixelId);
     // DEBUG_V (String ("PixelCount: ") + PixelCount);
 
-    if ((true == IsInputChannelActive) && (pixelId < PixelCount))
+    if ( (true == IsInputChannelActive) && (pixelId < PixelCount) )
     {
         uint8_t PixelBuffer[sizeof (CRGB) + 1];
 
@@ -749,8 +749,8 @@ void c_InputEffectEngine::outputEffectColor (uint16_t pixelId, CRGB outputColor)
 
     if (EffectMirror)
     {
-        setPixel (  (NumPixels - 1) - pixelId,              outputColor);
-        setPixel (  ((NumPixels) + pixelId) - PixelOffset,  outputColor);
+        setPixel (  (NumPixels - 1) - pixelId,                  outputColor );
+        setPixel (  ( (NumPixels) + pixelId ) - PixelOffset,    outputColor );
     }
     else
     {
@@ -812,7 +812,7 @@ uint16_t c_InputEffectEngine::effectRainbow ()
         hue = map (hue, 0, NumberOfPixelsToOutput, 0, 359);
         CRGB color = hsv2rgb ({double(hue), 1.0, 1.0});
 
-        outputEffectColor ((NumberOfPixelsToOutput - CurrentPixelId) - 1, color);
+        outputEffectColor ( (NumberOfPixelsToOutput - CurrentPixelId) - 1, color );
         // outputEffectColor (CurrentPixelId, color);
     }
 
@@ -855,9 +855,9 @@ uint16_t c_InputEffectEngine::effectRandom ()
         else
         {
             // DEBUG_V ("set up a new color");
-            HsvColor.h  = double(random (359));
-            HsvColor.s  = double(random (50, 100)) / 100;
-            HsvColor.v  = double(random (50, 100)) / 100;
+            HsvColor.h  = double( random (359) );
+            HsvColor.s  = double( random (50, 100) ) / 100;
+            HsvColor.v  = double( random (50, 100) ) / 100;
 
             // RgbColor = hsv2rgb (HsvColor);
             // DEBUG_V (String ("           hue: ") + String (HsvColor.h));
@@ -885,7 +885,7 @@ uint16_t c_InputEffectEngine::effectTransition ()
 
     // DEBUG_START;
 
-    if (ColorHasReachedTarget ())
+    if ( ColorHasReachedTarget () )
     {
         // DEBUG_V("need to calculate a new target color");
 
@@ -895,7 +895,7 @@ uint16_t c_InputEffectEngine::effectTransition ()
         ++TransitionTargetColorIterator;
 
         // wrap the index
-        if (TransitionTargetColorIterator == TransitionColorTable.end ())
+        if ( TransitionTargetColorIterator == TransitionColorTable.end () )
         {
             // DEBUG_V("Wrap Transition iterator");
             TransitionTargetColorIterator = TransitionColorTable.begin ();
@@ -965,7 +965,7 @@ uint16_t c_InputEffectEngine::effectMarquee ()
         {
             uint32_t    groupPixelCount     = CurrentGroup.NumPixelsInGroup;
             double      CurrentBrightness   = (EffectReverse) ? CurrentGroup.EndingIntensity : CurrentGroup.StartingIntensity;
-            double      BrightnessInterval  = (double(CurrentGroup.StartingIntensity) - double(CurrentGroup.EndingIntensity)) / double(groupPixelCount);
+            double      BrightnessInterval  = ( double(CurrentGroup.StartingIntensity) - double(CurrentGroup.EndingIntensity) ) / double(groupPixelCount);
 
             // now adjust for 100% = 1
             CurrentBrightness   /= 100;
@@ -1038,7 +1038,7 @@ void c_InputEffectEngine::CalculateTransitionStepValue (double tc, double cc, do
     step = (tc - cc) / NumStepsToTarget;
 
     #define MinStepValue (1.0 / NumStepsToTarget)
-    if (MinStepValue > fabs (step))
+    if ( MinStepValue > fabs (step) )
     {
         if (step < 0.0)
         {
@@ -1064,9 +1064,9 @@ void c_InputEffectEngine::ConditionalIncrementColor (double tc, double & cc, dou
 
     double originalDiff = fabs (tc - cc);
 
-    if (!ColorHasReachedTarget (tc, cc, step))
+    if ( !ColorHasReachedTarget (tc, cc, step) )
     {
-        cc  = min ((cc + step), 255.0);
+        cc  = min ( (cc + step), 255.0 );
         cc  = max (0.0, cc);
     }
 
@@ -1093,7 +1093,7 @@ bool c_InputEffectEngine::ColorHasReachedTarget (double tc, double cc, double st
 
     double diff = fabs (tc - cc);
 
-    if (diff <= fabs (2 * step))
+    if ( diff <= fabs (2 * step) )
     {
         // DEBUG_V("Single Color has reached target")
         response = true;
@@ -1117,9 +1117,9 @@ bool c_InputEffectEngine::ColorHasReachedTarget ()
 {
     // DEBUG_START;
 
-    bool response = (ColorHasReachedTarget (TransitionTargetColorIterator->r, TransitionCurrentColor.r, TransitionStepValue.r) &&
+    bool response = ( ColorHasReachedTarget (TransitionTargetColorIterator->r, TransitionCurrentColor.r, TransitionStepValue.r) &&
                         ColorHasReachedTarget ( TransitionTargetColorIterator->g,   TransitionCurrentColor.g,   TransitionStepValue.g) &&
-                        ColorHasReachedTarget ( TransitionTargetColorIterator->b,   TransitionCurrentColor.b,   TransitionStepValue.b));
+                        ColorHasReachedTarget ( TransitionTargetColorIterator->b,   TransitionCurrentColor.b,   TransitionStepValue.b) );
 
     if (response)
     {
@@ -1187,7 +1187,7 @@ uint16_t c_InputEffectEngine::effectFireFlicker ()
 {
     // DEBUG_START;
     byte    rev_intensity   = 6; // more=less intensive, less=more intensive
-    byte    lum             = max (EffectColor.r, max (EffectColor.g, EffectColor.b)) / rev_intensity;
+    byte    lum             = max ( EffectColor.r, max (EffectColor.g, EffectColor.b) ) / rev_intensity;
 
     for (uint16_t i = 0;i < PixelCount;i++)
     {
@@ -1195,9 +1195,9 @@ uint16_t c_InputEffectEngine::effectFireFlicker ()
         setPixel (
             i,
             CRGB{
-            uint8_t (   max (EffectColor.r - flicker, 0)),
-            uint8_t (   max (EffectColor.g - flicker, 0)),
-            uint8_t (   max (EffectColor.b - flicker, 0))
+            uint8_t (   max (EffectColor.r - flicker, 0) ),
+            uint8_t (   max (EffectColor.g - flicker, 0) ),
+            uint8_t (   max (EffectColor.b - flicker, 0) )
         });
     }
 
@@ -1294,7 +1294,7 @@ uint16_t c_InputEffectEngine::effectBreathe ()
       */
     // sin() is in radians, so 2*PI rad is a full period; compiler should optimize.
     // DEBUG_START;
-    float val = (exp (sin (float(millis ()) / (float(EffectDelay) * 5.0) * 2.0 * PI)) - 0.367879441) * 0.106364766 + 0.75;
+    float val = (exp ( sin (float( millis () ) / (float(EffectDelay) * 5.0) * 2.0 * PI) ) - 0.367879441) * 0.106364766 + 0.75;
     setAll (
     {
         uint8_t (   EffectColor.r * val),
@@ -1391,8 +1391,8 @@ c_InputEffectEngine::CRGB c_InputEffectEngine::hsv2rgb (dCHSV in)
         i   = (long)hh;
         ff  = hh - i;
         p   = in.v * (1.0 - in.s);
-        q   = in.v * (1.0 - (in.s * ff));
-        t   = in.v * (1.0 - (in.s * (1.0 - ff)));
+        q   = in.v * ( 1.0 - (in.s * ff) );
+        t   = in.v * ( 1.0 - ( in.s * (1.0 - ff) ) );
 
         switch (i)
         {
@@ -1447,9 +1447,9 @@ c_InputEffectEngine::CRGB c_InputEffectEngine::hsv2rgb (dCHSV in)
         } // switch
     }
 
-    out_int.r   = min (uint16_t (255), uint16_t (255 * out.r));
-    out_int.g   = min (uint16_t (255), uint16_t (255 * out.g));
-    out_int.b   = min (uint16_t (255), uint16_t (255 * out.b));
+    out_int.r   = min ( uint16_t (255), uint16_t (255 * out.r) );
+    out_int.g   = min ( uint16_t (255), uint16_t (255 * out.g) );
+    out_int.b   = min ( uint16_t (255), uint16_t (255 * out.b) );
 
     return out_int;
 }

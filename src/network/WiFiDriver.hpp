@@ -46,7 +46,7 @@ public:
     virtual void    OnDisconnect (void)             = 0;
     void            GetDriverName (String & Name)       {Name = CN_WiFiDrv;}
     void            SetParent (c_WiFiDriver * parent)   {pWiFiDriver = parent;}
-};  // fsm_WiFi_state
+}; // fsm_WiFi_state
 
 class c_WiFiDriver
 {
@@ -103,9 +103,9 @@ private:
 
     String                  ssid;
     String                  passphrase;
-    IPAddress               ip                      = IPAddress ((uint32_t)0);
-    IPAddress               netmask                 = IPAddress ((uint32_t)0);
-    IPAddress               gateway                 = IPAddress ((uint32_t)0);
+    IPAddress               ip                      = IPAddress ( (uint32_t)0 );
+    IPAddress               netmask                 = IPAddress ( (uint32_t)0 );
+    IPAddress               gateway                 = IPAddress ( (uint32_t)0 );
     bool                    UseDhcp                 = true;
     bool                    ap_fallbackIsEnabled    = true;
     uint32_t                ap_timeout              = AP_TIMEOUT;       ///< How long to wait in AP mode with no connection before rebooting
@@ -143,7 +143,7 @@ protected:
     friend class fsm_WiFi_state;
     fsm_WiFi_state  * pCurrentFsmState = nullptr;
     FastTimer       FsmTimer;
-};  // c_WiFiDriver
+}; // c_WiFiDriver
 
 
 /*****************************************************************************/
@@ -164,7 +164,7 @@ public:
     virtual void    GetStateName (String & sName)   {sName = F ("Boot");}
     virtual void    OnConnect (void)                { /* ignore */}
     virtual void    OnDisconnect (void)             { /* ignore */}
-};  // fsm_WiFi_state_Boot
+}; // fsm_WiFi_state_Boot
 
 /*****************************************************************************/
 class fsm_WiFi_state_ConnectingUsingConfig : public fsm_WiFi_state
@@ -178,7 +178,7 @@ public:
     virtual void    GetStateName (String & sName) {sName = F ("Connecting Using Config Credentials");}
     virtual void    OnConnect (void);
     virtual void    OnDisconnect (void) {}
-};  // fsm_WiFi_state_ConnectingUsingConfig
+}; // fsm_WiFi_state_ConnectingUsingConfig
 
 /*****************************************************************************/
 class fsm_WiFi_state_ConnectingUsingDefaults : public fsm_WiFi_state
@@ -192,7 +192,7 @@ public:
     virtual void    GetStateName (String & sName) {sName = F ("Connecting Using Default Credentials");}
     virtual void    OnConnect (void);
     virtual void    OnDisconnect (void) {}
-};  // fsm_WiFi_state_ConnectingUsingConfig
+}; // fsm_WiFi_state_ConnectingUsingConfig
 
 /*****************************************************************************/
 class fsm_WiFi_state_ConnectedToAP : public fsm_WiFi_state
@@ -206,7 +206,7 @@ public:
     virtual void    GetStateName (String & sName)   {sName = F ("Connected To AP");}
     virtual void    OnConnect (void)                {}
     virtual void    OnDisconnect (void);
-};  // fsm_WiFi_state_ConnectedToAP
+}; // fsm_WiFi_state_ConnectedToAP
 
 /*****************************************************************************/
 class fsm_WiFi_state_ConnectingAsAP : public fsm_WiFi_state
@@ -220,7 +220,7 @@ public:
     virtual void    GetStateName (String & sName) {sName = F ("Connecting As AP");}
     virtual void    OnConnect (void);
     virtual void    OnDisconnect (void) {}
-};  // fsm_WiFi_state_ConnectingAsAP
+}; // fsm_WiFi_state_ConnectingAsAP
 
 /*****************************************************************************/
 class fsm_WiFi_state_ConnectedToSta : public fsm_WiFi_state
@@ -234,7 +234,7 @@ public:
     virtual void    GetStateName (String & sName)   {sName = F ("Connected To STA");}
     virtual void    OnConnect (void)                {}
     virtual void    OnDisconnect (void);
-};  // fsm_WiFi_state_ConnectedToSta
+}; // fsm_WiFi_state_ConnectedToSta
 
 /*****************************************************************************/
 class fsm_WiFi_state_ConnectionFailed : public fsm_WiFi_state
@@ -248,7 +248,7 @@ public:
     virtual void    GetStateName (String & sName)   {sName = F ("Connection Failed");}
     virtual void    OnConnect (void)                {}
     virtual void    OnDisconnect (void)             {}
-};  // fsm_WiFi_state_Rebooting
+}; // fsm_WiFi_state_Rebooting
 
 /*****************************************************************************/
 class fsm_WiFi_state_Disabled : public fsm_WiFi_state
@@ -262,4 +262,4 @@ public:
     virtual void    GetStateName (String & sName)   {sName = F ("Disabled");}
     virtual void    OnConnect (void)                {}
     virtual void    OnDisconnect (void)             {}
-};  // fsm_WiFi_state_Disabled
+}; // fsm_WiFi_state_Disabled

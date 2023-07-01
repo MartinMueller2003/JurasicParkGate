@@ -134,7 +134,7 @@ private:
     #define MAX_EFFECT_DELAY        65535
     #define DEFAULT_EFFECT_DELAY    1000
 
-    using timeType = decltype(millis ());
+    using timeType = decltype( millis () );
 
 
     uint32_t    EffectWait = 32;                            /* How long to wait for the effect to run again */
@@ -202,5 +202,6 @@ private:
         uint32_t    MaxDurationMS   = 50;
         FastTimer   delaytimer;
         FastTimer   durationtimer;
-    } FlashInfo;
+    }
+    FlashInfo;
 }; // class c_InputEffectEngine

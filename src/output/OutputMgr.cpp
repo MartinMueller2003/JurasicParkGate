@@ -50,8 +50,8 @@ typedef struct
 
 static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::OutputType_End] =
 {
-    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"     },
-    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"          },
+    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"          },
+    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"               },
 };
 
 // -----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ c_OutputMgr::c_OutputMgr ()
     ConfigFileName = String ("/") + String (CN_output_config) + CN_Dotjson;
 
     // clear the input data buffer
-    memset ((char *)& OutputBuffer[0], 0, sizeof (OutputBuffer));
+    memset ( (char *)& OutputBuffer[0], 0, sizeof (OutputBuffer) );
 }  // c_OutputMgr
 
 // -----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ void c_OutputMgr::Begin ()
 
         if (0 == OutputChannelId_End)
         {
-            logcon (F ("ERROR: No output Channels defined. Rebooting"));
+            logcon ( F ("ERROR: No output Channels defined. Rebooting") );
             reboot = true;
             break;
         }
@@ -150,7 +150,7 @@ void c_OutputMgr::Begin ()
         // CreateNewConfig ();
 
         // Preset the output memory
-        memset ((void *)& OutputBuffer[0], 0x00, sizeof (OutputBuffer));
+        memset ( (void *)& OutputBuffer[0], 0x00, sizeof (OutputBuffer) );
     } while (false);
 
     // DEBUG_END;
@@ -169,7 +169,7 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
 
     // add the channels header
     JsonObject OutputMgrChannelsData;
-    if (true == jsonConfig.containsKey (CN_channels))
+    if ( true == jsonConfig.containsKey (CN_channels) )
     {
         // DEBUG_V ();
         OutputMgrChannelsData = jsonConfig[CN_channels];
@@ -188,8 +188,8 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         // DEBUG_V (String("Create Section in Config file for the output channel: '") + CurrentChannel.pOutputChannelDriver->GetOutputChannelId() + "'");
         // create a record for this channel
         JsonObject ChannelConfigData;
-        String sChannelId = String (CurrentChannel.pOutputChannelDriver->GetOutputChannelId ());
-        if (true == OutputMgrChannelsData.containsKey (sChannelId))
+        String sChannelId = String ( CurrentChannel.pOutputChannelDriver->GetOutputChannelId () );
+        if ( true == OutputMgrChannelsData.containsKey (sChannelId) )
         {
             // DEBUG_V ();
             ChannelConfigData = OutputMgrChannelsData[sChannelId];
@@ -202,11 +202,11 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         }
 
         // save the name as the selected channel type
-        ChannelConfigData[CN_type] = int(CurrentChannel.pOutputChannelDriver->GetOutputType ());
+        ChannelConfigData[CN_type] = int( CurrentChannel.pOutputChannelDriver->GetOutputType () );
 
-        String DriverTypeId = String (int(CurrentChannel.pOutputChannelDriver->GetOutputType ()));
+        String DriverTypeId = String ( int( CurrentChannel.pOutputChannelDriver->GetOutputType () ) );
         JsonObject ChannelConfigByTypeData;
-        if (true == ChannelConfigData.containsKey (String (DriverTypeId)))
+        if ( true == ChannelConfigData.containsKey ( String (DriverTypeId) ) )
         {
             ChannelConfigByTypeData = ChannelConfigData[DriverTypeId];
             // DEBUG_V ();
@@ -289,7 +289,7 @@ void c_OutputMgr::CreateNewConfig ()
             // DEBUG_V ();
         }  // end for each interface
 
-        if (JsonConfigDoc.overflowed ())
+        if ( JsonConfigDoc.overflowed () )
         {
             logcon ("Error: Config size is too small. Cannot create an output config with the current settings.")
             break;
@@ -411,7 +411,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
             CurrentOutputChannelDriver.pOutputChannelDriver->GetDriverName (DriverName);
             if (!IsBooting)
             {
-                logcon (String (MN_12) + DriverName + MN_13 + String (CurrentOutputChannelDriver.DriverId));
+                logcon ( String (MN_12) + DriverName + MN_13 + String (CurrentOutputChannelDriver.DriverId) );
             }
 
             delete CurrentOutputChannelDriver.pOutputChannelDriver;
@@ -449,7 +449,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
             {
                 // if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
                 {
-                    logcon (CN_stars + String (F (" Starting Servo PCA9685 for channel '")) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
+                    logcon (CN_stars + String ( F (" Starting Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
                     CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputServoPCA9685 (
                         CurrentOutputChannelDriver.DriverId,
                         CurrentOutputChannelDriver.GpioPin,
@@ -462,7 +462,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
 
                 if (!BuildingNewConfig)
                 {
-                    logcon (CN_stars + String (F (" Cannot Start Servo PCA9685 for channel '")) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
+                    logcon (CN_stars + String ( F (" Cannot Start Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
                 }
 
                 CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
@@ -500,7 +500,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
         // DEBUG_V (String("Driver Name: ") + sDriverName);
         if (!IsBooting)
         {
-            logcon ("'" + sDriverName + MN_14 + String (CurrentOutputChannelDriver.DriverId));
+            logcon ( "'" + sDriverName + MN_14 + String (CurrentOutputChannelDriver.DriverId) );
         }
 
         if (StartDriver)
@@ -526,7 +526,7 @@ void c_OutputMgr::LoadConfig ()
     // DEBUG_START;
 
     // try to load and process the config file
-    if (!FileMgr.LoadConfigFile (
+    if ( !FileMgr.LoadConfigFile (
         ConfigFileName,
         [this] (DynamicJsonDocument & JsonConfigDoc)
         {
@@ -541,7 +541,7 @@ void c_OutputMgr::LoadConfig ()
             // DEBUG_V ();
             this->ProcessJsonConfig (JsonConfig);
             // DEBUG_V ();
-        }))
+        }) )
     {
         if (!IsBooting)
         {
@@ -579,7 +579,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
 
     do  // once
     {
-        if (false == jsonConfig.containsKey (CN_output_config))
+        if ( false == jsonConfig.containsKey (CN_output_config) )
         {
             logcon (String (MN_16) + MN_18);
             break;
@@ -602,7 +602,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
         }
 
         // do we have a channel configuration array?
-        if (false == OutputChannelMgrData.containsKey (CN_channels))
+        if ( false == OutputChannelMgrData.containsKey (CN_channels) )
         {
             // if not, flag an error and stop processing
             logcon (String (MN_16) + MN_18);
@@ -616,7 +616,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
         for (auto & CurrentOutputChannelDriver : OutputChannelDrivers)
         {
             // get access to the channel config
-            if (false == OutputChannelArray.containsKey (String (CurrentOutputChannelDriver.DriverId).c_str ()))
+            if ( false == OutputChannelArray.containsKey ( String (CurrentOutputChannelDriver.DriverId).c_str () ) )
             {
                 // if not, flag an error and stop processing
                 logcon (String (MN_16) + CurrentOutputChannelDriver.DriverId + MN_18);
@@ -635,7 +635,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             // DEBUG_V ();
 
             // is it a valid / supported channel type
-            if (ChannelType >= uint32_t (OutputType_End))
+            if ( ChannelType >= uint32_t (OutputType_End) )
             {
                 // if not, flag an error and move on to the next channel
                 logcon (String (MN_19) + ChannelType + MN_20 + CurrentOutputChannelDriver.DriverId + MN_03);
@@ -646,7 +646,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             // DEBUG_V ();
 
             // do we have a configuration for the channel type?
-            if (false == OutputChannelConfig.containsKey (String (ChannelType)))
+            if ( false == OutputChannelConfig.containsKey ( String (ChannelType) ) )
             {
                 // if not, flag an error and stop processing
                 logcon (String (MN_16) + CurrentOutputChannelDriver.DriverId + MN_18);
@@ -663,7 +663,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             // DEBUG_V ();
 
             // make sure the proper output type is running
-            InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType (ChannelType));
+            InstantiateNewOutputChannel ( CurrentOutputChannelDriver, e_OutputType (ChannelType) );
 
             // DEBUG_V ();
             // PrettyPrint(OutputChannelDriverConfig, "ProcessJson Channel Driver Config");
@@ -710,7 +710,7 @@ void c_OutputMgr::SetConfig (const char * ConfigData)
 
     // DEBUG_V (String ("ConfigData: ") + ConfigData);
 
-    if (true == FileMgr.SaveConfigFile (ConfigFileName, ConfigData))
+    if ( true == FileMgr.SaveConfigFile (ConfigFileName, ConfigData) )
     {
         ConfigLoadNeeded = true;
     }  // end we got a config and it was good
@@ -738,7 +738,7 @@ void c_OutputMgr::SetConfig (ArduinoJson::JsonDocument & ConfigData)
     // serializeJson(ConfigData, LOG_PORT);
     // DEBUG_V ();
 
-    if (true == FileMgr.SaveConfigFile (ConfigFileName, ConfigData))
+    if ( true == FileMgr.SaveConfigFile (ConfigFileName, ConfigData) )
     {
         ConfigLoadNeeded = true;
     }  // end we got a config and it was good
@@ -819,7 +819,7 @@ void c_OutputMgr::UpdateDisplayBufferReferences (void)
 
         if (AvailableChannels < OutputBufferDataBytesNeeded)
         {
-            logcon (MN_22 + String (OutputBufferDataBytesNeeded));
+            logcon ( MN_22 + String (OutputBufferDataBytesNeeded) );
             // DEBUG_V (String ("    ChannelsNeeded: ") + String (ChannelsNeeded));
             // DEBUG_V (String (" AvailableChannels: ") + String (AvailableChannels));
             // DEBUG_V (String ("ChannelsToAllocate: ") + String (ChannelsToAllocate));
@@ -872,7 +872,7 @@ void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCou
 
     do  // once
     {
-        if (((StartChannelId + ChannelCount) > UsedBufferSize) || (0 == ChannelCount))
+        if ( ( (StartChannelId + ChannelCount) > UsedBufferSize ) || (0 == ChannelCount) )
         {
             // DEBUG_V (String("ERROR: Invalid parameters"));
             // DEBUG_V (String("StartChannelId: ") + String(StartChannelId, HEX));
@@ -932,7 +932,7 @@ void c_OutputMgr::ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCoun
 
     do  // once
     {
-        if ((StartChannelId + ChannelCount) > UsedBufferSize)
+        if ( (StartChannelId + ChannelCount) > UsedBufferSize )
         {
             // DEBUG_V (String("ERROR: Invalid parameters"));
             // DEBUG_V (String("StartChannelId: ") + String(StartChannelId, HEX));

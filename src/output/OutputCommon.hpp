@@ -102,4 +102,4 @@ private:
     uint32_t    FrameStartTimeInMicroSec    = 0;
     uint32_t    FrameEndTimeInMicroSec      = 0;
     uint32_t    FrameTimeDeltaInMicroSec    = 0;
-};  // c_OutputCommon
+}; // c_OutputCommon

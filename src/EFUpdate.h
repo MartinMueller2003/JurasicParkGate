@@ -37,7 +37,7 @@ public:
     bool    hasError ();
     uint8_t getError ();
     bool    end ();
-    void    GetDriverName (String & name) {name = String (F ("EFUPD"));}
+    void    GetDriverName (String & name) {name = String ( F ("EFUPD") );}
 
 private:
     /* Record types */
@@ -65,7 +65,7 @@ private:
         {
             uint32_t    signature;
             uint16_t    version;
-        } __attribute__ ((packed));
+        } __attribute__ ( (packed) );
 
         uint8_t raw[6];
     } efuheader_t;
@@ -77,7 +77,7 @@ private:
         {
             RecordType  type;
             uint32_t    size;
-        } __attribute__ ((packed));
+        } __attribute__ ( (packed) );
 
         uint8_t raw[6];
     } efurecord_t;

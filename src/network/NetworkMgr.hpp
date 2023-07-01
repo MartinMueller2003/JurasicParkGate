@@ -64,6 +64,6 @@ private:
     bool                    IsEthernetConnected             = false;
     bool                    PreviousState                   = false;
     bool                    AllowWiFiAndEthUpSimultaneously = true;
-};  // c_NetworkMgr
+}; // c_NetworkMgr
 
 extern c_NetworkMgr NetworkMgr;

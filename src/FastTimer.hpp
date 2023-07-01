@@ -37,4 +37,4 @@ private:
     uint32_t    offsetMS    = 0;
 
 protected:
-};  // FastTimer
+}; // FastTimer
