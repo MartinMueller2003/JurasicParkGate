@@ -50,8 +50,8 @@ typedef struct
 
 static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::OutputType_End] =
 {
-    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685"               },
-    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"                    },
+    {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685" },
+    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"      },
 };
 
 // -----------------------------------------------------------------------------
