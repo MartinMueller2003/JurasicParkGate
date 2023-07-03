@@ -859,43 +859,51 @@ function ProcessModeConfigurationDataRelay(RelayConfig) {
 
 } // ProcessModeConfigurationDataRelay
 
-function ProcessModeConfigurationDataServoPCA9685(ServoConfig) {
-    // console.log("Servochannelconfigurationtable.rows.length = " + $('#servo_pca9685channelconfigurationtable tr').length);
+function ProcessModeConfigurationDataServoPCA9685(channelId, ServoConfig) {
+    // console.log("channelId: " + channelId);
+
+    let modeControlName = '#outputmode' + channelId;
+    // console.info("modeControlName: " + modeControlName);
+
+    let ServoConfigTableName = modeControlName + ' #servo_pca9685 #channelconfigurationtable';
+    // console.info("ServoConfigTableName: " + ServoConfigTableName);
+    // console.log("ServoConfigTableName.rows.length = " + $(ServoConfigTableName + ' tr').length);
 
     let ChannelConfigs = ServoConfig.channels;
 
     // add as many rows as we need
     for (let CurrentRowId = 1; CurrentRowId <= ChannelConfigs.length; CurrentRowId++) {
         // console.log("CurrentRowId = " + CurrentRowId);
-        let ChanIdPattern = '<td                        id="ServoChanId_' + (CurrentRowId) + '">a</td>';
-        let EnabledPattern = '<td><input type="checkbox" id="ServoEnabled_' + (CurrentRowId) + '"></td>';
-        let MinLevelPattern = '<td><input type="number"   id="ServoMinLevel_' + (CurrentRowId) + '"step="1" min="10" max="4095"  value="0"  class="form-control is-valid"></td>';
-        let MaxLevelPattern = '<td><input type="number"   id="ServoMaxLevel_' + (CurrentRowId) + '"step="1" min="10" max="4095"  value="0"  class="form-control is-valid"></td>';
-        let RestingPattern = '<td><input type="number"   id="ServoHomeValue_' + (CurrentRowId) + '"step="1" min="0"  max="255"   value="0"  class="form-control is-valid"></td>';
-        let DataType = '<td><select class="form-control is-valid" id="ServoDataType_' + (CurrentRowId) + '" title="Effect to generate"></select></td>';
+        let ChanIdPattern   = '<td                        id="ServoChanId_'    + (CurrentRowId) + '">a</td>';
+        let EnabledPattern  = '<td><input type="checkbox" id="ServoEnabled_'   + (CurrentRowId) + '"></td>';
+        let MinLevelPattern = '<td><input type="number"   id="ServoMinLevel_'  + (CurrentRowId) + '"step="1" min="10" max="4095"  value="0"  class="form-control is-valid"></td>';
+        let MaxLevelPattern = '<td><input type="number"   id="ServoMaxLevel_'  + (CurrentRowId) + '"step="1" min="10" max="4095"  value="0"  class="form-control is-valid"></td>';
+        let RestingPattern  = '<td><input type="number"   id="ServoHomeValue_' + (CurrentRowId) + '"step="1" min="0"  max="255"   value="0"  class="form-control is-valid"></td>';
+        let DataType        = '<td><select class="form-control is-valid" id="ServoDataType_' + (CurrentRowId) + '" title="Effect to generate"></select></td>';
 
         let rowPattern = '<tr>' + ChanIdPattern + EnabledPattern + MinLevelPattern + MaxLevelPattern + DataType + RestingPattern + '</tr>';
 
-        $('#servo_pca9685channelconfigurationtable tr:last').after(rowPattern);
+        $(ServoConfigTableName + ' tr:last').after(rowPattern);
 
-        $('#ServoChanId_' + CurrentRowId).attr('style', $('#ServoChanId_hr').attr('style'));
-        $('#ServoEnabled_' + CurrentRowId).attr('style', $('#ServoEnabled_hr').attr('style'));
-        $('#ServoMinLevel_' + CurrentRowId).attr('style', $('#ServoMinLevel_hr').attr('style'));
-        $('#ServoMaxLevel_' + CurrentRowId).attr('style', $('#ServoMaxLevel_hr').attr('style'));
-        $('#ServoHomeValue_' + CurrentRowId).attr('style', $('#ServoHomeValue_hr').attr('style'));
-        $('#ServoDataType_' + CurrentRowId).attr('style', $('#ServoDataType_hr').attr('style'));
+        $(ServoConfigTableName + ' #ServoChanId_' + CurrentRowId).attr('style', $(ServoConfigTableName + ' #ServoChanId_hr').attr('style'));
+        $(ServoConfigTableName + ' #ServoEnabled_' + CurrentRowId).attr('style', $(ServoConfigTableName + ' #ServoEnabled_hr').attr('style'));
+        $(ServoConfigTableName + ' #ServoMinLevel_' + CurrentRowId).attr('style', $(ServoConfigTableName + ' #ServoMinLevel_hr').attr('style'));
+        $(ServoConfigTableName + ' #ServoMaxLevel_' + CurrentRowId).attr('style', $(ServoConfigTableName + ' #ServoMaxLevel_hr').attr('style'));
+        $(ServoConfigTableName + ' #ServoHomeValue_' + CurrentRowId).attr('style', $(ServoConfigTableName + ' #ServoHomeValue_hr').attr('style'));
+        $(ServoConfigTableName + ' #ServoDataType_' + CurrentRowId).attr('style', $(ServoConfigTableName + ' #ServoDataType_hr').attr('style'));
     }
 
     $.each(ChannelConfigs, function (i, CurrentChannelConfig) {
         // console.log("Current Channel Id = " + CurrentChannelConfig.id);
         let currentChannelRowId = CurrentChannelConfig.id + 1;
-        $('#ServoChanId_' + (currentChannelRowId)).html(currentChannelRowId);
-        $('#ServoEnabled_' + (currentChannelRowId)).prop("checked", CurrentChannelConfig.en);
-        $('#ServoMinLevel_' + (currentChannelRowId)).val(CurrentChannelConfig.Min);
-        $('#ServoMaxLevel_' + (currentChannelRowId)).val(CurrentChannelConfig.Max);
-        $('#ServoHomeValue_' + (currentChannelRowId)).val(CurrentChannelConfig.hv);
+        $(ServoConfigTableName + ' #ServoChanId_' + (currentChannelRowId)).html(currentChannelRowId);
+        $(ServoConfigTableName + ' #ServoEnabled_' + (currentChannelRowId)).prop("checked", CurrentChannelConfig.en);
+        $(ServoConfigTableName + ' #ServoMinLevel_' + (currentChannelRowId)).val(CurrentChannelConfig.Min);
+        $(ServoConfigTableName + ' #ServoMaxLevel_' + (currentChannelRowId)).val(CurrentChannelConfig.Max);
+        $(ServoConfigTableName + ' #ServoHomeValue_' + (currentChannelRowId)).val(CurrentChannelConfig.hv);
 
-        let jqSelector = "#ServoDataType_" + (currentChannelRowId);
+        let jqSelector = ServoConfigTableName + ' #ServoDataType_' + (currentChannelRowId);
+        // console.log("jqSelector = " + jqSelector);
 
         // remove the existing options
         $(jqSelector).empty();
@@ -966,7 +974,7 @@ function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
 
     else if ("servo_pca9685" === ChannelTypeName) {
         // console.info("ProcessModeConfigurationData: servo");
-        ProcessModeConfigurationDataServoPCA9685(channelConfig);
+        ProcessModeConfigurationDataServoPCA9685(channelId, channelConfig);
     }
 
     UpdateAdvancedOptionsMode();
@@ -1455,7 +1463,7 @@ function wsConnect() {
             target = document.location.host;
         }
 
-        target = "192.168.10.216";
+        // target = "192.168.10.216";
         // target = "192.168.10.101";
 
         // Open a new web socket and set the binary type
