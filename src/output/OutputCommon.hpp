@@ -99,11 +99,11 @@ virtual uint32_t GetFrameTimeMs ()
 }
 protected:
 
-gpio_num_t DataPin                     = gpio_num_t (-1);
-uart_port_t UartId                      = uart_port_t (-1);
-OTYPE_t OutputType                  = OTYPE_t::OutputType_Disabled;
-OID_t OutputChannelId             = OID_t::OutputChannelId_End;
-bool HasBeenInitialized          = false;
+gpio_num_t DataPin                   = gpio_num_t (-1);
+uart_port_t UartId                   = uart_port_t (-1);
+OTYPE_t OutputType                   = OTYPE_t::OutputType_Start;
+OID_t OutputChannelId                = OID_t::OutputChannelId_End;
+bool HasBeenInitialized              = false;
 uint32_t FrameDurationInMicroSec     = 25000;
 uint32_t ActualFrameDurationMicroSec = 50000;        // Default time for relays is every 50ms
 uint8_t* pOutputBuffer               = nullptr;

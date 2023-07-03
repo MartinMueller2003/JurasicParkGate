@@ -98,12 +98,11 @@ enum e_OutputChannelIds
 // do NOT insert into the middle of this list. Always add new types to the end of the list
 enum e_OutputType
 {
-    OutputType_Disabled = 0,
     OutputType_Servo_PCA9685,
 
     // Add new types here
     OutputType_End, // must be last
-    OutputType_Start = OutputType_Disabled
+    OutputType_Start = OutputType_Servo_PCA9685,
 };
 
     #define OM_MAX_NUM_CHANNELS (16 * 2)

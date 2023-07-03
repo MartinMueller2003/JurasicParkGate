@@ -51,7 +51,7 @@ typedef struct
 static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::OutputType_End] =
 {
     {c_OutputMgr::e_OutputType::OutputType_Servo_PCA9685, "Servo_PCA9685" },
-    {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"      },
+    // {c_OutputMgr::e_OutputType::OutputType_Disabled,      "Disabled"      },
 };
 
 // -----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ void c_OutputMgr::Begin ()
         {
             // DEBUG_V(String("init index: ") + String(index) + " Start");
             CurrentOutputChannelDriver.DriverId = e_OutputChannelIds (index++);
-            InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Disabled);
+            InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Start);
             // DEBUG_V(String("init index: ") + String(index) + " Done");
         }
 
@@ -313,7 +313,7 @@ void c_OutputMgr::CreateNewConfig ()
     // DEBUG_V ("leave the outputs disabled");
     for (auto & CurrentOutputChannelDriver : OutputChannelDrivers)
     {
-        InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Disabled);
+        InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Start);
     }  // end for each interface
 
     // PrettyPrint(JsonConfig, "Complete OutputMgr");
@@ -437,6 +437,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
 
         switch (NewOutputChannelType)
         {
+/*
         case e_OutputType::OutputType_Disabled :
         {
             // logcon (CN_stars + String (CN_Disabled) + MN_06 + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
@@ -448,7 +449,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
             // DEBUG_V ();
             break;
         }
-
+*/
         case e_OutputType::OutputType_Servo_PCA9685 :
         {
             // if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
@@ -468,7 +469,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
             {
                 logcon (CN_stars + String ( F (" Cannot Start Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
             }
-
+/*
             CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
                 CurrentOutputChannelDriver.DriverId,
                 CurrentOutputChannelDriver.GpioPin,
@@ -476,6 +477,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
                 OutputType_Disabled);
             // DEBUG_V ();
             break;
+*/
         }
 
         default :
@@ -485,11 +487,11 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
                 logcon (CN_stars + String (MN_09) + String (NewOutputChannelType) + MN_10 + CurrentOutputChannelDriver.DriverId + MN_11 + CN_stars);
             }
 
-            CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
+            CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputServoPCA9685 (
                 CurrentOutputChannelDriver.DriverId,
                 CurrentOutputChannelDriver.GpioPin,
                 CurrentOutputChannelDriver.PortId,
-                OutputType_Disabled);
+                OutputType_Servo_PCA9685);
             // DEBUG_V ();
             break;
         }
@@ -644,7 +646,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             {
                 // if not, flag an error and move on to the next channel
                 logcon (String (MN_19) + ChannelType + MN_20 + CurrentOutputChannelDriver.DriverId + MN_03);
-                InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Disabled);
+                InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Start);
                 continue;
             }
 
@@ -655,7 +657,7 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
             {
                 // if not, flag an error and stop processing
                 logcon (String (MN_16) + CurrentOutputChannelDriver.DriverId + MN_18);
-                InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Disabled);
+                InstantiateNewOutputChannel (CurrentOutputChannelDriver, e_OutputType::OutputType_Start);
                 continue;
             }
 
