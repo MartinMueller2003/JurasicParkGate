@@ -1,21 +1,21 @@
 /*
-  * InputAlexa.cpp
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * InputAlexa.cpp
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 
 #include "JurasicParkGate.h"
 #include <Int64String.h>
@@ -28,10 +28,9 @@
 #endif // if defined ARDUINO_ARCH_ESP32
 
 // -----------------------------------------------------------------------------
-c_InputAlexa::c_InputAlexa (
-    c_InputMgr::e_InputChannelIds   NewInputChannelId,
-    c_InputMgr::e_InputType         NewChannelType,
-    uint32_t                        BufferSize) :
+c_InputAlexa::c_InputAlexa (c_InputMgr::e_InputChannelIds   NewInputChannelId,
+ c_InputMgr::e_InputType                                    NewChannelType,
+ uint32_t                                                   BufferSize) :
     c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
 
 {
@@ -73,9 +72,9 @@ void c_InputAlexa::Begin ()
     pEffectsEngine = new c_InputEffectEngine (c_InputMgr::e_InputChannelIds::InputSecondaryChannelId, c_InputMgr::e_InputType::InputType_Effects, InputDataBufferSize);
     pEffectsEngine->SetOperationalState (false);
 
-    WebMgr.RegisterAlexaCallback ([this] (EspalexaDevice * pDevice) {
+    WebMgr.RegisterAlexaCallback ([this] (EspalexaDevice* pDevice) {
         this->onMessage (pDevice);
-                                                                                               });
+    });
 
     pEffectsEngine->Begin ();
 
@@ -135,7 +134,7 @@ bool c_InputAlexa::SetConfig (ArduinoJson::JsonObject & jsonConfig)
 
     // DEBUG_END;
 
-    return true;
+    return(true);
 }  // SetConfig
 
 // -----------------------------------------------------------------------------
@@ -152,7 +151,7 @@ void c_InputAlexa::validateConfiguration ()
 /////////////////////////////////////////////////////////
 
 // -----------------------------------------------------------------------------
-void c_InputAlexa::onMessage (EspalexaDevice * pDevice)
+void c_InputAlexa::onMessage (EspalexaDevice* pDevice)
 {
     // DEBUG_START;
     do  // once
@@ -167,7 +166,7 @@ void c_InputAlexa::onMessage (EspalexaDevice * pDevice)
         // DEBUG_V (String ("pDevice->getB: ") + String (pDevice->getB ()));
 
         DynamicJsonDocument JsonConfigDoc (1024);
-        JsonObject JsonConfig = JsonConfigDoc.createNestedObject (CN_config);
+        JsonObject          JsonConfig = JsonConfigDoc.createNestedObject (CN_config);
 
         JsonConfig[CN_EffectSpeed]      = 1;
         JsonConfig[CN_EffectReverse]    = false;

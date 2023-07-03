@@ -1,22 +1,22 @@
 #pragma once
 /*
-  * JurasicParkGate.h
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * JurasicParkGate.h
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 
 #include "JurasicParkGate.h"
 #include "./backported.h"
@@ -57,6 +57,7 @@ inline esp_err_t saferRgbToHtmlColorString (char(& output)[N], uint8_t r, uint8_
     static_assert ( N >= 8);
     static_assert ( sizeof (int) <= sizeof (size_t) ); // casting non-negative int to size_t is safe
     int wouldHaveWrittenChars = snprintf (output, N, "#%02x%02x%02x", r, g, b);
+
     if ( likely ( (wouldHaveWrittenChars > 0) && ( ( (size_t)wouldHaveWrittenChars ) < N ) ) )
     {
         result = ESP_OK;
@@ -66,8 +67,8 @@ inline esp_err_t saferRgbToHtmlColorString (char(& output)[N], uint8_t r, uint8_
         // TODO: assert((wouldHaveWrittenChars > 0) && (wouldHaveWrittenChars < N));
     }
 
-    return result;
-}
+    return(result);
+} // saferRgbToHtmlColorString
 
 // Safer seconds to "Minutes:Seconds" string conversion function
 //
@@ -88,9 +89,10 @@ inline esp_err_t saferSecondsToFormattedMinutesAndSecondsString (char(& output)[
     // seconds is always exactly two characters.
     static_assert ( N >= 12);
     static_assert ( sizeof (int) <= sizeof (size_t) ); // casting non-negative int to size_t is safe
-    uint32_t m                = seconds / 60u;
-    uint8_t  s                = seconds % 60u;
-    int wouldHaveWrittenChars = snprintf (output, N, "%u:%02u", m, s);
+    uint32_t    m                = seconds / 60u;
+    uint8_t     s                = seconds % 60u;
+    int         wouldHaveWrittenChars = snprintf (output, N, "%u:%02u", m, s);
+
     if ( likely ( (wouldHaveWrittenChars > 0) && ( ( (size_t)wouldHaveWrittenChars ) < N ) ) )
     {
         result = ESP_OK;
@@ -100,5 +102,5 @@ inline esp_err_t saferSecondsToFormattedMinutesAndSecondsString (char(& output)[
         // TODO: assert((wouldHaveWrittenChars > 0) && (wouldHaveWrittenChars < N));
     }
 
-    return result;
-}
+    return(result);
+} // saferSecondsToFormattedMinutesAndSecondsString

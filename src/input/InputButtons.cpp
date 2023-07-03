@@ -1,21 +1,21 @@
 /*
-  * InputButtons.cpp
-  *
-  * Project: JurasicParkGate
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartinMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * InputButtons.cpp
+ *
+ * Project: JurasicParkGate
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartinMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 #include "InputButtons.hpp"
 #include "FileMgr.hpp"
 #include "InputMgr.hpp"
@@ -37,8 +37,8 @@ static String DefaultButtonNames[]
 /*****************************************************************************/
 
 c_InputButtons::c_InputButtons (c_InputMgr::e_InputChannelIds   NewInputChannelId,
-                                c_InputMgr::e_InputType         NewChannelType,
-                                uint32_t                        BufferSize) :
+ c_InputMgr::e_InputType                                        NewChannelType,
+ uint32_t                                                       BufferSize) :
     c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
 {
     // DEBUG_START;
@@ -71,7 +71,7 @@ void c_InputButtons::Begin ()
     HasBeenInitialized = true;
 
     // DEBUG_END;
-}
+} // c_InputButtons::Begin
 
 /*****************************************************************************/
 void c_InputButtons::GetConfig (JsonObject & JsonData)
@@ -112,9 +112,9 @@ void c_InputButtons::GetStatus (JsonObject & JsonData)
 {
     DEBUG_START;
 
-    JsonArray InputStatus = JsonData.createNestedArray (CN_buttons);
+    JsonArray   InputStatus = JsonData.createNestedArray (CN_buttons);
 
-    uint32_t index = 0;
+    uint32_t    index = 0;
     for (auto & CurrentButton : Buttons)
     {
         JsonObject channelStatus = InputStatus.createNestedObject ();
@@ -159,6 +159,7 @@ bool c_InputButtons::SetConfig (JsonObject & JsonData)
         }
 
         uint32_t index = CurrentButtonJsonData[CN_device];
+
         if (index >= NumButtons)
         {
             logcon ( String ( F ("Invalid button array entry ID: ") ) + String (index) );
@@ -170,7 +171,7 @@ bool c_InputButtons::SetConfig (JsonObject & JsonData)
     }
 
     // DEBUG_END;
-    return true;
+    return(true);
 }  // ProcessConfig
 
 /*****************************************************************************/
@@ -187,5 +188,6 @@ void c_InputButtons::Process (void)
 }  // Poll
 
 /*****************************************************************************/
-void c_InputButtons::NetworkStateChanged (bool IsConnected) {
+void c_InputButtons::NetworkStateChanged (bool IsConnected)
+{
 }                                                               // NetworkStateChanged

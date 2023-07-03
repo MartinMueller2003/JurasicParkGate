@@ -1,21 +1,21 @@
 /*
-  * InputMQTT.cpp
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * InputMQTT.cpp
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 
 #include "JurasicParkGate.h"
 #include <Ticker.h>
@@ -29,8 +29,8 @@
 
 // -----------------------------------------------------------------------------
 c_InputMQTT::c_InputMQTT (c_InputMgr::e_InputChannelIds NewInputChannelId,
-                          c_InputMgr::e_InputType       NewChannelType,
-                          uint32_t                      BufferSize) :
+ c_InputMgr::e_InputType                                NewChannelType,
+ uint32_t                                               BufferSize) :
     c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
 
 {
@@ -96,9 +96,9 @@ void c_InputMQTT::Begin ()
     // DEBUG_V ("");
 
     using namespace std::placeholders;
-    mqtt.onConnect    ( std::bind (& c_InputMQTT::onMqttConnect,    this, _1) );
-    mqtt.onDisconnect ( std::bind (& c_InputMQTT::onMqttDisconnect, this, _1) );
-    mqtt.onMessage    ( std::bind (& c_InputMQTT::onMqttMessage,    this, _1, _2, _3, _4, _5, _6) );
+    mqtt.onConnect    ( std::bind (&c_InputMQTT::onMqttConnect,    this, _1) );
+    mqtt.onDisconnect ( std::bind (&c_InputMQTT::onMqttDisconnect, this, _1) );
+    mqtt.onMessage    ( std::bind (&c_InputMQTT::onMqttMessage,    this, _1, _2, _3, _4, _5, _6) );
 
     HasBeenInitialized = true;
 
@@ -195,7 +195,7 @@ bool c_InputMQTT::SetConfig (ArduinoJson::JsonObject & jsonConfig)
     NetworkStateChanged (NetworkMgr.IsConnected (), false);
 
     // DEBUG_END;
-    return true;
+    return(true);
 }  // SetConfig
 
 // -----------------------------------------------------------------------------
@@ -295,16 +295,16 @@ void c_InputMQTT::onMqttConnect (bool sessionPresent)
     // DEBUG_END;
 }  // onMqttConnect
 
-static const char DisconnectReason0[] = "TCP_DISCONNECTED";
-static const char DisconnectReason1[] = "UNACCEPTABLE_PROTOCOL_VERSION";
-static const char DisconnectReason2[] = "IDENTIFIER_REJECTED";
-static const char DisconnectReason3[] = "SERVER_UNAVAILABLE";
-static const char DisconnectReason4[] = "MALFORMED_CREDENTIALS";
-static const char DisconnectReason5[] = "NOT_AUTHORIZED";
-static const char DisconnectReason6[] = "NOT_ENOUGH_SPACE";
-static const char DisconnectReason7[] = "TLS_BAD_FINGERPRINT";
+static const char   DisconnectReason0[] = "TCP_DISCONNECTED";
+static const char   DisconnectReason1[] = "UNACCEPTABLE_PROTOCOL_VERSION";
+static const char   DisconnectReason2[] = "IDENTIFIER_REJECTED";
+static const char   DisconnectReason3[] = "SERVER_UNAVAILABLE";
+static const char   DisconnectReason4[] = "MALFORMED_CREDENTIALS";
+static const char   DisconnectReason5[] = "NOT_AUTHORIZED";
+static const char   DisconnectReason6[] = "NOT_ENOUGH_SPACE";
+static const char   DisconnectReason7[] = "TLS_BAD_FINGERPRINT";
 
-static const char * DisconnectReasons[] =
+static const char*  DisconnectReasons[] =
 {
     DisconnectReason0,
     DisconnectReason1,
@@ -344,18 +344,17 @@ void c_InputMQTT::onMqttDisconnect (AsyncMqttClientDisconnectReason reason)
 }  // onMqttDisconnect
 
 // -----------------------------------------------------------------------------
-void c_InputMQTT::onMqttMessage (
-    char                               * RcvTopic,
-    char                               * payload,
-    AsyncMqttClientMessageProperties   properties,
-    uint32_t                           len,
-    uint32_t                           index,
-    uint32_t                           total)
+void c_InputMQTT::onMqttMessage (char*  RcvTopic,
+ char*                                  payload,
+ AsyncMqttClientMessageProperties       properties,
+ uint32_t                               len,
+ uint32_t                               index,
+ uint32_t                               total)
 {
     // DEBUG_START;
 
     // Payload isn't null terminated
-    char * payloadString = (char *)malloc (len + 1);
+    char* payloadString = (char*)malloc (len + 1);
     memcpy (payloadString, payload, len);
     payloadString[len] = 0x00;
 
@@ -367,14 +366,14 @@ void c_InputMQTT::onMqttMessage (
         // DEBUG_V (String ("   l/i/t: ") + String (len) + " / " + String(index) + " / " + String(total));
 
         if ( (String (RcvTopic) != topic) &&
-             (String (RcvTopic) != topic + CN_slashset) )
+         (String (RcvTopic) != topic + CN_slashset) )
         {
             // DEBUG_V ("Not our topic");
             return;
         }
 
-        DynamicJsonDocument rootDoc (1024);
-        DeserializationError error = deserializeJson (rootDoc, payloadString, len);
+        DynamicJsonDocument     rootDoc (1024);
+        DeserializationError    error = deserializeJson (rootDoc, payloadString, len);
 
         // DEBUG_V ("Set new values");
         if (error)
@@ -459,7 +458,7 @@ void c_InputMQTT::PlayEffect (JsonObject & JsonConfig)
     pEffectsEngine->SetOperationalState (true);
     // DEBUG_V ("");
 
-    ( (c_InputEffectEngine *)(pEffectsEngine) )->SetMqttConfig (effectConfig);
+    ( (c_InputEffectEngine*)(pEffectsEngine) )->SetMqttConfig (effectConfig);
 
     // DEBUG_END;
 }  // PlayEffect
@@ -472,7 +471,7 @@ void c_InputMQTT::GetEngineConfig (JsonObject & JsonConfig)
     if (nullptr != pEffectsEngine)
     {
         // DEBUG_V ("Effects engine running");
-        ( (c_InputEffectEngine *)(pEffectsEngine) )->GetMqttConfig (effectConfig);
+        ( (c_InputEffectEngine*)(pEffectsEngine) )->GetMqttConfig (effectConfig);
     }
     else
     {
@@ -499,6 +498,7 @@ void c_InputMQTT::GetEffectList (JsonObject & JsonConfig)
     // DEBUG_START;
 
     bool EffectEngineIsRunning = (nullptr != pEffectsEngine);
+
     if (nullptr == pEffectsEngine)
     {
         // DEBUG_V ("");
@@ -510,7 +510,7 @@ void c_InputMQTT::GetEffectList (JsonObject & JsonConfig)
     // DEBUG_V ("");
 
     JsonConfig[CN_brightness] = CN_true;
-    ( (c_InputEffectEngine *)(pEffectsEngine) )->GetMqttEffectList (JsonConfig);
+    ( (c_InputEffectEngine*)(pEffectsEngine) )->GetMqttEffectList (JsonConfig);
     JsonConfig[CN_effect] = CN_true;
 
     if (!EffectEngineIsRunning)
@@ -530,11 +530,11 @@ void c_InputMQTT::publishHA ()
 
     // Setup HA discovery
     #ifdef ARDUINO_ARCH_ESP8266
-    String chipId = String (ESP.getChipId (), HEX);
+        String  chipId = String (ESP.getChipId (), HEX);
     #else // ifdef ARDUINO_ARCH_ESP8266
-    String chipId = int64String (ESP.getEfuseMac (), HEX);
+        String  chipId = int64String (ESP.getEfuseMac (), HEX);
     #endif // ifdef ARDUINO_ARCH_ESP8266
-    String ha_config = haprefix + F ("/light/") + chipId + F ("/config");
+    String      ha_config = haprefix + F ("/light/") + chipId + F ("/config");
 
     // DEBUG_V (String ("ha_config: ") + ha_config);
     // DEBUG_V (String ("hadisco: ") + hadisco);
@@ -543,7 +543,7 @@ void c_InputMQTT::publishHA ()
     {
         // DEBUG_V ("");
         DynamicJsonDocument root (1024);
-        JsonObject JsonConfig = root.to <JsonObject>();
+        JsonObject          JsonConfig = root.to <JsonObject>();
 
         JsonConfig[F ("platform")]           = F ("MQTT");
         JsonConfig[CN_name]                  = config.id;
@@ -591,9 +591,9 @@ void c_InputMQTT::publishState ()
     // DEBUG_START;
 
     DynamicJsonDocument root (1024);
-    JsonObject JsonConfig = root.createNestedObject ( F ("MQTT") );
+    JsonObject          JsonConfig = root.createNestedObject ( F ("MQTT") );
 
-    JsonConfig[CN_state] = (true == stateOn) ? String (ON) : String (OFF);
+    JsonConfig[CN_state] = (true == stateOn)?String (ON) : String (OFF);
 
     // populate the effect information
     GetEngineConfig (JsonConfig);
@@ -610,7 +610,8 @@ void c_InputMQTT::publishState ()
 }  // publishState
 
 // -----------------------------------------------------------------------------
-void c_InputMQTT::NetworkStateChanged (bool IsConnected) {
+void c_InputMQTT::NetworkStateChanged (bool IsConnected)
+{
     NetworkStateChanged (IsConnected, false);
 }                                                                                                     // NetworkStateChanged
 
@@ -624,7 +625,8 @@ void c_InputMQTT::NetworkStateChanged (bool IsConnected, bool ReBootAllowed)
         onNetworkConnect ();
         // DEBUG_V ("");
     }
-    else if (ReBootAllowed)
+    else
+    if (ReBootAllowed)
     {
         // handle a disconnect
         extern bool reboot;

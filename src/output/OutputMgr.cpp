@@ -1,25 +1,25 @@
 /*
-  * OutputMgr.cpp - Output Management class
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  *   This is a factory class used to manage the output port. It creates and deletes
-  *   the output channel functionality as needed to support any new configurations
-  *   that get sent from from the WebPage.
-  *
-  */
+ * OutputMgr.cpp - Output Management class
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ *   This is a factory class used to manage the output port. It creates and deletes
+ *   the output channel functionality as needed to support any new configurations
+ *   that get sent from from the WebPage.
+ *
+ */
 
 #include "JurasicParkGate.h"
 #include "FileMgr.hpp"
@@ -45,7 +45,7 @@
 typedef struct
 {
     c_OutputMgr::e_OutputType id;
-    String                    name;
+    String name;
 } OutputTypeXlateMap_t;
 
 static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::OutputType_End] =
@@ -57,8 +57,8 @@ static const OutputTypeXlateMap_t OutputTypeXlateMap[c_OutputMgr::e_OutputType::
 // -----------------------------------------------------------------------------
 typedef struct
 {
-    gpio_num_t                 GpioPin;
-    uart_port_t                PortId;
+    gpio_num_t GpioPin;
+    uart_port_t PortId;
     c_OutputMgr::OM_PortType_t PortType;
 } OutputChannelIdToGpioAndPortEntry_t;
 
@@ -81,7 +81,7 @@ c_OutputMgr::c_OutputMgr ()
     ConfigFileName = String ("/") + String (CN_output_config) + CN_Dotjson;
 
     // clear the input data buffer
-    memset ( (char *)& OutputBuffer[0], 0, sizeof (OutputBuffer) );
+    memset ( (char*)&OutputBuffer[0], 0, sizeof (OutputBuffer) );
 }  // c_OutputMgr
 
 // -----------------------------------------------------------------------------
@@ -127,8 +127,8 @@ void c_OutputMgr::Begin ()
         HasBeenInitialized = true;
 
         #ifdef LED_FLASH_GPIO
-        pinMode (LED_FLASH_GPIO, OUTPUT);
-        digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
+            pinMode (LED_FLASH_GPIO, OUTPUT);
+            digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
         #endif // def LED_FLASH_GPIO
 
         // make sure the pointers are set up properly
@@ -150,7 +150,7 @@ void c_OutputMgr::Begin ()
         // CreateNewConfig ();
 
         // Preset the output memory
-        memset ( (void *)& OutputBuffer[0], 0x00, sizeof (OutputBuffer) );
+        memset ( (void*)&OutputBuffer[0], 0x00, sizeof (OutputBuffer) );
     } while (false);
 
     // DEBUG_END;
@@ -169,6 +169,7 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
 
     // add the channels header
     JsonObject OutputMgrChannelsData;
+
     if ( true == jsonConfig.containsKey (CN_channels) )
     {
         // DEBUG_V ();
@@ -187,8 +188,9 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
     {
         // DEBUG_V (String("Create Section in Config file for the output channel: '") + CurrentChannel.pOutputChannelDriver->GetOutputChannelId() + "'");
         // create a record for this channel
-        JsonObject ChannelConfigData;
-        String sChannelId = String ( CurrentChannel.pOutputChannelDriver->GetOutputChannelId () );
+        JsonObject  ChannelConfigData;
+        String      sChannelId = String ( CurrentChannel.pOutputChannelDriver->GetOutputChannelId () );
+
         if ( true == OutputMgrChannelsData.containsKey (sChannelId) )
         {
             // DEBUG_V ();
@@ -204,8 +206,9 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
         // save the name as the selected channel type
         ChannelConfigData[CN_type] = int( CurrentChannel.pOutputChannelDriver->GetOutputType () );
 
-        String DriverTypeId = String ( int( CurrentChannel.pOutputChannelDriver->GetOutputType () ) );
-        JsonObject ChannelConfigByTypeData;
+        String      DriverTypeId = String ( int( CurrentChannel.pOutputChannelDriver->GetOutputType () ) );
+        JsonObject  ChannelConfigByTypeData;
+
         if ( true == ChannelConfigData.containsKey ( String (DriverTypeId) ) )
         {
             ChannelConfigByTypeData = ChannelConfigData[DriverTypeId];
@@ -251,10 +254,10 @@ void c_OutputMgr::CreateJsonConfig (JsonObject & jsonConfig)
 
 // -----------------------------------------------------------------------------
 /*
-  *     The running config is made from a composite of running and not instantiated
-  *     objects. To create a complete config we need to start each output type on
-  *     each output channel and collect the configuration at each stage.
-  */
+ *     The running config is made from a composite of running and not instantiated
+ *     objects. To create a complete config we need to start each output type on
+ *     each output channel and collect the configuration at each stage.
+ */
 void c_OutputMgr::CreateNewConfig ()
 {
     // DEBUG_START;
@@ -343,7 +346,7 @@ void c_OutputMgr::GetConfig (String & Response)
 }  // GetConfig
 
 // -----------------------------------------------------------------------------
-void c_OutputMgr::GetConfig (byte * Response, uint32_t maxlen)
+void c_OutputMgr::GetConfig (byte* Response, uint32_t maxlen)
 {
     // DEBUG_START;
 
@@ -375,17 +378,17 @@ void c_OutputMgr::GetStatus (JsonObject & jsonStatus)
 
 // -----------------------------------------------------------------------------
 /* Create an instance of the desired output type in the desired channel
-  *
-  * WARNING:  This function assumes there is a driver running in the identified
-  *           out channel. These must be set up and started when the manager is
-  *           started.
-  *
-  *     needs
-  *         channel ID
-  *         channel type
-  *     returns
-  *         nothing
-  */
+ *
+ * WARNING:  This function assumes there is a driver running in the identified
+ *           out channel. These must be set up and started when the manager is
+ *           started.
+ *
+ *     needs
+ *         channel ID
+ *         channel type
+ *     returns
+ *         nothing
+ */
 void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChannelDriver, e_OutputType NewOutputChannelType, bool StartDriver)
 {
     // DEBUG_START;
@@ -409,6 +412,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
 
             String DriverName;
             CurrentOutputChannelDriver.pOutputChannelDriver->GetDriverName (DriverName);
+
             if (!IsBooting)
             {
                 logcon ( String (MN_12) + DriverName + MN_13 + String (CurrentOutputChannelDriver.DriverId) );
@@ -433,62 +437,62 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
 
         switch (NewOutputChannelType)
         {
-            case e_OutputType::OutputType_Disabled:
+        case e_OutputType::OutputType_Disabled :
+        {
+            // logcon (CN_stars + String (CN_Disabled) + MN_06 + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
+            CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
+                CurrentOutputChannelDriver.DriverId,
+                CurrentOutputChannelDriver.GpioPin,
+                CurrentOutputChannelDriver.PortId,
+                OutputType_Disabled);
+            // DEBUG_V ();
+            break;
+        }
+
+        case e_OutputType::OutputType_Servo_PCA9685 :
+        {
+            // if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
             {
-                // logcon (CN_stars + String (CN_Disabled) + MN_06 + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
-                CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
+                logcon (CN_stars + String ( F (" Starting Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
+                CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputServoPCA9685 (
                     CurrentOutputChannelDriver.DriverId,
                     CurrentOutputChannelDriver.GpioPin,
                     CurrentOutputChannelDriver.PortId,
-                    OutputType_Disabled);
+                    OutputType_Servo_PCA9685);
                 // DEBUG_V ();
                 break;
             }
+            // DEBUG_V ();
 
-            case e_OutputType::OutputType_Servo_PCA9685:
+            if (!BuildingNewConfig)
             {
-                // if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
-                {
-                    logcon (CN_stars + String ( F (" Starting Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
-                    CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputServoPCA9685 (
-                        CurrentOutputChannelDriver.DriverId,
-                        CurrentOutputChannelDriver.GpioPin,
-                        CurrentOutputChannelDriver.PortId,
-                        OutputType_Servo_PCA9685);
-                    // DEBUG_V ();
-                    break;
-                }
-                // DEBUG_V ();
-
-                if (!BuildingNewConfig)
-                {
-                    logcon (CN_stars + String ( F (" Cannot Start Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
-                }
-
-                CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
-                    CurrentOutputChannelDriver.DriverId,
-                    CurrentOutputChannelDriver.GpioPin,
-                    CurrentOutputChannelDriver.PortId,
-                    OutputType_Disabled);
-                // DEBUG_V ();
-                break;
+                logcon (CN_stars + String ( F (" Cannot Start Servo PCA9685 for channel '") ) + CurrentOutputChannelDriver.DriverId + "'. " + CN_stars);
             }
 
-            default:
+            CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
+                CurrentOutputChannelDriver.DriverId,
+                CurrentOutputChannelDriver.GpioPin,
+                CurrentOutputChannelDriver.PortId,
+                OutputType_Disabled);
+            // DEBUG_V ();
+            break;
+        }
+
+        default :
+        {
+            if (!IsBooting)
             {
-                if (!IsBooting)
-                {
-                    logcon (CN_stars + String (MN_09) + String (NewOutputChannelType) + MN_10 + CurrentOutputChannelDriver.DriverId + MN_11 + CN_stars);
-                }
-
-                CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
-                    CurrentOutputChannelDriver.DriverId,
-                    CurrentOutputChannelDriver.GpioPin,
-                    CurrentOutputChannelDriver.PortId,
-                    OutputType_Disabled);
-                // DEBUG_V ();
-                break;
+                logcon (CN_stars + String (MN_09) + String (NewOutputChannelType) + MN_10 + CurrentOutputChannelDriver.DriverId + MN_11 + CN_stars);
             }
+
+            CurrentOutputChannelDriver.pOutputChannelDriver = new c_OutputDisabled (
+                CurrentOutputChannelDriver.DriverId,
+                CurrentOutputChannelDriver.GpioPin,
+                CurrentOutputChannelDriver.PortId,
+                OutputType_Disabled);
+            // DEBUG_V ();
+            break;
+        }
         }  // end switch (NewChannelType)
 
         // DEBUG_V ();
@@ -497,6 +501,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
 
         String sDriverName;
         CurrentOutputChannelDriver.pOutputChannelDriver->GetDriverName (sDriverName);
+
         // DEBUG_V (String("Driver Name: ") + sDriverName);
         if (!IsBooting)
         {
@@ -515,33 +520,33 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
 
 // -----------------------------------------------------------------------------
 /* Load and process the current configuration
-  *
-  *   needs
-  *       Nothing
-  *   returns
-  *       Nothing
-  */
+ *
+ *   needs
+ *       Nothing
+ *   returns
+ *       Nothing
+ */
 void c_OutputMgr::LoadConfig ()
 {
     // DEBUG_START;
 
     // try to load and process the config file
     if ( !FileMgr.LoadConfigFile (
-        ConfigFileName,
-        [this] (DynamicJsonDocument & JsonConfigDoc)
+         ConfigFileName,
+         [this] (DynamicJsonDocument & JsonConfigDoc)
     {
-            // extern void PrettyPrint(DynamicJsonDocument & jsonStuff, String Name);
-            // PrettyPrint(JsonConfigDoc, "OM Load Config");
+        // extern void PrettyPrint(DynamicJsonDocument & jsonStuff, String Name);
+        // PrettyPrint(JsonConfigDoc, "OM Load Config");
 
-            // DEBUG_V ();
+        // DEBUG_V ();
         JsonObject JsonConfig = JsonConfigDoc.as <JsonObject>();
 
-            // extern void PrettyPrint(JsonObject & jsonStuff, String Name);
-            // PrettyPrint(JsonConfig, "OM Load Config");
-            // DEBUG_V ();
+        // extern void PrettyPrint(JsonObject & jsonStuff, String Name);
+        // PrettyPrint(JsonConfig, "OM Load Config");
+        // DEBUG_V ();
         this->ProcessJsonConfig (JsonConfig);
-            // DEBUG_V ();
-        }) )
+        // DEBUG_V ();
+    }) )
     {
         if (!IsBooting)
         {
@@ -558,15 +563,15 @@ void c_OutputMgr::LoadConfig ()
 
 // -----------------------------------------------------------------------------
 /*
-  *     check the contents of the config and send
-  *     the proper portion of the config to the currently instantiated channels
-  *
-  *     needs
-  *         ref to data from config file
-  *     returns
-  *         true - config was properly processes
-  *         false - config had an error.
-  */
+ *     check the contents of the config and send
+ *     the proper portion of the config to the currently instantiated channels
+ *
+ *     needs
+ *         ref to data from config file
+ *     returns
+ *         true - config was properly processes
+ *         false - config had an error.
+ */
 bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
 {
     // DEBUG_START;
@@ -692,19 +697,19 @@ bool c_OutputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
     // DEBUG_V ();
 
     // DEBUG_END;
-    return Response;
+    return(Response);
 }  // ProcessJsonConfig
 
 // -----------------------------------------------------------------------------
 /*
-  *   Save the current configuration to the FS
-  *
-  *   needs
-  *       pointer to the config data array
-  *   returns
-  *       Nothing
-  */
-void c_OutputMgr::SetConfig (const char * ConfigData)
+ *   Save the current configuration to the FS
+ *
+ *   needs
+ *       pointer to the config data array
+ *   returns
+ *       Nothing
+ */
+void c_OutputMgr::SetConfig (const char* ConfigData)
 {
     // DEBUG_START;
 
@@ -724,13 +729,13 @@ void c_OutputMgr::SetConfig (const char * ConfigData)
 
 // -----------------------------------------------------------------------------
 /*
-  *   Save the current configuration to the FS
-  *
-  *   needs
-  *       Reference to the JSON Document
-  *   returns
-  *       Nothing
-  */
+ *   Save the current configuration to the FS
+ *
+ *   needs
+ *       Reference to the JSON Document
+ *   returns
+ *       Nothing
+ */
 void c_OutputMgr::SetConfig (ArduinoJson::JsonDocument & ConfigData)
 {
     // DEBUG_START;
@@ -757,8 +762,8 @@ void c_OutputMgr::Poll ()
     // //DEBUG_START;
 
     #ifdef LED_FLASH_GPIO
-    pinMode (LED_FLASH_GPIO, OUTPUT);
-    digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
+        pinMode (LED_FLASH_GPIO, OUTPUT);
+        digitalWrite (LED_FLASH_GPIO, LED_FLASH_OFF);
     #endif // def LED_FLASH_GPIO
 
     // do we need to save the current config?
@@ -787,16 +792,16 @@ void c_OutputMgr::UpdateDisplayBufferReferences (void)
     // DEBUG_START;
 
     /* Buffer vs virtual buffer.
-      *     Pixels have a concept called groups. A group of pixels uses
-      *     a single tupple of input channel data and replicates that
-      *     data into N positions in the output buffer. For non pixel
-      *     channels or for pixels with a group size of 1, the virtual
-      *     buffer and the output buffers are the same.
-      *     The virtual buffer size is the one we give to the input
-      *     processing engine
-      */
-    uint32_t OutputBufferOffset  = 0;       // offset into the raw data in the output buffer
-    uint32_t OutputChannelOffset = 0;       // Virtual channel offset to the output buffer.
+     *     Pixels have a concept called groups. A group of pixels uses
+     *     a single tupple of input channel data and replicates that
+     *     data into N positions in the output buffer. For non pixel
+     *     channels or for pixels with a group size of 1, the virtual
+     *     buffer and the output buffers are the same.
+     *     The virtual buffer size is the one we give to the input
+     *     processing engine
+     */
+    uint32_t    OutputBufferOffset  = 0;    // offset into the raw data in the output buffer
+    uint32_t    OutputChannelOffset = 0;    // Virtual channel offset to the output buffer.
 
     // DEBUG_V (String ("        BufferSize: ") + String (sizeof(OutputBuffer)));
     // DEBUG_V (String ("OutputBufferOffset: ") + String (OutputBufferOffset));
@@ -810,12 +815,12 @@ void c_OutputMgr::UpdateDisplayBufferReferences (void)
 
         OutputChannel.OutputBufferStartingOffset  = OutputBufferOffset;
         OutputChannel.OutputChannelStartingOffset = OutputChannelOffset;
-        OutputChannel.pOutputChannelDriver->SetOutputBufferAddress (& OutputBuffer[OutputBufferOffset]);
+        OutputChannel.pOutputChannelDriver->SetOutputBufferAddress (&OutputBuffer[OutputBufferOffset]);
 
-        uint32_t OutputBufferDataBytesNeeded        = OutputChannel.pOutputChannelDriver->GetNumOutputBufferBytesNeeded ();
-        uint32_t VirtualOutputBufferDataBytesNeeded = OutputChannel.pOutputChannelDriver->GetNumOutputBufferChannelsServiced ();
+        uint32_t    OutputBufferDataBytesNeeded        = OutputChannel.pOutputChannelDriver->GetNumOutputBufferBytesNeeded ();
+        uint32_t    VirtualOutputBufferDataBytesNeeded = OutputChannel.pOutputChannelDriver->GetNumOutputBufferChannelsServiced ();
 
-        uint32_t AvailableChannels = sizeof (OutputBuffer) - OutputBufferOffset;
+        uint32_t    AvailableChannels = sizeof (OutputBuffer) - OutputBufferOffset;
 
         if (AvailableChannels < OutputBufferDataBytesNeeded)
         {
@@ -866,7 +871,7 @@ void c_OutputMgr::PauseOutputs (bool PauseTheOutput)
 }  // PauseOutputs
 
 // -----------------------------------------------------------------------------
-void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCount, uint8_t * pSourceData)
+void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCount, uint8_t* pSourceData)
 {
     // DEBUG_START;
 
@@ -904,9 +909,10 @@ void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCou
 
             // Serial.print('5');
 
-            uint32_t lastChannelToSet       = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
-            uint32_t ChannelsToSet          = lastChannelToSet - StartChannelId;
-            uint32_t RelativeStartChannelId = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
+            uint32_t    lastChannelToSet       = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
+            uint32_t    ChannelsToSet          = lastChannelToSet - StartChannelId;
+            uint32_t    RelativeStartChannelId = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
+
             // DEBUG_V (String("               StartChannelId: 0x") + String(StartChannelId, HEX));
             // DEBUG_V (String("                 EndChannelId: 0x") + String(EndChannelId, HEX));
             // DEBUG_V (String("             lastChannelToSet: 0x") + String(lastChannelToSet, HEX));
@@ -926,7 +932,7 @@ void c_OutputMgr::WriteChannelData (uint32_t StartChannelId, uint32_t ChannelCou
 }  // WriteChannelData
 
 // -----------------------------------------------------------------------------
-void c_OutputMgr::ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCount, byte * pTargetData)
+void c_OutputMgr::ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCount, byte* pTargetData)
 {
     // DEBUG_START;
 
@@ -964,9 +970,9 @@ void c_OutputMgr::ReadChannelData (uint32_t StartChannelId, uint32_t ChannelCoun
 
             // Serial.print('5');
 
-            uint32_t lastChannelToSet       = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
-            uint32_t ChannelsToSet          = lastChannelToSet - StartChannelId;
-            uint32_t RelativeStartChannelId = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
+            uint32_t    lastChannelToSet       = min (EndChannelId, currentOutputChannelDriver.OutputChannelEndOffset);
+            uint32_t    ChannelsToSet          = lastChannelToSet - StartChannelId;
+            uint32_t    RelativeStartChannelId = StartChannelId - currentOutputChannelDriver.OutputChannelStartingOffset;
             // DEBUG_V (String("               StartChannelId: 0x") + String(StartChannelId, HEX));
             // DEBUG_V (String("                 EndChannelId: 0x") + String(EndChannelId, HEX));
             // DEBUG_V (String("             lastChannelToSet: 0x") + String(lastChannelToSet, HEX));

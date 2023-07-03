@@ -1,25 +1,25 @@
 /*
-  * NetworkMgr.cpp - Input Management class
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  *   This is a factory class used to manage the Input channel. It creates and deletes
-  *   the Input channel functionality as needed to support any new configurations
-  *   that get sent from from the WebPage.
-  *
-  */
+ * NetworkMgr.cpp - Input Management class
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ *   This is a factory class used to manage the Input channel. It creates and deletes
+ *   the Input channel functionality as needed to support any new configurations
+ *   that get sent from from the WebPage.
+ *
+ */
 
 #include "JurasicParkGate.h"
 #include "NetworkMgr.hpp"
@@ -32,8 +32,7 @@
 // -----------------------------------------------------------------------------
 ///< Start up the driver and put it into a safe mode
 c_NetworkMgr::c_NetworkMgr ()
-{
-}   // c_NetworkMgr
+{}   // c_NetworkMgr
 
 // -----------------------------------------------------------------------------
 ///< deallocate any resources and put the Input channels into a safe state
@@ -77,7 +76,7 @@ void c_NetworkMgr::Begin ()
     WiFiDriver.Begin ();
 
     #ifdef SUPPORT_ETHERNET
-    EthernetDriver.Begin ();
+        EthernetDriver.Begin ();
     #endif // def SUPPORT_ETHERNET
 
     // DEBUG_END;
@@ -96,10 +95,10 @@ void c_NetworkMgr::GetConfig (JsonObject & json)
     WiFiDriver.GetConfig (NetworkWiFiConfig);
 
     #ifdef SUPPORT_ETHERNET
-    NetworkConfig[CN_weus] = AllowWiFiAndEthUpSimultaneously;
+        NetworkConfig[CN_weus] = AllowWiFiAndEthUpSimultaneously;
 
-    JsonObject NetworkEthConfig = NetworkConfig.createNestedObject (CN_eth);
-    EthernetDriver.GetConfig (NetworkEthConfig);
+        JsonObject NetworkEthConfig = NetworkConfig.createNestedObject (CN_eth);
+        EthernetDriver.GetConfig (NetworkEthConfig);
 
     #endif // def SUPPORT_ETHERNET
 
@@ -107,8 +106,9 @@ void c_NetworkMgr::GetConfig (JsonObject & json)
 }  // GetConfig
 
 // -----------------------------------------------------------------------------
-IPAddress c_NetworkMgr::GetlocalIP () {
-    return WiFi.localIP ();
+IPAddress c_NetworkMgr::GetlocalIP ()
+{
+    return( WiFi.localIP () );
 }                                                                // GetlocalIP
 
 // -----------------------------------------------------------------------------
@@ -116,8 +116,8 @@ void c_NetworkMgr::GetStatus (JsonObject & json)
 {
     // DEBUG_START;
 
-    JsonObject NetworkStatus = json.createNestedObject (CN_network);
-    String name;
+    JsonObject  NetworkStatus = json.createNestedObject (CN_network);
+    String      name;
     GetHostname (name);
     NetworkStatus[CN_hostname] = name;
 
@@ -125,8 +125,8 @@ void c_NetworkMgr::GetStatus (JsonObject & json)
     WiFiDriver.GetStatus (NetworkWiFiStatus);
 
     #ifdef SUPPORT_ETHERNET
-    JsonObject NetworkEthStatus = NetworkStatus.createNestedObject (CN_eth);
-    EthernetDriver.GetStatus (NetworkEthStatus);
+        JsonObject NetworkEthStatus = NetworkStatus.createNestedObject (CN_eth);
+        EthernetDriver.GetStatus (NetworkEthStatus);
     #endif // def SUPPORT_ETHERNET
 
     // DEBUG_END;
@@ -143,7 +143,7 @@ void c_NetworkMgr::Poll ()
         WiFiDriver.Poll ();
 
         #ifdef SUPPORT_ETHERNET
-        EthernetDriver.Poll ();
+            EthernetDriver.Poll ();
         #endif // def SUPPORT_ETHERNET
     } while (false);
 
@@ -154,8 +154,8 @@ void c_NetworkMgr::Poll ()
 bool c_NetworkMgr::SetConfig (JsonObject & json)
 {
     // DEBUG_START;
-    bool ConfigChanged   = false;
-    bool HostnameChanged = false;
+    bool    ConfigChanged   = false;
+    bool    HostnameChanged = false;
 
     do  // once
     {
@@ -198,21 +198,21 @@ bool c_NetworkMgr::SetConfig (JsonObject & json)
         }
 
         #ifdef SUPPORT_ETHERNET
-        ConfigChanged = setFromJSON (AllowWiFiAndEthUpSimultaneously, network, CN_weus);
+            ConfigChanged = setFromJSON (AllowWiFiAndEthUpSimultaneously, network, CN_weus);
 
-        if ( network.containsKey (CN_eth) )
-        {
-            JsonObject networkEth = network[CN_eth];
-            ConfigChanged |= EthernetDriver.SetConfig (networkEth);
-        }
-        else
-        {
-            logcon ( String ( F ("No network Ethernet settings found. Using default Ethernet Settings") ) );
-        }
+            if ( network.containsKey (CN_eth) )
+            {
+                JsonObject networkEth = network[CN_eth];
+                ConfigChanged |= EthernetDriver.SetConfig (networkEth);
+            }
+            else
+            {
+                logcon ( String ( F ("No network Ethernet settings found. Using default Ethernet Settings") ) );
+            }
 
             // DEBUG_V (String ("            IsEthernetConnected: ") + String (IsEthernetConnected));
             // DEBUG_V (String ("AllowWiFiAndEthUpSimultaneously: ") + String (AllowWiFiAndEthUpSimultaneously));
-        SetWiFiEnable ();
+            SetWiFiEnable ();
 
         #endif // def SUPPORT_ETHERNET
     } while (false);
@@ -226,7 +226,7 @@ bool c_NetworkMgr::SetConfig (JsonObject & json)
         // DEBUG_V(String("hostname: ") + hostname);
         WiFiDriver.SetHostname (hostname);
         #ifdef SUPPORT_ETHERNET
-        EthernetDriver.SetHostname (hostname);
+            EthernetDriver.SetHostname (hostname);
         #endif // def SUPPORT_ETHERNET
     }
 
@@ -236,7 +236,7 @@ bool c_NetworkMgr::SetConfig (JsonObject & json)
 
     // DEBUG_V (String ("ConfigChanged: ") + String (ConfigChanged));
     // DEBUG_END;
-    return ConfigChanged;
+    return(ConfigChanged);
 }  // SetConfig
 
 // -----------------------------------------------------------------------------
@@ -249,9 +249,9 @@ bool c_NetworkMgr::Validate ()
     if ( 0 == hostname.length () )
     {
         #ifdef ARDUINO_ARCH_ESP8266
-        String chipId = String (ESP.getChipId (), HEX);
+            String  chipId = String (ESP.getChipId (), HEX);
         #else // ifdef ARDUINO_ARCH_ESP8266
-        String chipId = int64String (ESP.getEfuseMac (), HEX);
+            String  chipId = int64String (ESP.getEfuseMac (), HEX);
         #endif // ifdef ARDUINO_ARCH_ESP8266
         // DEBUG_V ("Setting Hostname default");
         hostname = "esps-" + String (chipId);
@@ -262,7 +262,7 @@ bool c_NetworkMgr::Validate ()
     // DEBUG_V (String (" Changed: ") + String (Changed));
 
     // DEBUG_END;
-    return Changed;
+    return(Changed);
 }  // Validate
 
 // -----------------------------------------------------------------------------

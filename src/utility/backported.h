@@ -10,13 +10,13 @@
 #elif defined (ARDUINO_ARCH_ESP8266)
 
 #ifdef __cplusplus
-extern "C"
-{
+        extern "C"
+        {
 #endif // ifdef __cplusplus
 
-typedef int esp_err_t;      // currently only need two defined status: OK & FAIL
-    #define ESP_OK   0
-    #define ESP_FAIL -1
+    typedef int esp_err_t;  // currently only need two defined status: OK & FAIL
+    #define ESP_OK      0
+    #define ESP_FAIL    -1
 
 #ifdef DEBUG_ESP_PORT
         #define LOG_ERROR_MSG(...) DEBUG_ESP_PORT.printf (__VA_ARGS__)
@@ -32,27 +32,32 @@ typedef int esp_err_t;      // currently only need two defined status: OK & FAIL
 #endif // ifndef unlikely
 
 #if defined (NDEBUG)
-    #define ESP_ERROR_CHECK(x)                                          \
-            do {                                                            \
-                esp_err_t err_rc_ = (x);                                    \
-                (void) sizeof(err_rc_);                                     \
+    #define ESP_ERROR_CHECK(x)           \
+            do                           \
+            {                            \
+                esp_err_t err_rc_ = (x); \
+                (void) sizeof(err_rc_);  \
             } while(0)
 #elif defined (CONFIG_COMPILER_OPTIMIZATION_ASSERTIONS_SILENT)
-    #define ESP_ERROR_CHECK(x)                                          \
-            do {                                                            \
-                esp_err_t err_rc_ = (x);                                    \
-                if (unlikely(err_rc_ != ESP_OK)) {                          \
-                    abort();                                                \
-                }                                                           \
+    #define ESP_ERROR_CHECK(x)                     \
+            do                                     \
+            {                                      \
+                esp_err_t err_rc_ = (x);           \
+                if ( unlikely(err_rc_ != ESP_OK) ) \
+                {                                  \
+                    abort();                       \
+                }                                  \
             } while(0)
 #else // if defined (NDEBUG)
-    #define ESP_ERROR_CHECK(x)                                          \
-            do {                                                            \
-                esp_err_t err_rc_ = (x);                                    \
-                if (unlikely(err_rc_ != ESP_OK)) {                          \
-                    LOG_ERROR_MSG("err: esp_err_t = %d", rc);               \
-                    assert(0 && #x);                                        \
-                }                                                           \
+    #define ESP_ERROR_CHECK(x)                                \
+            do                                                \
+            {                                                 \
+                esp_err_t err_rc_ = (x);                      \
+                if ( unlikely(err_rc_ != ESP_OK) )            \
+                {                                             \
+                    LOG_ERROR_MSG("err: esp_err_t = %d", rc); \
+                    assert(0 && #x);                          \
+                }                                             \
             } while(0);
 
 #endif // if defined (NDEBUG)
@@ -60,7 +65,7 @@ typedef int esp_err_t;      // currently only need two defined status: OK & FAIL
 
 
 #ifdef __cplusplus
-}
+        }
 #endif // ifdef __cplusplus
 
 #else // if defined (ARDUINO_ARCH_ESP32)

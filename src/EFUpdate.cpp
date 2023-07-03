@@ -1,21 +1,21 @@
 /*
-  * EFUpdate.cpp
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * EFUpdate.cpp
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 
 #include "JurasicParkGate.h"
 #include <FS.h>
@@ -31,11 +31,11 @@
 
 #ifndef U_SPIFFS
     /*
-      * Arduino 8266 libraries removed U_SPIFFS on master, replacing it with U_FS to allow for other FS types -
-      * See https://github.com/esp8266/Arduino/commit/a389a995fb12459819e33970ec80695f1eaecc58#diff-6c6d762c616bd0b92156f152d128ad51
-      *
-      * Substitute the value here, while not breaking things for people using older SDKs.
-      */
+     * Arduino 8266 libraries removed U_SPIFFS on master, replacing it with U_FS to allow for other FS types -
+     * See https://github.com/esp8266/Arduino/commit/a389a995fb12459819e33970ec80695f1eaecc58#diff-6c6d762c616bd0b92156f152d128ad51
+     *
+     * Substitute the value here, while not breaking things for people using older SDKs.
+     */
     #define U_SPIFFS U_FS
 #endif // ifndef U_SPIFFS
 
@@ -48,13 +48,13 @@ void EFUpdate::begin ()
     _loc            = 0;
     _error          = EFUPDATE_ERROR_OK;
     // DEBUG_END;
-}
+} // EFUpdate::begin
 
-bool EFUpdate::process (uint8_t * data, uint32_t len)
+bool EFUpdate::process (uint8_t* data, uint32_t len)
 {
     // DEBUG_START;
-    uint32_t index     = 0;
-    bool ConfigChanged = true;
+    uint32_t    index     = 0;
+    bool        ConfigChanged = true;
 
     while (index < len)
     {
@@ -63,158 +63,164 @@ bool EFUpdate::process (uint8_t * data, uint32_t len)
 
         switch (_state)
         {
-            case State::HEADER:
-            {
-                // DEBUG_V ("Process HEADER record");
-                _header.raw[_loc++] = data[index++];
-                // DEBUG_V ();
-                if ( _loc == sizeof (efuheader_t) )
-                {
-                    if (_header.signature == EFU_ID)
-                    {
-                        // DEBUG_V ();
-                        _header.version = ntohs (_header.version);
-                        memset ( & _record, 0, sizeof (efurecord_t) );
-                        _loc   = 0;
-                        _state = State::RECORD;
-                    }
-                    else
-                    {
-                        // DEBUG_V ();
-                        _state = State::FAIL;
-                        _error = EFUPDATE_ERROR_SIG;
-                    }
-                }
+        case State::HEADER :
+        {
+            // DEBUG_V ("Process HEADER record");
+            _header.raw[_loc++] = data[index++];
 
-                // DEBUG_V ();
-                break;
-            }
-
-            case State::RECORD:
+            // DEBUG_V ();
+            if ( _loc == sizeof (efuheader_t) )
             {
-                // DEBUG_V ("Process Data RECORD Type");
-                _record.raw[_loc++] = data[index++];
-                if ( _loc == sizeof (efurecord_t) )
+                if (_header.signature == EFU_ID)
                 {
                     // DEBUG_V ();
-                    _record.type = RecordType ( ntohs ( (uint16_t)_record.type ) );
-                    _record.size = ntohl (_record.size);
-                    _loc         = 0;
-                    // DEBUG_V (String("_record.type: ") + uint32_t(_record.type));
-                    // DEBUG_V (String("_record.size: ") + _record.size);
-                    if (_record.type == RecordType::SKETCH_IMAGE)
-                    {
-                        logcon ("Starting Sketch Image");
-                        // Begin sketch update
-                        if ( !Update.begin (_record.size, U_FLASH) )
-                        {
-                            // DEBUG_V ("Update.begin FAIL");
-                            _state = State::FAIL;
-                            _error = Update.getError ();
-                        }
-                        else
-                        {
-                            // DEBUG_V ("PASS");
-                            _state = State::DATA;
-                        }
-
-                        #ifdef ARDUINO_ARCH_ESP8266
-                        Update.runAsync (true);
-                        #endif // ifdef ARDUINO_ARCH_ESP8266
-                        // DEBUG_V ();
-                    }
-                    else if (_record.type == RecordType::FS_IMAGE)
-                    {
-                        logcon ("Starting FS IMAGE");
-                        // Begin file system update
-                        #ifdef ARDUINO_ARCH_ESP8266
-                        LittleFS.end ();
-                        #endif // ifdef ARDUINO_ARCH_ESP8266
-                        // DEBUG_V ();
-                        if ( !Update.begin (_record.size, U_SPIFFS) )
-                        {
-                            // DEBUG_V ("begin U_SPIFFS failed");
-                            _state = State::FAIL;
-                            _error = Update.getError ();
-                            // DEBUG_V ();
-                        }
-                        else
-                        {
-                            // DEBUG_V ("begin U_SPIFFS");
-                            _state = State::DATA;
-                        }
-
-                        #ifdef ARDUINO_ARCH_ESP8266
-                        Update.runAsync (true);
-                        #endif // ifdef ARDUINO_ARCH_ESP8266
-                    }
-                    else
-                    {
-                        logcon ("Unknown Record Type");
-                        _state = State::FAIL;
-                        _error = EFUPDATE_ERROR_REC;
-                    }
-                }
-
-                // DEBUG_V ();
-                break;
-            }
-
-            case State::DATA:
-            {
-                // DEBUG_V ("DATA");
-                uint32_t toWrite;
-
-                toWrite = (_record.size - _loc < len) ? _record.size - _loc : len - index;
-                // DEBUG_V ("Call Update.write");
-                // DEBUG_V (String ("toWrite: 0x") + String (toWrite, HEX));
-                // DEBUG_V (String ("   data: 0x") + String (uint32_t(data) + index, HEX));
-                FeedWDT ();
-
-                Update.write (& data[index], toWrite);
-                // DEBUG_V ("write done");
-                index = index + toWrite;
-                _loc  = _loc + toWrite;
-
-                if (_record.size == _loc)
-                {
-                    // DEBUG_V ("Call Update.end");
-                    Update.end (true);
-                    logcon ("Data Transfer Complete");
-                    memset ( & _record, 0, sizeof (efurecord_t) );
+                    _header.version = ntohs (_header.version);
+                    memset ( &_record, 0, sizeof (efurecord_t) );
                     _loc   = 0;
                     _state = State::RECORD;
                 }
-
-                // DEBUG_V ();
-                break;
+                else
+                {
+                    // DEBUG_V ();
+                    _state = State::FAIL;
+                    _error = EFUPDATE_ERROR_SIG;
+                }
             }
 
-            case State::FAIL:
+            // DEBUG_V ();
+            break;
+        }
+
+        case State::RECORD :
+        {
+            // DEBUG_V ("Process Data RECORD Type");
+            _record.raw[_loc++] = data[index++];
+
+            if ( _loc == sizeof (efurecord_t) )
             {
-                // DEBUG_V ("FAIL");
-                index         = len;
-                ConfigChanged = false;
-                break;
+                // DEBUG_V ();
+                _record.type = RecordType ( ntohs ( (uint16_t)_record.type ) );
+                _record.size = ntohl (_record.size);
+                _loc         = 0;
+
+                // DEBUG_V (String("_record.type: ") + uint32_t(_record.type));
+                // DEBUG_V (String("_record.size: ") + _record.size);
+                if (_record.type == RecordType::SKETCH_IMAGE)
+                {
+                    logcon ("Starting Sketch Image");
+
+                    // Begin sketch update
+                    if ( !Update.begin (_record.size, U_FLASH) )
+                    {
+                        // DEBUG_V ("Update.begin FAIL");
+                        _state = State::FAIL;
+                        _error = Update.getError ();
+                    }
+                    else
+                    {
+                        // DEBUG_V ("PASS");
+                        _state = State::DATA;
+                    }
+
+                        #ifdef ARDUINO_ARCH_ESP8266
+                        Update.runAsync (true);
+                        #endif // ifdef ARDUINO_ARCH_ESP8266
+                    // DEBUG_V ();
+                }
+                else
+                if (_record.type == RecordType::FS_IMAGE)
+                {
+                    logcon ("Starting FS IMAGE");
+                    // Begin file system update
+                        #ifdef ARDUINO_ARCH_ESP8266
+                        LittleFS.end ();
+                        #endif // ifdef ARDUINO_ARCH_ESP8266
+
+                    // DEBUG_V ();
+                    if ( !Update.begin (_record.size, U_SPIFFS) )
+                    {
+                        // DEBUG_V ("begin U_SPIFFS failed");
+                        _state = State::FAIL;
+                        _error = Update.getError ();
+                        // DEBUG_V ();
+                    }
+                    else
+                    {
+                        // DEBUG_V ("begin U_SPIFFS");
+                        _state = State::DATA;
+                    }
+
+                        #ifdef ARDUINO_ARCH_ESP8266
+                        Update.runAsync (true);
+                        #endif // ifdef ARDUINO_ARCH_ESP8266
+                }
+                else
+                {
+                    logcon ("Unknown Record Type");
+                    _state = State::FAIL;
+                    _error = EFUPDATE_ERROR_REC;
+                }
             }
+
+            // DEBUG_V ();
+            break;
+        }
+
+        case State::DATA :
+        {
+            // DEBUG_V ("DATA");
+            uint32_t toWrite;
+
+            toWrite = (_record.size - _loc < len)?_record.size - _loc : len - index;
+            // DEBUG_V ("Call Update.write");
+            // DEBUG_V (String ("toWrite: 0x") + String (toWrite, HEX));
+            // DEBUG_V (String ("   data: 0x") + String (uint32_t(data) + index, HEX));
+            FeedWDT ();
+
+            Update.write (&data[index], toWrite);
+            // DEBUG_V ("write done");
+            index = index + toWrite;
+            _loc  = _loc + toWrite;
+
+            if (_record.size == _loc)
+            {
+                // DEBUG_V ("Call Update.end");
+                Update.end (true);
+                logcon ("Data Transfer Complete");
+                memset ( &_record, 0, sizeof (efurecord_t) );
+                _loc   = 0;
+                _state = State::RECORD;
+            }
+
+            // DEBUG_V ();
+            break;
+        }
+
+        case State::FAIL :
+        {
+            // DEBUG_V ("FAIL");
+            index         = len;
+            ConfigChanged = false;
+            break;
+        }
         } // switch
     }
 
     // DEBUG_END;
 
-    return ConfigChanged;
-}
+    return(ConfigChanged);
+} // EFUpdate::process
 
 bool EFUpdate::hasError ()
 {
     // DEBUG_V("Test For error");
-    return _error != EFUPDATE_ERROR_OK;
+    return(_error != EFUPDATE_ERROR_OK);
 }
 
 uint8_t EFUpdate::getError ()
 {
     // DEBUG_V ();
-    return _error;
+    return(_error);
 }
 
 bool EFUpdate::end ()
@@ -222,10 +228,10 @@ bool EFUpdate::end ()
     // DEBUG_V ();
     if (_state == State::FAIL)
     {
-        return false;
+        return(false);
     }
     else
     {
-        return true;
+        return(true);
     }
-}
+} // EFUpdate::end

@@ -1,21 +1,21 @@
 /*
-  * InputButton.cpp
-  *
-  * Project: JurasicParkGate
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartinMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * InputButton.cpp
+ *
+ * Project: JurasicParkGate
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartinMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 #include "InputButton.hpp"
 
 /*****************************************************************************/
@@ -26,10 +26,10 @@
 /*	fsm                                                                      */
 /*****************************************************************************/
 
-fsm_InputButton_boot fsm_InputButton_boot_imp;
-fsm_InputButton_off_state fsm_InputButton_off_state_imp;
-fsm_InputButton_on_wait_long_state fsm_InputButton_on_wait_long_state_imp;
-fsm_InputButton_wait_for_off_state fsm_InputButton_wait_for_off_state_imp;
+fsm_InputButton_boot                fsm_InputButton_boot_imp;
+fsm_InputButton_off_state           fsm_InputButton_off_state_imp;
+fsm_InputButton_on_wait_long_state  fsm_InputButton_on_wait_long_state_imp;
+fsm_InputButton_wait_for_off_state  fsm_InputButton_wait_for_off_state_imp;
 
 /*****************************************************************************/
 /* Code                                                                      */
@@ -50,7 +50,7 @@ void c_InputButton::Begin ()
     // DEBUG_V(String("Name: ") + Name);
 
     // DEBUG_END;
-}
+} // c_InputButton::Begin
 
 /*****************************************************************************/
 void c_InputButton::GetConfig (JsonObject & JsonData)
@@ -60,7 +60,7 @@ void c_InputButton::GetConfig (JsonObject & JsonData)
     JsonData[M_IO_ENABLED] = Enabled;
     JsonData[M_NAME]       = Name;
     JsonData[M_ID]         = GpioId;
-    JsonData[M_POLARITY]   = (Polarity_t::ActiveHigh == polarity) ? CN_ActiveHigh : CN_ActiveLow;
+    JsonData[M_POLARITY]   = (Polarity_t::ActiveHigh == polarity)?CN_ActiveHigh : CN_ActiveLow;
     JsonData[CN_channels]  = TriggerChannel;
     JsonData[CN_long]      = LongPushDelayMS;
 
@@ -76,7 +76,7 @@ void c_InputButton::GetStatus (JsonObject & JsonData)
 
     JsonData[M_NAME]  = Name;
     JsonData[M_ID]    = GpioId;
-    JsonData[M_STATE] = ( ReadInput () ) ? CN_on : CN_off;
+    JsonData[M_STATE] = ( ReadInput () )?CN_on : CN_off;
 
     // DEBUG_END;
 }  // GetStatistics
@@ -86,9 +86,9 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
 {
     // DEBUG_START;
 
-    String Polarity = (ActiveHigh == polarity) ? CN_ActiveHigh : CN_ActiveLow;
+    String      Polarity = (ActiveHigh == polarity)?CN_ActiveHigh : CN_ActiveLow;
 
-    uint32_t oldInputId = GpioId;
+    uint32_t    oldInputId = GpioId;
 
     setFromJSON (   Enabled,            JsonData,   M_IO_ENABLED);
     setFromJSON (   Name,               JsonData,   M_NAME);
@@ -97,7 +97,7 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
     setFromJSON (   TriggerChannel,     JsonData,   CN_channels);
     setFromJSON (   LongPushDelayMS,    JsonData,   CN_long);
 
-    polarity = (String (CN_ActiveHigh) == Polarity) ? ActiveHigh : ActiveLow;
+    polarity = (String (CN_ActiveHigh) == Polarity)?ActiveHigh : ActiveLow;
 
     if ( (oldInputId != GpioId) || (false == Enabled) )
     {
@@ -109,7 +109,7 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
     // DEBUG_V (String ("GpioId: ") + String (GpioId));
 
     // DEBUG_END;
-    return true;
+    return(true);
 }  // ProcessConfig
 
 /*****************************************************************************/
@@ -137,11 +137,12 @@ bool c_InputButton::ReadInput (void)
 
     // DEBUG_V (String ("GpioId:    ") + String (GpioId));
     // DEBUG_V (String ("bInputValue: ") + String (bInputValue));
-    return bInputValue;
+    return(bInputValue);
 }  // ReadInput
 
 // -----------------------------------------------------------------------------
-void c_InputButton::NetworkStateChanged (bool IsConnected) {
+void c_InputButton::NetworkStateChanged (bool IsConnected)
+{
 }                                                              // NetworkStateChanged
 
 /*****************************************************************************/
@@ -155,7 +156,7 @@ void fsm_InputButton_boot::Init (c_InputButton & pInputButton)
     // DEBUG_START;
 
     // DEBUG_V ("Entring BOOT State");
-    pInputButton.CurrentFsmState = & fsm_InputButton_boot_imp;
+    pInputButton.CurrentFsmState = &fsm_InputButton_boot_imp;
     // dont do anything
 
     // DEBUG_END;
@@ -186,7 +187,7 @@ void fsm_InputButton_off_state::Init (c_InputButton & pInputButton)
 
     // DEBUG_V ("Entring OFF State");
     pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
-    pInputButton.CurrentFsmState    = & fsm_InputButton_off_state_imp;
+    pInputButton.CurrentFsmState    = &fsm_InputButton_off_state_imp;
 
     // DEBUG_END;
 }  // fsm_InputButton_off_state::Init
@@ -229,7 +230,7 @@ void fsm_InputButton_on_wait_long_state::Init (c_InputButton & pInputButton)
 
     // DEBUG_V ("Entring Wait Long State");
     pInputButton.InputHoldTimer.StartTimer (pInputButton.LongPushDelayMS);
-    pInputButton.CurrentFsmState = & fsm_InputButton_on_wait_long_state_imp;
+    pInputButton.CurrentFsmState = &fsm_InputButton_on_wait_long_state_imp;
 
     // DEBUG_END;
 }  // fsm_InputButton_on_wait_long_state::Init
@@ -273,7 +274,7 @@ void fsm_InputButton_wait_for_off_state::Init (c_InputButton & pInputButton)
     // DEBUG_START;
 
     // DEBUG_V ("Entring Wait OFF State");
-    pInputButton.CurrentFsmState = & fsm_InputButton_wait_for_off_state_imp;
+    pInputButton.CurrentFsmState = &fsm_InputButton_wait_for_off_state_imp;
 
     // DEBUG_END;
 }  // fsm_InputButton_wait_for_off_state::Init

@@ -1,21 +1,21 @@
 /*
-  * WebMgr.cpp - Output Management class
-  *
-  * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
-  * Copyright (c) 2023 Martin Mueller
-  * http://www.MartnMueller2003.com
-  *
-  *  This program is provided free for you to use in any way that you wish,
-  *  subject to the laws and regulations where you are using it.  Due diligence
-  *  is strongly suggested before using this code.  Please give credit where due.
-  *
-  *  The Author makes no warranty of any kind, express or implied, with regard
-  *  to this program or the documentation contained in this document.  The
-  *  Author shall not be liable in any event for incidental or consequential
-  *  damages in connection with, or arising out of, the furnishing, performance
-  *  or use of these programs.
-  *
-  */
+ * WebMgr.cpp - Output Management class
+ *
+ * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Copyright (c) 2023 Martin Mueller
+ * http://www.MartnMueller2003.com
+ *
+ *  This program is provided free for you to use in any way that you wish,
+ *  subject to the laws and regulations where you are using it.  Due diligence
+ *  is strongly suggested before using this code.  Please give credit where due.
+ *
+ *  The Author makes no warranty of any kind, express or implied, with regard
+ *  to this program or the documentation contained in this document.  The
+ *  Author shall not be liable in any event for incidental or consequential
+ *  damages in connection with, or arising out of, the furnishing, performance
+ *  or use of these programs.
+ *
+ */
 
 #include "JurasicParkGate.h"
 
@@ -39,12 +39,12 @@
 #define ESPALEXA_ASYNC      // it is important to define this before #include <Espalexa.h>!
 #include <Espalexa.h>
 
-const uint8_t HTTP_PORT = 80;      ///< Default web server port
+const uint8_t           HTTP_PORT = 80; ///< Default web server port
 
-static Espalexa espalexa;
-static EFUpdate efupdate;                       /// EFU Update Handler
-static AsyncWebServer webServer (HTTP_PORT);    // Web Server
-static AsyncWebSocket webSocket ("/ws");        // Web Socket Plugin
+static Espalexa         espalexa;
+static EFUpdate         efupdate;               /// EFU Update Handler
+static AsyncWebServer   webServer (HTTP_PORT);  // Web Server
+static AsyncWebSocket   webSocket ("/ws");      // Web Socket Plugin
 
 // -----------------------------------------------------------------------------
 void PrettyPrint (DynamicJsonDocument & jsonStuff, String Name)
@@ -94,7 +94,7 @@ c_WebMgr::~c_WebMgr ()
 
 // -----------------------------------------------------------------------------
 ///< Start the module
-void c_WebMgr::Begin (config_t * /* NewConfig */)
+void c_WebMgr::Begin (config_t* /* NewConfig */)
 {
     // DEBUG_START;
     do  // once
@@ -102,10 +102,11 @@ void c_WebMgr::Begin (config_t * /* NewConfig */)
         #ifdef BOARD_HAS_PSRAM
             // DEBUG_V(String(F("Total PSRAM: ")) + String(ESP.getPsramSize()));
             // DEBUG_V(String(F(" Free PSRAM: ")) + String(ESP.getFreePsram()));
-        pWebSocketFrameCollectionBuffer = (char *)ps_malloc (WebSocketFrameCollectionBufferSize + 1);
+            pWebSocketFrameCollectionBuffer = (char*)ps_malloc (WebSocketFrameCollectionBufferSize + 1);
         #else  // Use Heap
-        pWebSocketFrameCollectionBuffer = (char *)malloc (WebSocketFrameCollectionBufferSize + 1);
+            pWebSocketFrameCollectionBuffer = (char*)malloc (WebSocketFrameCollectionBufferSize + 1);
         #endif // def BOARD_HAS_PSRAM
+
         if (nullptr == pWebSocketFrameCollectionBuffer)
         {
             logcon ("Could not allocate Web Buffer. Requesting reboot");
@@ -158,27 +159,27 @@ void c_WebMgr::init ()
 
         // Setup WebSockets
         using namespace std::placeholders;
-        webSocket.onEvent ( std::bind (& c_WebMgr::onWsEvent, this, _1, _2, _3, _4, _5, _6) );
-        webServer.addHandler (& webSocket);
+        webSocket.onEvent ( std::bind (&c_WebMgr::onWsEvent, this, _1, _2, _3, _4, _5, _6) );
+        webServer.addHandler (&webSocket);
 
         // Reboot handler
         webServer.on (
             "/reboot",
             HTTP_GET,
-            [] (AsyncWebServerRequest * request)
+            [] (AsyncWebServerRequest* request)
         {
             reboot = true;
             request->send (200, CN_textSLASHplain, "Rebooting");
-            });
+        });
 
         // Heap status handler
         webServer.on (
             "/heap",
             HTTP_GET,
-            [] (AsyncWebServerRequest * request)
+            [] (AsyncWebServerRequest* request)
         {
             request->send ( 200, CN_textSLASHplain, String ( ESP.getFreeHeap () ).c_str () );
-            });
+        });
 
         // JSON Config Handler
         // TODO: This is only being used by FPP to get the hostname.  Will submit PR to change FPP and remove this
@@ -186,107 +187,107 @@ void c_WebMgr::init ()
         webServer.on (
             "/conf",
             HTTP_GET,
-            [this] (AsyncWebServerRequest * request)
+            [this] (AsyncWebServerRequest* request)
         {
-                // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
+            // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
             this->GetConfiguration ();
             request->send (200, "text/json", pWebSocketFrameCollectionBuffer);
-                // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
-            });
+            // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
+        });
 
         // Firmware upload handler
         webServer.on (
             "/updatefw",
             HTTP_POST,
-            [] (AsyncWebServerRequest * request)
+            [] (AsyncWebServerRequest* request)
         {
             webSocket.textAll ("X6");
-            },
-            [] (AsyncWebServerRequest * request, String filename, uint32_t index, uint8_t * data, uint32_t len, bool final) {
+        },
+            [] (AsyncWebServerRequest* request, String filename, uint32_t index, uint8_t* data, uint32_t len, bool final) {
             WebMgr.FirmwareUpload (request, filename, index, data, len, final);
-            }).setFilter (ON_STA_FILTER);
+        }).setFilter (ON_STA_FILTER);
 
         // Static Handlers
         webServer.  serveStatic (   "/UpdRecipe",   LittleFS,   "/UpdRecipe.json");
         // webServer.serveStatic ("/static", LittleFS, "/www/static").setCacheControl ("max-age=31536000");
         webServer.  serveStatic (   "/",            LittleFS,   "/www/").setDefaultFile ("index.html");
         /*
-          *         // if the client posts to the upload page
-          *         webServer.on ("/upload", HTTP_POST | HTTP_PUT | HTTP_OPTIONS,
-          *             [](AsyncWebServerRequest * request)
-          *             {
-          *                 // DEBUG_V ("Got upload post request");
-          *                 if (true == FileMgr.SdCardIsInstalled())
-          *                 {
-          *                     // Send status 200 (OK) to tell the client we are ready to receive
-          *                     request->send (200);
-          *                 }
-          *                 else
-          *                 {
-          *                     request->send (404, CN_textSLASHplain, "Page Not found");
-          *                 }
-          *             },
-          *
-          *             [this](AsyncWebServerRequest* request, uint8_t* data, uint32_t len, uint32_t index, uint32_t total)
-          *             {
-          *                 // DEBUG_V (String ("Got process Body request: index: ") + String (index));
-          *                 // DEBUG_V (String ("Got process Body request: len:   ") + String (len));
-          *                 // DEBUG_V (String ("Got process Body request: total: ") + String (total));
-          *                 request->send (404, CN_textSLASHplain, "Page Not found");
-          *             }
-          *         );
-          */
+         *         // if the client posts to the upload page
+         *         webServer.on ("/upload", HTTP_POST | HTTP_PUT | HTTP_OPTIONS,
+         *             [](AsyncWebServerRequest * request)
+         *             {
+         *                 // DEBUG_V ("Got upload post request");
+         *                 if (true == FileMgr.SdCardIsInstalled())
+         *                 {
+         *                     // Send status 200 (OK) to tell the client we are ready to receive
+         *                     request->send (200);
+         *                 }
+         *                 else
+         *                 {
+         *                     request->send (404, CN_textSLASHplain, "Page Not found");
+         *                 }
+         *             },
+         *
+         *             [this](AsyncWebServerRequest* request, uint8_t* data, uint32_t len, uint32_t index, uint32_t total)
+         *             {
+         *                 // DEBUG_V (String ("Got process Body request: index: ") + String (index));
+         *                 // DEBUG_V (String ("Got process Body request: len:   ") + String (len));
+         *                 // DEBUG_V (String ("Got process Body request: total: ") + String (total));
+         *                 request->send (404, CN_textSLASHplain, "Page Not found");
+         *             }
+         *         );
+         */
         webServer.on (
             "/download",
             HTTP_GET,
-            [] (AsyncWebServerRequest * request)
+            [] (AsyncWebServerRequest* request)
         {
-                // DEBUG_V (String ("url: ") + String (request->url ()));
+            // DEBUG_V (String ("url: ") + String (request->url ()));
             String filename = request->url ().substring ( String ("/download").length () );
-                // DEBUG_V (String ("filename: ") + String (filename));
+            // DEBUG_V (String ("filename: ") + String (filename));
 
-            AsyncWebServerResponse * response = new AsyncFileResponse (ESP_SDFS, filename, "application/octet-stream", true);
+            AsyncWebServerResponse* response = new AsyncFileResponse (ESP_SDFS, filename, "application/octet-stream", true);
             request->send (response);
 
-                // DEBUG_V ("Send File Done");
-            });
+            // DEBUG_V ("Send File Done");
+        });
 
         webServer.onNotFound (
-            [this] (AsyncWebServerRequest * request)
+            [this] (AsyncWebServerRequest* request)
         {
-                // DEBUG_V ("onNotFound");
+            // DEBUG_V ("onNotFound");
             if ( true == this->IsAlexaCallbackValid () )
             {
-                    // DEBUG_V ("IsAlexaCallbackValid == true");
+                // DEBUG_V ("IsAlexaCallbackValid == true");
                 if ( !espalexa.handleAlexaApiCall (request) ) // if you don't know the URI, ask espalexa whether it is an Alexa control request
                 {
-                                                              // DEBUG_V ("Alexa Callback could not resolve the request");
+                    // DEBUG_V ("Alexa Callback could not resolve the request");
                     request->send (404, CN_textSLASHplain, "Page Not found");
                 }
             }
             else
             {
-                    // DEBUG_V ("IsAlexaCallbackValid == false");
+                // DEBUG_V ("IsAlexaCallbackValid == false");
                 request->send (404, CN_textSLASHplain, "Page Not found");
             }
-            });
+        });
 
         // give espalexa a pointer to the server object so it can use your server instead of creating its own
-        espalexa.begin (& webServer);
+        espalexa.begin (&webServer);
 
         // webServer.begin ();
 
         pAlexaDevice = new EspalexaDevice (
             String ( F ("ESP") ),
-            [this] (EspalexaDevice * pDevice)
+            [this] (EspalexaDevice* pDevice)
         {
             this->onAlexaMessage (pDevice);
-            },
+        },
             EspalexaDeviceType::extendedcolor);
 
         pAlexaDevice->setName (config.id);
         espalexa.addDevice (pAlexaDevice);
-        espalexa.setDiscoverable ( (nullptr != pAlexaCallback) ? true : false );
+        espalexa.setDiscoverable ( (nullptr != pAlexaCallback)?true : false );
 
         logcon (String ( F ("Web server listening on port ") ) + HTTP_PORT);
 
@@ -294,7 +295,7 @@ void c_WebMgr::init ()
     }
 
     // DEBUG_END;
-}
+} // c_WebMgr::init
 
 // -----------------------------------------------------------------------------
 void c_WebMgr::RegisterAlexaCallback (DeviceCallbackFunction cb)
@@ -308,7 +309,7 @@ void c_WebMgr::RegisterAlexaCallback (DeviceCallbackFunction cb)
 }  // RegisterAlexaCallback
 
 // -----------------------------------------------------------------------------
-void c_WebMgr::onAlexaMessage (EspalexaDevice * dev)
+void c_WebMgr::onAlexaMessage (EspalexaDevice* dev)
 {
     // DEBUG_START;
     if ( true == IsAlexaCallbackValid () )
@@ -323,8 +324,8 @@ void c_WebMgr::onAlexaMessage (EspalexaDevice * dev)
 
 // -----------------------------------------------------------------------------
 /*
-  *     Gather config data from the various config sources and send it to the web page.
-  */
+ *     Gather config data from the various config sources and send it to the web page.
+ */
 void c_WebMgr::GetConfiguration ()
 {
     extern void GetConfig (JsonObject & json);
@@ -346,16 +347,16 @@ void c_WebMgr::GetDeviceOptions ()
     // DEBUG_START;
     #ifdef SUPPORT_DEVICE_OPTION_LIST
         // set up a framework to get the option data
-    WebJsonDoc->clear ();
+        WebJsonDoc->clear ();
 
-    if ( 0 == WebJsonDoc->capacity () )
-    {
-        logcon ( F ("ERROR: Failed to allocate memory for the GetDeviceOptions web request response.") );
-    }
+        if ( 0 == WebJsonDoc->capacity () )
+        {
+            logcon ( F ("ERROR: Failed to allocate memory for the GetDeviceOptions web request response.") );
+        }
 
         // DEBUG_V ("");
-    JsonObject WebOptions        = WebJsonDoc->createNestedObject ( F ("options") );
-    JsonObject JsonDeviceOptions = WebOptions.createNestedObject (CN_device);
+        JsonObject  WebOptions        = WebJsonDoc->createNestedObject ( F ("options") );
+        JsonObject  JsonDeviceOptions = WebOptions.createNestedObject (CN_device);
         // DEBUG_V("");
 
         // PrettyPrint (WebOptions);
@@ -363,8 +364,8 @@ void c_WebMgr::GetDeviceOptions ()
         // PrettyPrint (WebOptions);
 
         // now make it something we can transmit
-    uint32_t msgOffset = strlen (WebSocketFrameCollectionBuffer);
-    serializeJson ( WebOptions, & pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
+        uint32_t msgOffset = strlen (WebSocketFrameCollectionBuffer);
+        serializeJson ( WebOptions, &pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
     #endif // def SUPPORT_DEVICE_OPTION_LIST
 
     // DEBUG_END;
@@ -373,150 +374,150 @@ void c_WebMgr::GetDeviceOptions ()
 // -----------------------------------------------------------------------------
 /// Handle Web Service events
 /** Handles all Web Service event types and performs initial parsing of Web Service event data.
-  * Text messages that start with 'X' are treated as "Simple" format messages, else they're parsed as JSON.
-  */
-void c_WebMgr::onWsEvent (AsyncWebSocket        * server,
-                          AsyncWebSocketClient  * client,
-                          AwsEventType          type,
-                          void                  * arg,
-                          uint8_t               * data,
-                          uint32_t              len)
+ * Text messages that start with 'X' are treated as "Simple" format messages, else they're parsed as JSON.
+ */
+void c_WebMgr::onWsEvent (AsyncWebSocket*   server,
+ AsyncWebSocketClient*                      client,
+ AwsEventType                               type,
+ void*                                      arg,
+ uint8_t*                                   data,
+ uint32_t                                   len)
 {
     // DEBUG_START;
     // DEBUG_V (CN_Heap_colon + String (ESP.getFreeHeap ()));
 
     switch (type)
     {
-        case WS_EVT_DATA:
+    case WS_EVT_DATA :
+    {
+        // DEBUG_V ("");
+
+        AwsFrameInfo* MessageInfo = static_cast <AwsFrameInfo*> (arg);
+        // DEBUG_V (String (F ("               len: ")) + len);
+        // DEBUG_V (String (F ("MessageInfo->index: ")) + int64String (MessageInfo->index));
+        // DEBUG_V (String (F ("  MessageInfo->len: ")) + int64String (MessageInfo->len));
+        // DEBUG_V (String (F ("MessageInfo->final: ")) + String (MessageInfo->final));
+
+        // only process text messages
+        if (MessageInfo->opcode != WS_TEXT)
         {
-            // DEBUG_V ("");
-
-            AwsFrameInfo * MessageInfo = static_cast <AwsFrameInfo *> (arg);
-            // DEBUG_V (String (F ("               len: ")) + len);
-            // DEBUG_V (String (F ("MessageInfo->index: ")) + int64String (MessageInfo->index));
-            // DEBUG_V (String (F ("  MessageInfo->len: ")) + int64String (MessageInfo->len));
-            // DEBUG_V (String (F ("MessageInfo->final: ")) + String (MessageInfo->final));
-
-            // only process text messages
-            if (MessageInfo->opcode != WS_TEXT)
-            {
-                logcon ( F ("-- Ignore binary message --") );
-                break;
-            }
-
-            // DEBUG_V ("");
-
-            // is this a message start?
-            if (0 == MessageInfo->index)
-            {
-                // clear the string we are building
-                memset (pWebSocketFrameCollectionBuffer, 0x0, WebSocketFrameCollectionBufferSize);
-                // DEBUG_V ("");
-            }
-
-            // DEBUG_V ("");
-
-            // will the message fit into our buffer?
-            if ( WebSocketFrameCollectionBufferSize < (MessageInfo->index + len) )
-            {
-                // message wont fit. Dont save any of it
-                logcon ( String ( F ("*** onWsEvent() error: Incoming message is too long.") ) );
-                break;
-            }
-
-            // add the current data to the aggregate message
-            memcpy (& pWebSocketFrameCollectionBuffer[MessageInfo->index], data, len);
-
-            // is the message complete?
-            if ( (MessageInfo->index + len) != MessageInfo->len )
-            {
-                // DEBUG_V ("The message is not yet complete");
-                break;
-            }
-
-            // DEBUG_V ("");
-
-            // did we get the final part of the message?
-            if (!MessageInfo->final)
-            {
-                // DEBUG_V ("message is not terminated yet");
-                break;
-            }
-
-            // DEBUG_V (WebSocketFrameCollectionBuffer);
-            // message is all here. Process it
-
-            FeedWDT ();
-
-            if (pWebSocketFrameCollectionBuffer[0] == 'X')
-            {
-                // DEBUG_V ("");
-                ProcessXseriesRequests (client);
-                break;
-            }
-
-            if (pWebSocketFrameCollectionBuffer[0] == 'V')
-            {
-                // DEBUG_V ("");
-                ProcessVseriesRequests (client);
-                break;
-            }
-
-            if (pWebSocketFrameCollectionBuffer[0] == 'G')
-            {
-                // DEBUG_V ("");
-                ProcessGseriesRequests (client);
-                break;
-            }
-
-            OutputMgr.PauseOutputs (true);
-
-            // convert the input data into a json structure (use json read only mode)
-            WebJsonDoc->clear ();
-            DeserializationError error = deserializeJson ( *WebJsonDoc, (const char *)(pWebSocketFrameCollectionBuffer) );
-
-            // DEBUG_V ("");
-            if (error)
-            {
-                logcon (    CN_stars + String ( F (" WebIO::onWsEvent(): Parse Error: ") ) + error.c_str () );
-                logcon (    pWebSocketFrameCollectionBuffer);
-                break;
-            }
-
-            // DEBUG_V ("");
-
-            ProcessReceivedJsonMessage (client);
-            // DEBUG_V ("");
-
-            break;
-        }  // case WS_EVT_DATA:
-
-        case WS_EVT_CONNECT:
-        {
-            webSocket.cleanupClients ();
-            logcon ( String ( F ("WS client connect - ") ) + client->id () );
-            break;
-        }  // case WS_EVT_CONNECT:
-
-        case WS_EVT_DISCONNECT:
-        {
-            logcon ( String ( F ("WS client disconnect - ") ) + client->id () );
-            break;
-        }  // case WS_EVT_DISCONNECT:
-
-        case WS_EVT_PONG:
-        {
-            logcon ( F ("* WS PONG *") );
-            break;
-        }  // case WS_EVT_PONG:
-
-        case WS_EVT_ERROR:
-        default:
-        {
-            webSocket.cleanupClients ();
-            logcon ( F ("** WS ERROR **") );
+            logcon ( F ("-- Ignore binary message --") );
             break;
         }
+
+        // DEBUG_V ("");
+
+        // is this a message start?
+        if (0 == MessageInfo->index)
+        {
+            // clear the string we are building
+            memset (pWebSocketFrameCollectionBuffer, 0x0, WebSocketFrameCollectionBufferSize);
+            // DEBUG_V ("");
+        }
+
+        // DEBUG_V ("");
+
+        // will the message fit into our buffer?
+        if ( WebSocketFrameCollectionBufferSize < (MessageInfo->index + len) )
+        {
+            // message wont fit. Dont save any of it
+            logcon ( String ( F ("*** onWsEvent() error: Incoming message is too long.") ) );
+            break;
+        }
+
+        // add the current data to the aggregate message
+        memcpy (&pWebSocketFrameCollectionBuffer[MessageInfo->index], data, len);
+
+        // is the message complete?
+        if ( (MessageInfo->index + len) != MessageInfo->len )
+        {
+            // DEBUG_V ("The message is not yet complete");
+            break;
+        }
+
+        // DEBUG_V ("");
+
+        // did we get the final part of the message?
+        if (!MessageInfo->final)
+        {
+            // DEBUG_V ("message is not terminated yet");
+            break;
+        }
+
+        // DEBUG_V (WebSocketFrameCollectionBuffer);
+        // message is all here. Process it
+
+        FeedWDT ();
+
+        if (pWebSocketFrameCollectionBuffer[0] == 'X')
+        {
+            // DEBUG_V ("");
+            ProcessXseriesRequests (client);
+            break;
+        }
+
+        if (pWebSocketFrameCollectionBuffer[0] == 'V')
+        {
+            // DEBUG_V ("");
+            ProcessVseriesRequests (client);
+            break;
+        }
+
+        if (pWebSocketFrameCollectionBuffer[0] == 'G')
+        {
+            // DEBUG_V ("");
+            ProcessGseriesRequests (client);
+            break;
+        }
+
+        OutputMgr.PauseOutputs (true);
+
+        // convert the input data into a json structure (use json read only mode)
+        WebJsonDoc->clear ();
+        DeserializationError error = deserializeJson ( *WebJsonDoc, (const char*)(pWebSocketFrameCollectionBuffer) );
+
+        // DEBUG_V ("");
+        if (error)
+        {
+            logcon (    CN_stars + String ( F (" WebIO::onWsEvent(): Parse Error: ") ) + error.c_str () );
+            logcon (    pWebSocketFrameCollectionBuffer);
+            break;
+        }
+
+        // DEBUG_V ("");
+
+        ProcessReceivedJsonMessage (client);
+        // DEBUG_V ("");
+
+        break;
+    }      // case WS_EVT_DATA:
+
+    case WS_EVT_CONNECT :
+    {
+        webSocket.cleanupClients ();
+        logcon ( String ( F ("WS client connect - ") ) + client->id () );
+        break;
+    }      // case WS_EVT_CONNECT:
+
+    case WS_EVT_DISCONNECT :
+    {
+        logcon ( String ( F ("WS client disconnect - ") ) + client->id () );
+        break;
+    }      // case WS_EVT_DISCONNECT:
+
+    case WS_EVT_PONG :
+    {
+        logcon ( F ("* WS PONG *") );
+        break;
+    }      // case WS_EVT_PONG:
+
+    case WS_EVT_ERROR :
+    default :
+    {
+        webSocket.cleanupClients ();
+        logcon ( F ("** WS ERROR **") );
+        break;
+    }
     }  // end switch (type)
 
     FeedWDT ();
@@ -530,67 +531,67 @@ void c_WebMgr::onWsEvent (AsyncWebSocket        * server,
 // -----------------------------------------------------------------------------
 /// Process simple format 'X' messages
 /// XA and XJ messages are used by FPP
-void c_WebMgr::ProcessXseriesRequests (AsyncWebSocketClient * client)
+void c_WebMgr::ProcessXseriesRequests (AsyncWebSocketClient* client)
 {
     // DEBUG_START;
 
     switch (pWebSocketFrameCollectionBuffer[1])
     {
-        case SimpleMessage::GET_STATUS:
-        {
-            // DEBUG_V ("");
-            ProcessXJRequest (client);
-            break;
-        }  // end case SimpleMessage::GET_STATUS:
+    case SimpleMessage::GET_STATUS :
+    {
+        // DEBUG_V ("");
+        ProcessXJRequest (client);
+        break;
+    }      // end case SimpleMessage::GET_STATUS:
 
-        case SimpleMessage::PING:
-        {
-            client->text (CN_XP);
-            break;
-        }
+    case SimpleMessage::PING :
+    {
+        client->text (CN_XP);
+        break;
+    }
 
-        case SimpleMessage::GET_ADMIN:
-        {
-            // DEBUG_V ("");
-            ProcessXARequest (client);
-            break;
-        }  // end case SimpleMessage::GET_ADMIN:
+    case SimpleMessage::GET_ADMIN :
+    {
+        // DEBUG_V ("");
+        ProcessXARequest (client);
+        break;
+    }      // end case SimpleMessage::GET_ADMIN:
 
-        case SimpleMessage::DO_RESET:
-        {
-            // DEBUG_V ("");
-            extern bool reboot;
-            reboot = true;
-            break;
-        }  // end case SimpleMessage::DO_RESET:
+    case SimpleMessage::DO_RESET :
+    {
+        // DEBUG_V ("");
+        extern bool reboot;
+        reboot = true;
+        break;
+    }      // end case SimpleMessage::DO_RESET:
 
-        case SimpleMessage::DO_FACTORYRESET:
-        {
-            extern void DeleteConfig ();
-            // DEBUG_V ("");
-            InputMgr.DeleteConfig ();
-            OutputMgr.DeleteConfig ();
-            DeleteConfig ();
+    case SimpleMessage::DO_FACTORYRESET :
+    {
+        extern void DeleteConfig ();
+        // DEBUG_V ("");
+        InputMgr.DeleteConfig ();
+        OutputMgr.DeleteConfig ();
+        DeleteConfig ();
 
-            // DEBUG_V ("");
-            extern bool reboot;
-            reboot = true;
-            break;
-        }  // end case SimpleMessage::DO_RESET:
+        // DEBUG_V ("");
+        extern bool reboot;
+        reboot = true;
+        break;
+    }      // end case SimpleMessage::DO_RESET:
 
-        default:
-        {
-            logcon ( String ( F ("ERROR: Unhandled request: ") ) + String (pWebSocketFrameCollectionBuffer) );
-            client->text ( ( String ( F ("{\"Error\":Error") ) ).c_str () );
-            break;
-        }
+    default :
+    {
+        logcon ( String ( F ("ERROR: Unhandled request: ") ) + String (pWebSocketFrameCollectionBuffer) );
+        client->text ( ( String ( F ("{\"Error\":Error") ) ).c_str () );
+        break;
+    }
     }  // end switch (data[1])
 
     // DEBUG_END;
 }  // ProcessXseriesRequests
 
 // -----------------------------------------------------------------------------
-void c_WebMgr::ProcessXARequest (AsyncWebSocketClient * client)
+void c_WebMgr::ProcessXARequest (AsyncWebSocketClient* client)
 {
     // DEBUG_START;
 
@@ -602,17 +603,17 @@ void c_WebMgr::ProcessXARequest (AsyncWebSocketClient * client)
     jsonAdmin["realflashsize"] = String ( ESP.getFlashChipSize () );
     jsonAdmin["BoardName"]     = String (BOARD_NAME);
     #ifdef ARDUINO_ARCH_ESP8266
-    jsonAdmin["arch"]        = CN_ESP8266;
-    jsonAdmin["flashchipid"] = String (ESP.getChipId (), HEX);
+        jsonAdmin["arch"]        = CN_ESP8266;
+        jsonAdmin["flashchipid"] = String (ESP.getChipId (), HEX);
     #elif defined (ARDUINO_ARCH_ESP32)
-    jsonAdmin["arch"]        = CN_ESP32;
-    jsonAdmin["flashchipid"] = int64String (ESP.getEfuseMac (), HEX);
+        jsonAdmin["arch"]        = CN_ESP32;
+        jsonAdmin["flashchipid"] = int64String (ESP.getEfuseMac (), HEX);
     #endif // ifdef ARDUINO_ARCH_ESP8266
 
     memset (pWebSocketFrameCollectionBuffer, 0x00, WebSocketFrameCollectionBufferSize);
     strcpy (pWebSocketFrameCollectionBuffer, "XA");
     uint32_t msgOffset = strlen (pWebSocketFrameCollectionBuffer);
-    serializeJson ( *WebJsonDoc, & pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
+    serializeJson ( *WebJsonDoc, &pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
     // DEBUG_V (String(WebSocketFrameCollectionBuffer));
 
     client->text (pWebSocketFrameCollectionBuffer);
@@ -621,13 +622,13 @@ void c_WebMgr::ProcessXARequest (AsyncWebSocketClient * client)
 }  // ProcessXARequest
 
 // -----------------------------------------------------------------------------
-void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient * client)
+void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient* client)
 {
     // DEBUG_START;
 
     WebJsonDoc->clear ();
-    JsonObject status = WebJsonDoc->createNestedObject (CN_status);
-    JsonObject system = status.createNestedObject (CN_system);
+    JsonObject  status = WebJsonDoc->createNestedObject (CN_status);
+    JsonObject  system = status.createNestedObject (CN_system);
 
     system[F ("freeheap")]        = ESP.getFreeHeap ();
     system[F ("uptime")]          = millis ();
@@ -655,7 +656,7 @@ void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient * client)
     memset (pWebSocketFrameCollectionBuffer, 0x00, WebSocketFrameCollectionBufferSize);
     strcpy (pWebSocketFrameCollectionBuffer, "XJ");
     uint32_t msgOffset = strlen (pWebSocketFrameCollectionBuffer);
-    serializeJson ( *WebJsonDoc, & pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
+    serializeJson ( *WebJsonDoc, &pWebSocketFrameCollectionBuffer[msgOffset], (WebSocketFrameCollectionBufferSize - msgOffset) );
 
     // DEBUG_V (response);
 
@@ -666,7 +667,7 @@ void c_WebMgr::ProcessXJRequest (AsyncWebSocketClient * client)
 
 // -----------------------------------------------------------------------------
 /// Process simple format 'V' messages
-void c_WebMgr::ProcessVseriesRequests (AsyncWebSocketClient * client)
+void c_WebMgr::ProcessVseriesRequests (AsyncWebSocketClient* client)
 {
     // DEBUG_START;
 
@@ -674,28 +675,28 @@ void c_WebMgr::ProcessVseriesRequests (AsyncWebSocketClient * client)
     // serializeJson (webJsonDoc, response);
     switch (pWebSocketFrameCollectionBuffer[1])
     {
-        case '1':
+    case '1' :
+    {
+        // Diag screen is asking for real time output data
+        if ( OutputMgr.GetBufferUsedSize () )
         {
-            // Diag screen is asking for real time output data
-            if ( OutputMgr.GetBufferUsedSize () )
-            {
-                client->binary ( OutputMgr.GetBufferAddress (), OutputMgr.GetBufferUsedSize () );
-            }
-            else
-            {
-                // Diagnostics tab needs something or it'll clog up the websocket queue with timeouts
-                client->binary ("0");
-            }
-
-            break;
+            client->binary ( OutputMgr.GetBufferAddress (), OutputMgr.GetBufferUsedSize () );
+        }
+        else
+        {
+            // Diagnostics tab needs something or it'll clog up the websocket queue with timeouts
+            client->binary ("0");
         }
 
-        default:
-        {
-            client->text ( F ("V Error") );
-            logcon (String (CN_stars) + F ("ERROR: Unsupported Web command V") + pWebSocketFrameCollectionBuffer[1] + CN_stars);
-            break;
-        }
+        break;
+    }
+
+    default :
+    {
+        client->text ( F ("V Error") );
+        logcon (String (CN_stars) + F ("ERROR: Unsupported Web command V") + pWebSocketFrameCollectionBuffer[1] + CN_stars);
+        break;
+    }
     }  // end switch
 
     // DEBUG_END;
@@ -704,7 +705,7 @@ void c_WebMgr::ProcessVseriesRequests (AsyncWebSocketClient * client)
 // -----------------------------------------------------------------------------
 /// Process simple format 'G' messages
 /// G2 messages are used by xLights and FPP
-void c_WebMgr::ProcessGseriesRequests (AsyncWebSocketClient * client)
+void c_WebMgr::ProcessGseriesRequests (AsyncWebSocketClient* client)
 {
     // DEBUG_START;
 
@@ -712,19 +713,19 @@ void c_WebMgr::ProcessGseriesRequests (AsyncWebSocketClient * client)
     // serializeJson (webJsonDoc, response);
     switch (pWebSocketFrameCollectionBuffer[1])
     {
-        case '2':
-        {
-            // xLights asking the "version"
-            client->text ( (String ( F ("G2{\"version\": \"") ) + VERSION + "\"}").c_str () );
-            break;
-        }
+    case '2' :
+    {
+        // xLights asking the "version"
+        client->text ( (String ( F ("G2{\"version\": \"") ) + VERSION + "\"}").c_str () );
+        break;
+    }
 
-        default:
-        {
-            client->text ( F ("G Error") );
-            logcon (String (CN_stars) + F ("ERROR: Unsupported Web command V") + pWebSocketFrameCollectionBuffer[1] + CN_stars);
-            break;
-        }
+    default :
+    {
+        client->text ( F ("G Error") );
+        logcon (String (CN_stars) + F ("ERROR: Unsupported Web command V") + pWebSocketFrameCollectionBuffer[1] + CN_stars);
+        break;
+    }
     }  // end switch
 
     // DEBUG_END;
@@ -732,7 +733,7 @@ void c_WebMgr::ProcessGseriesRequests (AsyncWebSocketClient * client)
 
 // -----------------------------------------------------------------------------
 // Process JSON messages
-void c_WebMgr::ProcessReceivedJsonMessage (AsyncWebSocketClient * client)
+void c_WebMgr::ProcessReceivedJsonMessage (AsyncWebSocketClient* client)
 {
     // DEBUG_START;
     // LOG_PORT.printf_P( PSTR("ProcessReceivedJsonMessage heap / stack Stats: %u:%u:%u:%u\n"), ESP.getFreeHeap(), ESP.getHeapFragmentation(), ESP.getMaxFreeBlockSize(), ESP.getFreeContStack());
@@ -742,10 +743,10 @@ void c_WebMgr::ProcessReceivedJsonMessage (AsyncWebSocketClient * client)
         // DEBUG_V ("");
 
         /** Following commands are supported:
-          * - get: returns requested configuration
-          * - set: receive and applies configuration
-          * - opt: returns select option lists
-          */
+         * - get: returns requested configuration
+         * - set: receive and applies configuration
+         * - opt: returns select option lists
+         */
         if ( WebJsonDoc->containsKey (CN_cmd) )
         {
             // DEBUG_V ("cmd");
@@ -767,7 +768,7 @@ void c_WebMgr::ProcessReceivedJsonMessage (AsyncWebSocketClient * client)
 // -----------------------------------------------------------------------------
 /// Process JSON command messages
 /// These messages are used by xLights and FPP
-void c_WebMgr::processCmd (AsyncWebSocketClient * client, JsonObject & jsonCmd)
+void c_WebMgr::processCmd (AsyncWebSocketClient* client, JsonObject & jsonCmd)
 {
     // DEBUG_START;
 
@@ -793,6 +794,7 @@ void c_WebMgr::processCmd (AsyncWebSocketClient * client, JsonObject & jsonCmd)
             // DEBUG_V ("set");
             // strcpy(WebSocketFrameCollectionBuffer, "{\"set\":");
             JsonObject jsonCmdSet = jsonCmd["set"];
+
             // DEBUG_V ("");
             // TODO:  This will get called when time is set as well. We need something we can return
             //       to identify configration was saved and there were no errors. for now, we return
@@ -855,8 +857,8 @@ void c_WebMgr::processCmdGet (JsonObject & jsonCmd)
 
     do  // once
     {
-        uint32_t bufferoffset   = strlen (pWebSocketFrameCollectionBuffer);
-        uint32_t BufferFreeSize = WebSocketFrameCollectionBufferSize - (bufferoffset + 3);
+        uint32_t    bufferoffset   = strlen (pWebSocketFrameCollectionBuffer);
+        uint32_t    BufferFreeSize = WebSocketFrameCollectionBufferSize - (bufferoffset + 3);
         // DEBUG_V (String ("bufferoffset: ") + bufferoffset);
         // DEBUG_V (String ("BufferFreeSize: ") + BufferFreeSize);
 
@@ -865,7 +867,7 @@ void c_WebMgr::processCmdGet (JsonObject & jsonCmd)
             // DEBUG_V ("system");
             FileMgr.ReadConfigFile (
                 ConfigFileName,
-                (byte *)& pWebSocketFrameCollectionBuffer[bufferoffset],
+                (byte*)&pWebSocketFrameCollectionBuffer[bufferoffset],
                 BufferFreeSize);
             // DEBUG_V ("");
             break;
@@ -875,7 +877,7 @@ void c_WebMgr::processCmdGet (JsonObject & jsonCmd)
         {
             // DEBUG_V (CN_output);
             OutputMgr.GetConfig (
-                (byte *)& pWebSocketFrameCollectionBuffer[bufferoffset],
+                (byte*)&pWebSocketFrameCollectionBuffer[bufferoffset],
                 BufferFreeSize);
             // DEBUG_V ("");
             break;
@@ -885,7 +887,7 @@ void c_WebMgr::processCmdGet (JsonObject & jsonCmd)
         {
             // DEBUG_V ("input");
             InputMgr.GetConfig (
-                (byte *)& pWebSocketFrameCollectionBuffer[bufferoffset],
+                (byte*)&pWebSocketFrameCollectionBuffer[bufferoffset],
                 BufferFreeSize);
             // DEBUG_V ("");
             break;
@@ -939,7 +941,7 @@ bool c_WebMgr::processCmdSet (JsonObject & jsonCmd)
         if ( jsonCmd.containsKey (CN_device) | jsonCmd.containsKey (CN_system) )
         {
             // DEBUG_V ("device/network");
-            extern void SetConfig (const char * DataString);
+            extern void SetConfig (const char* DataString);
             serializeJson (jsonCmd, pWebSocketFrameCollectionBuffer, WebSocketFrameCollectionBufferSize - 1);
             SetConfig (pWebSocketFrameCollectionBuffer);
             pAlexaDevice->setName (config.id);
@@ -986,7 +988,7 @@ bool c_WebMgr::processCmdSet (JsonObject & jsonCmd)
         strcat (pWebSocketFrameCollectionBuffer, "ERROR");
     } while (false);
 
-    return retval;
+    return(retval);
 
     // DEBUG_END;
 }  // processCmdSet
@@ -1004,7 +1006,7 @@ void c_WebMgr::processCmdSetTime (JsonObject & jsonCmd)
     struct timeval now =
     {.tv_sec = TimeToSet};
 
-    settimeofday (& now, NULL);
+    settimeofday (&now, NULL);
 
     // DEBUG_V (String ("TimeToSet: ") + String (TimeToSet));
     // DEBUG_V (String ("TimeToSet: ") + String (ctime(&TimeToSet)));
@@ -1078,12 +1080,12 @@ void c_WebMgr::processCmdDelete (JsonObject & jsonCmd)
 }  // processCmdDelete
 
 // -----------------------------------------------------------------------------
-void c_WebMgr::FirmwareUpload (AsyncWebServerRequest    * request,
-                               String                   filename,
-                               uint32_t                 index,
-                               uint8_t                  * data,
-                               uint32_t                 len,
-                               bool final)
+void c_WebMgr::FirmwareUpload (AsyncWebServerRequest*   request,
+ String                                                 filename,
+ uint32_t                                               index,
+ uint8_t*                                               data,
+ uint32_t                                               len,
+ bool final)
 {
     // DEBUG_START;
 
@@ -1104,7 +1106,7 @@ void c_WebMgr::FirmwareUpload (AsyncWebServerRequest    * request,
         if (0 == index)
         {
             #ifdef ARDUINO_ARCH_ESP8266
-            WiFiUDP::stopAll ();
+                WiFiUDP::stopAll ();
             #else // ifdef ARDUINO_ARCH_ESP8266
                 // this is not supported for ESP32
             #endif // ifdef ARDUINO_ARCH_ESP8266
@@ -1149,10 +1151,10 @@ void c_WebMgr::FirmwareUpload (AsyncWebServerRequest    * request,
 
 // -----------------------------------------------------------------------------
 /*
-  * This function is called as part of the Arduino "loop" and does things that need
-  * periodic poking.
-  *
-  */
+ * This function is called as part of the Arduino "loop" and does things that need
+ * periodic poking.
+ *
+ */
 void c_WebMgr::Process ()
 {
     if (HasBeenInitialized)
