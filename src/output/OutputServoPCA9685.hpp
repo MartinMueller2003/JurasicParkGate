@@ -1,7 +1,7 @@
 #pragma once
 /******************************************************************
  *
- *       Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
+ *       Project: JurasicParkGateAn ESP8266 / ESP32 and E1.31 based pixel (And Serial!) driver
  *       Orginal JurasicParkGateproject by 2015 Martin Mueller
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the

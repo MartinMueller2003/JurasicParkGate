@@ -1,7 +1,7 @@
 /*
  * InputDisabled.cpp - InputDisabled NULL driver code for JurasicParkGate
  *
- * Project: JurasicParkGate - 
+ * Project: JurasicParkGate
  * Copyright (c) 2023 Martin Mueller
  * http://www.MartnMueller2003.com
  *

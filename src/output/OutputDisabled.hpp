@@ -2,7 +2,7 @@
 /*
  * OutputDisabled.h
  *
- * Project: JurasicParkGate - 
+ * Project: JurasicParkGate
  * Copyright (c) 2015, 2022 Martin Mueller
  * http://www.MartnMueller2003.com
  *

@@ -1,7 +1,7 @@
 /*
  * FastTimer.cpp - Output Management class
  *
- * Project: JurasicParkGate - 
+ * Project: JurasicParkGate
  * Copyright (c) 2023 Martin Mueller
  * http://www.MartnMueller2003.com
  *

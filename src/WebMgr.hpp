@@ -2,7 +2,7 @@
 /*
  * WebMgr.hpp
  *
- * Project: JurasicParkGate - 
+ * Project: JurasicParkGate
  * Copyright (c) 2023Martin Mueller
  * http://www.MartnMueller2003.com
  *

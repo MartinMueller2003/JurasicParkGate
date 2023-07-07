@@ -2,7 +2,7 @@
 /*
  * InputAlexa.h
  *
- * Project: JurasicParkGate - 
+ * Project: JurasicParkGate
  * Copyright (c) 2023 Martin Mueller
  * http://www.MartinMueller2003.com
  *
