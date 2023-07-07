@@ -2,7 +2,7 @@
 /*
  * InputDisabled.h - Do Nothing input driver
  *
- * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Project: JurasicParkGate - 
  * Copyright (c) 2023 Martin Mueller
  * http://www.MartnMueller2003.com
  *
