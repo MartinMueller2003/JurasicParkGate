@@ -18,6 +18,7 @@
 #include <utility>
 #include <algorithm>
 #include <math.h>
+#include <wire.h>
 
 #include "OutputServoPCA9685.hpp"
 
@@ -70,8 +71,10 @@ void c_OutputServoPCA9685::Begin ()
 
     if (!HasBeenInitialized)
     {
+        Wire.begin(int (DEFAULT_I2C_SDA), int (DEFAULT_I2C_SCL));
+
         // DEBUG_V("Allocate PWM");
-        pwm = new Adafruit_PWMServoDriver (I2C_Address);
+        pwm = new Adafruit_PWMServoDriver (I2C_Address, Wire);
 
         SetOutputBufferSize (Num_Channels);
 
