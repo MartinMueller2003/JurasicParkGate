@@ -94,6 +94,7 @@ const CN_PROGMEM char   CN_get                      [] = "get";
 const CN_PROGMEM char   CN_gen_ser_hdr              [] = "gen_ser_hdr";
 const CN_PROGMEM char   CN_gen_ser_ftr              [] = "gen_ser_ftr";
 const CN_PROGMEM char   CN_gid                      [] = "gid";
+const CN_PROGMEM char   CN_GPIO                     [] = "GPIO";
 const CN_PROGMEM char   CN_group_size               [] = "group_size";
 const CN_PROGMEM char   CN_Heap_colon               [] = "Heap: ";
 const CN_PROGMEM char   CN_hadisco                  [] = "hadisco";

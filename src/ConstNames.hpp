@@ -103,6 +103,7 @@ extern const CN_PROGMEM char    CN_get[];
 extern const CN_PROGMEM char    CN_gen_ser_hdr[];
 extern const CN_PROGMEM char    CN_gen_ser_ftr[];
 extern const CN_PROGMEM char    CN_gid[];
+extern const CN_PROGMEM char    CN_GPIO[];
 extern const CN_PROGMEM char    CN_group_size[];
 extern const CN_PROGMEM char    CN_hadisco[];
 extern const CN_PROGMEM char    CN_haprefix[];
