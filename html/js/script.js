@@ -859,17 +859,15 @@ function ProcessModeConfigurationDataRelay(RelayConfig) {
 
 } // ProcessModeConfigurationDataRelay
 
-function ProcessModeConfigurationDataServoPCA9685(channelId, ServoConfig) {
+function ProcessModeConfigurationDataServoPCA9685(modeControlName, channelId, Config) {
     // console.log("channelId: " + channelId);
-
-    let modeControlName = '#outputmode' + channelId;
     // console.info("modeControlName: " + modeControlName);
 
     let ServoConfigTableName = modeControlName + ' #servo_pca9685 #channelconfigurationtable';
     // console.info("ServoConfigTableName: " + ServoConfigTableName);
     // console.log("ServoConfigTableName.rows.length = " + $(ServoConfigTableName + ' tr').length);
 
-    let ChannelConfigs = ServoConfig.channels;
+    let ChannelConfigs = Config.channels;
 
     // add as many rows as we need
     for (let CurrentRowId = 1; CurrentRowId <= ChannelConfigs.length; CurrentRowId++) {
@@ -924,6 +922,66 @@ function ProcessModeConfigurationDataServoPCA9685(channelId, ServoConfig) {
 
 } // ProcessModeConfigurationDataServoPCA9685
 
+function ProcessModeConfigurationButtons(modeControlName, channelId, Config) {
+    console.log("channelId: " + channelId);
+    console.info("modeControlName: " + modeControlName);
+
+    let ButtonConfigTableName = modeControlName + ' #buttonConfigurationtable';
+    console.info("ButtonConfigTableName: " + ButtonConfigTableName);
+    console.log("ButtonConfigTableName.rows.length = " + $(ButtonConfigTableName + ' tr').length);
+
+    let ButtonConfigs = Config.buttons;
+
+    // add as many rows as we need
+    for (let CurrentRowId = 1; CurrentRowId <= ButtonConfigs.length; CurrentRowId++) {
+        console.log("CurrentRowId = " + CurrentRowId);
+        let IdPattern       = '<td                        id="buttonId_'       + (CurrentRowId) + '">a' + CurrentRowId + '</td>';
+        let EnabledPattern  = '<td><input type="checkbox" id="buttonEnabled_'  + (CurrentRowId) + '"></td>';
+        let NamePattern     = '<td><input type="text"     id="buttonName_'     + (CurrentRowId) + '          min="3"  maxe="25"   value="Not Set"  class="form-control is-valid"></td>';
+        let GPIOPattern     = '<td><input type="number"   id="buttonGpioId_'   + (CurrentRowId) + '"step="1" min="0"  max="34"    value="36"  class="form-control is-valid"></td>';
+        let PolarityPattern = '<td><select class="form-control is-valid" id="buttonPolarity_' + (CurrentRowId) + '" title="Input Polarity"></select></td>';
+
+        let rowPattern = '<tr>' + IdPattern + EnabledPattern + NamePattern + GPIOPattern + PolarityPattern + '</tr>';
+
+        $(ButtonConfigTableName + ' tr:last').after(rowPattern);
+
+        $(ButtonConfigTableName + ' #buttonId_' + CurrentRowId).attr('style', $(ButtonConfigTableName + ' #buttonId_hr').attr('style'));
+        $(ButtonConfigTableName + ' #buttonEnabled_' + CurrentRowId).attr('style', $(ButtonConfigTableName + ' #buttonEnabled_hr').attr('style'));
+        $(ButtonConfigTableName + ' #buttonName_' + CurrentRowId).attr('style', $(ButtonConfigTableName + ' #buttonName_hr').attr('style'));
+        $(ButtonConfigTableName + ' #buttonGpioId_' + CurrentRowId).attr('style', $(ButtonConfigTableName + ' #buttonGpioId_hr').attr('style'));
+        $(ButtonConfigTableName + ' #buttonPolarity_' + CurrentRowId).attr('style', $(ButtonConfigTableName + ' #buttonPolarity_hr').attr('style'));
+    }
+
+    console.log("ButtonConfigTableName = " + ButtonConfigTableName);
+
+    $.each(ButtonConfigs, function (i, CurrentButtonConfig) {
+        // console.log("Current Channel device = " + CurrentButtonConfig.device);
+        let currentButtonRowId = CurrentButtonConfig.device + 1;
+        console.log("   currentButtonRowId = " + currentButtonRowId);
+        
+        $(ButtonConfigTableName + ' #buttonId_'      + currentButtonRowId).html(currentButtonRowId);
+        $(ButtonConfigTableName + ' #buttonEnabled_' + currentButtonRowId).prop("checked", CurrentButtonConfig.enabled);
+//        $(ButtonConfigTableName + ' #buttonName_'    + currentButtonRowId).val(CurrentButtonConfig.name);
+        let temp = ButtonConfigTableName + ' #buttonName_'    + currentButtonRowId;
+        console.log("   temp = " + temp);
+        $(temp).val("foo");
+        $(ButtonConfigTableName + ' #buttonGpioId_'  + currentButtonRowId).val(CurrentButtonConfig.GPIO);
+
+        let jqSelector = ButtonConfigTableName + ' #buttonPolarity_' + (currentButtonRowId);
+        console.log("jqSelector = " + jqSelector);
+
+        // remove the existing options
+        $(jqSelector).empty();
+        // set the current options
+        $(jqSelector).append('<option value=0> Active Low</option>');
+        $(jqSelector).append('<option value=1> Active High</option>');
+
+        // set the current selector value
+        $(jqSelector).val( (CurrentButtonConfig.polarity === "ActiveLow") ? 0 : 1);
+    });
+
+} // ProcessModeConfigurationButtons
+
 function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
     // console.info("ProcessModeConfigurationData: Start");
 
@@ -949,7 +1007,7 @@ function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
     //TODO: Dirty hack to clean-up input names
     if (ChannelType !== 'input') {
         let ModeDisplayName = GenerateInputOutputControlLabel(ChannelType, channelId) + " - " + $(modeControlName + ' #Title')[0].innerHTML;
-        // console.info("ModeDisplayName: " + ModeDisplayName);
+        console.info("ModeDisplayName: " + ModeDisplayName);
         $(modeControlName + ' #Title')[0].innerHTML = ModeDisplayName;
     }
 
@@ -974,7 +1032,12 @@ function ProcessModeConfigurationData(channelId, ChannelType, JsonConfig) {
 
     else if ("servo_pca9685" === ChannelTypeName) {
         // console.info("ProcessModeConfigurationData: servo");
-        ProcessModeConfigurationDataServoPCA9685(channelId, channelConfig);
+        ProcessModeConfigurationDataServoPCA9685(modeControlName, channelId, channelConfig);
+    }
+
+    else if ("buttons" === ChannelTypeName) {
+        // console.info("ProcessModeConfigurationData: Buttons");
+        ProcessModeConfigurationButtons(modeControlName, channelId, channelConfig);
     }
 
     UpdateAdvancedOptionsMode();
@@ -1463,7 +1526,7 @@ function wsConnect() {
             target = document.location.host;
         }
 
-        // target = "192.168.10.216";
+        target = "192.168.10.216";
         // target = "192.168.10.101";
 
         // Open a new web socket and set the binary type

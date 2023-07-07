@@ -1,3 +1,3 @@
 rem http-server -p8000
-npm install express
+rem npm install express
 node NodeJsServer
