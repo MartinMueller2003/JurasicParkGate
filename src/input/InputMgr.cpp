@@ -51,7 +51,7 @@ static const InputTypeXlateMap_t InputTypeXlateMap[c_InputMgr::e_InputType::Inpu
     {c_InputMgr::e_InputType::InputType_Effects,  "Effects",  c_InputMgr::e_InputChannelIds::InputSecondaryChannelId },
     {c_InputMgr::e_InputType::InputType_MQTT,     "MQTT",     c_InputMgr::e_InputChannelIds::InputSecondaryChannelId },
     {c_InputMgr::e_InputType::InputType_Alexa,    "Alexa",    c_InputMgr::e_InputChannelIds::InputSecondaryChannelId },
-    {c_InputMgr::e_InputType::InputType_Disabled, "Disabled", c_InputMgr::e_InputChannelIds::InputChannelId_ALL      }
+    {c_InputMgr::e_InputType::InputType_Disabled, "Disabled", c_InputMgr::e_InputChannelIds::InputSecondaryChannelId }
 };
 
 // -----------------------------------------------------------------------------
@@ -269,6 +269,9 @@ void c_InputMgr::CreateNewConfig ()
     {
         InstantiateNewInputChannel (e_InputChannelIds (CurrentInput.DriverId), e_InputType::InputType_Disabled, false);
     }  // end for each interface
+
+    // buttons are always enabled
+    InstantiateNewInputChannel (e_InputChannelIds::InputChannelId_Start, e_InputType::InputType_Buttons, false);
 
     // DEBUG_V ("");
 
@@ -544,14 +547,18 @@ void c_InputMgr::LoadConfig ()
         // DEBUG_V ("");
     }) )
     {
-        if (!IsBooting)
+        logcon (CN_stars + String ( F (" Error loading Input Manager Config File ") ) + CN_stars);
+        if (IsBooting)
         {
-            logcon (CN_stars + String ( F (" Error loading Input Manager Config File ") ) + CN_stars);
+            // create a config file with default values
+            // DEBUG_V ("");
+            CreateNewConfig ();
+        }
+        else
+        {
+            reboot = true;
         }
 
-        // create a config file with default values
-        // DEBUG_V ("");
-        CreateNewConfig ();
     }
 
     // DEBUG_END;
