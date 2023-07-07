@@ -57,12 +57,10 @@ void c_InputButton::GetConfig (JsonObject & JsonData)
 {
     // DEBUG_START;
 
-    JsonData[M_IO_ENABLED] = Enabled;
     JsonData[M_NAME]       = Name;
-    JsonData[M_ID]         = GpioId;
+    JsonData[M_IO_ENABLED] = Enabled;
+    JsonData[CN_GPIO]      = GpioId;
     JsonData[M_POLARITY]   = (Polarity_t::ActiveHigh == polarity)?CN_ActiveHigh : CN_ActiveLow;
-    JsonData[CN_channels]  = TriggerChannel;
-    JsonData[CN_long]      = LongPushDelayMS;
 
     // DEBUG_V (String ("GpioId: ") + String (GpioId));
 
@@ -75,7 +73,7 @@ void c_InputButton::GetStatus (JsonObject & JsonData)
     // DEBUG_START;
 
     JsonData[M_NAME]  = Name;
-    JsonData[M_ID]    = GpioId;
+    JsonData[CN_GPIO] = GpioId;
     JsonData[M_STATE] = ( ReadInput () )?CN_on : CN_off;
 
     // DEBUG_END;
@@ -90,12 +88,10 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
 
     uint32_t    oldInputId = GpioId;
 
-    setFromJSON (   Enabled,            JsonData,   M_IO_ENABLED);
-    setFromJSON (   Name,               JsonData,   M_NAME);
-    setFromJSON (   GpioId,             JsonData,   M_ID);
-    setFromJSON (   Polarity,           JsonData,   M_POLARITY);
-    setFromJSON (   TriggerChannel,     JsonData,   CN_channels);
-    setFromJSON (   LongPushDelayMS,    JsonData,   CN_long);
+    setFromJSON (   Name,      JsonData,   M_NAME);
+    setFromJSON (   Enabled,   JsonData,   M_IO_ENABLED);
+    setFromJSON (   GpioId,    JsonData,   CN_GPIO);
+    setFromJSON (   Polarity,  JsonData,   M_POLARITY);
 
     polarity = (String (CN_ActiveHigh) == Polarity)?ActiveHigh : ActiveLow;
 

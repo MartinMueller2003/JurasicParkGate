@@ -55,16 +55,15 @@ bool ReadInput (void);
     #define M_IO_ENABLED    CN_enabled
     #define M_STATE         CN_state
     #define M_POLARITY      CN_polarity
-    #define M_ID            CN_id
 
 String Name;
 uint32_t GpioId             = 0;
 uint32_t TriggerChannel     = uint32_t (32);
-Polarity_t polarity           = Polarity_t::ActiveLow;
-bool Enabled            = false;
+Polarity_t polarity         = Polarity_t::ActiveLow;
+bool Enabled                = true;
 uint32_t InputDebounceCount = 0;
 FastTimer InputHoldTimer;
-uint32_t LongPushDelayMS = 2000;
+uint32_t LongPushDelayMS    = 2000;
 fsm_InputButton_state* CurrentFsmState = nullptr;             // initialized in constructor
 
 friend class fsm_InputButton_boot;
