@@ -2,7 +2,7 @@
 /*
  * OutputDisabled.h
  *
- * Project: JurasicParkGate - An ESP8266 / ESP32 and E1.31 based pixel driver
+ * Project: JurasicParkGate - 
  * Copyright (c) 2015, 2022 Martin Mueller
  * http://www.MartnMueller2003.com
  *
