@@ -1288,12 +1288,15 @@ function ExtractChannelConfigFromHtmlPage(JsonConfig, SectionName) {
     jQuery.each(JsonConfig, function (DisplayedChannelId, CurrentChannelConfigurationData) {
         let elementids = [];
         let modeControlName = '#' + SectionName + 'mode' + DisplayedChannelId;
+        console.log("modeControlName: " + modeControlName);
         elementids = $(modeControlName + ' *[id]').filter(":input").map(function () {
             return $(this).attr('id');
         }).get();
 
         let ChannelType = parseInt($("#" + SectionName + DisplayedChannelId + " option:selected").val(), 10);
         let ChannelConfig = CurrentChannelConfigurationData[ChannelType];
+        // console.log("ChannelType: " + ChannelType);
+        // console.log("ChannelConfig.type: " + ChannelConfig.type);
 
         // tell the ESP what type of channel it should be using
         CurrentChannelConfigurationData.type = ChannelType;
@@ -1314,16 +1317,19 @@ function ExtractChannelConfigFromHtmlPage(JsonConfig, SectionName) {
                 }
             });
         }
-        else if ((ChannelConfig.type === "Servo PCA9685") && ($("#servo_pca9685channelconfigurationtable").length)) {
-            ChannelConfig.updateinterval = parseInt($('#updateinterval').val(), 10);
+        else if ((ChannelConfig.type === "Servo PCA9685") && ($(modeControlName + " #servo_pca9685 #channelconfigurationtable").length)) {
+            let ServoName = modeControlName + " #servo_pca9685 #channelconfigurationtable";
+            // console.log("ServoName: " + ServoName);
+
+            ChannelConfig.updateinterval = parseInt($(modeControlName + ' #servo_pca9685 #updateinterval').val(), 10);
             $.each(ChannelConfig.channels, function (i, CurrentChannelConfig) {
                 // console.info("Current Channel Id = " + CurrentChannelConfig.id);
-                let currentChannelRowId = CurrentChannelConfig.id + 1;
-                CurrentChannelConfig.en = $('#ServoEnabled_' + (currentChannelRowId)).prop("checked");
-                CurrentChannelConfig.Min = parseInt($('#ServoMinLevel_' + (currentChannelRowId)).val(), 10);
-                CurrentChannelConfig.Max = parseInt($('#ServoMaxLevel_' + (currentChannelRowId)).val(), 10);
-                CurrentChannelConfig.hv = parseInt($('#ServoHomeValue_' + (currentChannelRowId)).val(), 10);
-                let ServoDataType = parseInt($('#ServoDataType_' + (currentChannelRowId)).val(), 10);
+                let currentChannelRowId  = CurrentChannelConfig.id + 1;
+                CurrentChannelConfig.en  =          $(ServoName + ' #ServoEnabled_'   + (currentChannelRowId)).prop("checked");
+                CurrentChannelConfig.Min = parseInt($(ServoName + ' #ServoMinLevel_'  + (currentChannelRowId)).val(), 10);
+                CurrentChannelConfig.Max = parseInt($(ServoName + ' #ServoMaxLevel_'  + (currentChannelRowId)).val(), 10);
+                CurrentChannelConfig.hv  = parseInt($(ServoName + ' #ServoHomeValue_' + (currentChannelRowId)).val(), 10);
+                let ServoDataType        = parseInt($(ServoName + ' #ServoDataType_'  + (currentChannelRowId)).val(), 10);
 
                 CurrentChannelConfig.rev = (ServoDataType & 0x01) ? true : false;
                 CurrentChannelConfig.sca = (ServoDataType & 0x02) ? true : false;
@@ -1425,9 +1431,26 @@ function ExtractChannelConfigFromHtmlPage(JsonConfig, SectionName) {
 
             ChannelConfig.MarqueeGroups = MarqueeGroups;
         }
+        else if(ChannelConfig.type === "Buttons")
+        {
+            console.log("Buttons");
+            let Name = modeControlName + " #buttons #buttonConfigurationtable";
+            console.log("Name: " + Name);
+
+            $.each(ChannelConfig.buttons, function (i, CurrentConfig) {
+                console.info("Current row Id = " + CurrentConfig.device);
+                let currentRowId  = CurrentConfig.device + 1;
+                CurrentConfig.enabled = $(Name + ' #buttonEnabled_' + (currentRowId)).prop("checked");
+                CurrentConfig.name    = $(Name + ' #buttonName_'    + (currentRowId)).val();
+                CurrentConfig.GPIO    = parseInt($(Name + ' #buttonGpioId_'   + (currentRowId)).val(), 10);
+                let PolarityType      = parseInt($(Name + ' #buttonPolarity_' + (currentRowId)).val(), 10);
+                CurrentConfig.polarity = (PolarityType === 0) ? "ActiveLow" : "ActiveHigh";
+            });
+        }
         else {
             ExtractConfigFromHtmlPages(elementids, modeControlName, ChannelConfig);
         }
+
     });
 } // ExtractChannelConfigFromHtmlPage
 
@@ -1522,7 +1545,7 @@ function wsConnect() {
             target = document.location.host;
         }
 
-        target = "192.168.10.216";
+        // target = "192.168.10.216";
         // target = "192.168.10.101";
 
         // Open a new web socket and set the binary type
