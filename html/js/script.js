@@ -937,9 +937,11 @@ function ProcessModeConfigurationButtons(modeControlName, channelId, Config) {
         console.log("CurrentRowId = " + CurrentRowId);
         let IdPattern       = '<td                        id="buttonId_'       + (CurrentRowId) + '">a' + CurrentRowId + '</td>';
         let EnabledPattern  = '<td><input type="checkbox" id="buttonEnabled_'  + (CurrentRowId) + '"></td>';
-        let NamePattern     = '<td><input type="text"     id="buttonName_'     + (CurrentRowId) + '          min="3"  maxe="25"   value="Not Set"  class="form-control is-valid"></td>';
+        let NamePattern     = '<td><input type="text"     id="buttonName_'     + (CurrentRowId) + '"         min="3"  max="25"   value="Not Set"  class="form-control is-valid"></td>';
         let GPIOPattern     = '<td><input type="number"   id="buttonGpioId_'   + (CurrentRowId) + '"step="1" min="0"  max="34"    value="36"  class="form-control is-valid"></td>';
         let PolarityPattern = '<td><select class="form-control is-valid" id="buttonPolarity_' + (CurrentRowId) + '" title="Input Polarity"></select></td>';
+
+        console.log("NamePattern = " + NamePattern);
 
         let rowPattern = '<tr>' + IdPattern + EnabledPattern + NamePattern + GPIOPattern + PolarityPattern + '</tr>';
 
@@ -961,10 +963,7 @@ function ProcessModeConfigurationButtons(modeControlName, channelId, Config) {
         
         $(ButtonConfigTableName + ' #buttonId_'      + currentButtonRowId).html(currentButtonRowId);
         $(ButtonConfigTableName + ' #buttonEnabled_' + currentButtonRowId).prop("checked", CurrentButtonConfig.enabled);
-//        $(ButtonConfigTableName + ' #buttonName_'    + currentButtonRowId).val(CurrentButtonConfig.name);
-        let temp = ButtonConfigTableName + ' #buttonName_'    + currentButtonRowId;
-        console.log("   temp = " + temp);
-        $(temp).val("foo");
+        $(ButtonConfigTableName + ' #buttonName_'    + currentButtonRowId).val(CurrentButtonConfig.name);
         $(ButtonConfigTableName + ' #buttonGpioId_'  + currentButtonRowId).val(CurrentButtonConfig.GPIO);
 
         let jqSelector = ButtonConfigTableName + ' #buttonPolarity_' + (currentButtonRowId);
