@@ -110,7 +110,7 @@ void c_InputButtons::GetConfig (JsonObject & JsonData)
 /*****************************************************************************/
 void c_InputButtons::GetStatus (JsonObject & JsonData)
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     JsonArray   InputStatus = JsonData.createNestedArray (CN_buttons);
 
@@ -122,7 +122,7 @@ void c_InputButtons::GetStatus (JsonObject & JsonData)
         CurrentButton.GetStatus (channelStatus);
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // GetStatus
 
 // -----------------------------------------------------------------------------
