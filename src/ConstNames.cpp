@@ -88,6 +88,7 @@ const CN_PROGMEM char   CN_filename                 [] = "filename";
 const CN_PROGMEM char   CN_files                    [] = "files";
 const CN_PROGMEM char   CN_Frequency                [] = "Frequency";
 const CN_PROGMEM char   CN_g                        [] = "g";
+const CN_PROGMEM char   CN_gate                     [] = "gate";
 const CN_PROGMEM char   CN_gamma                    [] = "gamma";
 const CN_PROGMEM char   CN_gateway                  [] = "gateway";
 const CN_PROGMEM char   CN_get                      [] = "get";

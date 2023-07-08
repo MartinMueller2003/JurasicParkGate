@@ -19,16 +19,13 @@
  */
 
 #include "InputCommon.hpp"
-#include <vector>
+
+class FsmInputGateCommon;
 
 class c_InputGateControl : public c_InputCommon {
 public:
-c_InputGateControl (c_InputMgr::e_InputChannelIds  NewInputChannelId,
- c_InputMgr::e_InputType                            NewChannelType,
- uint32_t                                           BufferSize);
-virtual~c_InputGateControl ();
-
 c_InputGateControl ();
+virtual~c_InputGateControl ();
 
 // dCRGB red, green, blue 0->1.0
 struct dCRGB
@@ -63,20 +60,6 @@ struct dCHSV
 };
 
 typedef uint16_t(c_InputGateControl::* EffectFunc)(void);
-
-typedef struct EffectDescriptor_s
-{
-    String name;
-    EffectFunc func;
-    const char* htmlid;
-    bool hasColor;
-    bool hasMirror;
-    bool hasReverse;
-    bool hasAllLeds;
-    bool hasWhiteChannel;
-    String wsTCode;
-} EffectDescriptor_t;
-
 typedef struct MQTTConfiguration_s
 {
     String effect;
@@ -87,14 +70,6 @@ typedef struct MQTTConfiguration_s
     CRGB color;
 } MQTTConfiguration_s;
 
-struct MarqueeGroup
-{
-    uint32_t NumPixelsInGroup;
-    CRGB Color;
-    uint8_t StartingIntensity;
-    uint8_t EndingIntensity;
-};
-
 // functions to be provided by the derived class
 void Begin ();                                         ///< set up the operating environment based on the current config (or defaults)
 bool SetConfig (JsonObject & jsonConfig);              ///< Set a new config in the driver
@@ -104,28 +79,20 @@ void GetMqttConfig (MQTTConfiguration_s & mqttConfig); ///< Get the current conf
 void GetMqttEffectList (JsonObject & jsonConfig);      ///< Get the current config used by the driver
 void GetStatus (JsonObject & jsonStatus);
 void Process ();                                       ///< Call from loop(),  renders Input data
-void GetDriverName (String & sDriverName)
-{
-    sDriverName = "Effects";
-}                                                                           ///< get the name for the instantiated driver
+void GetDriverName (String & sDriverName) { sDriverName = "Gate"; }                                                                           ///< get the name for the instantiated driver
 void SetBufferInfo (uint32_t BufferSize);
-void NextEffect ();
 
-// Effect functions
-uint16_t effectSolidColor ();
-uint16_t effectRainbow ();
-uint16_t effectChase ();
-uint16_t effectBlink ();
-uint16_t effectFlash ();
-uint16_t effectFireFlicker ();
-uint16_t effectLightning ();
-uint16_t effectBreathe ();
-uint16_t effectNull ();
-uint16_t effectRandom ();
-uint16_t effectTransition ();
-uint16_t effectMarquee ();
+protected:
 
-private:
+    friend class FsmInputGateBooting ;
+    friend class FsmInputGateIdle;
+    friend class FsmInputGateOpening;
+    friend class FsmInputGateOpen;
+    friend class FsmInputGateClosing;
+    friend class FsmInputGateLights;
+    friend class FsmInputGatePlaying;
+    friend class FsmInputGatePaused;
+    FsmInputGateCommon * CurrentFsmState = nullptr;
 
 void validateConfiguration ();
 
@@ -137,29 +104,8 @@ bool HasBeenInitialized = false;
 
 using timeType = decltype( millis () );
 
-
-uint32_t EffectWait = 32;                                   /* How long to wait for the effect to run again */
-
-uint32_t EffectCounter      = 0;                            /* Counter for the number of calls to the active effect */
-uint16_t EffectSpeed        = 6;                            /* Externally controlled effect speed 1..10 */
-uint16_t EffectDelay        = DEFAULT_EFFECT_DELAY;         /* Internal representation of speed */
-bool EffectReverse      = false;                            /* Externally controlled effect reverse option */
-bool EffectMirror       = false;                            /* Externally controlled effect mirroring (start at center) */
-bool EffectAllLeds      = false;                            /* Externally controlled effect all leds = 1st led */
-bool EffectWhiteChannel = false;
-float EffectBrightness   = 1.0;                             /* Externally controlled effect brightness [0, 255] */
-CRGB EffectColor        = {183, 0, 255};                    /* Externally controlled effect color */
-bool StayDark           = false;
-
-uint32_t effectMarqueePixelAdvanceCount = 1;
-uint32_t effectMarqueePixelLocation     = 0;
-
-uint32_t EffectStep         = 0;                    /* Shared mutable effect step counter */
-uint32_t PixelCount         = 0;                    /* Number of RGB leds (not channels) */
-uint32_t MirroredPixelCount = 0;                    /* Number of RGB leds (not channels) */
-uint8_t ChannelsPerPixel   = 3;
-uint32_t PixelOffset        = 0;
-FastTimer EffectDelayTimer;
+uint32_t PixelCount = 0;
+CRGB FireColor         = {183, 0, 255};                    /* Externally controlled effect color */
 
 void setPixel (uint16_t idx,
  CRGB                   color);
@@ -171,15 +117,12 @@ void setRange (uint16_t first,
 void clearRange (uint16_t   first,
  uint16_t                   len);
 void setAll (CRGB color);
-void outputEffectColor (uint16_t    pixelId,
- CRGB                               outputColor);
 
 CRGB colorWheel (uint8_t pos);
 dCHSV rgb2hsv (CRGB in);
 CRGB hsv2rgb (dCHSV in);
 
 void setColor (String & NewColor);
-void setEffect (const String & effectName);
 void setBrightness (float brightness);
 void setSpeed (uint16_t speed);
 void setDelay (uint16_t delay);
@@ -187,34 +130,131 @@ void PollFlash ();
 
 void clearAll ();
 
-const EffectDescriptor_t* ActiveEffect = nullptr;
-
-dCRGB TransitionCurrentColor = {0.0, 0.0, 0.0};
-std::vector <c_InputGateControl::dCRGB>::iterator TransitionTargetColorIterator;
-dCRGB TransitionStepValue = {2.0, 2.0, 2.0};
-    #define NumStepsToTarget 300.0
-bool ColorHasReachedTarget ();
-bool ColorHasReachedTarget (double  tc,
- double                             cc,
- double                             step);
-void ConditionalIncrementColor (double  tc,
- double &                               cc,
- double                                 step);
-void CalculateTransitionStepValue (double   tc,
- double                                     cc,
- double &                                   step);
-
-struct FlashInfo_t
-{
-    bool Enable        = false;
-    uint32_t MinIntensity  = 100;
-    uint32_t MaxIntensity  = 100;
-    uint32_t MinDelayMS    = 100;
-    uint32_t MaxDelayMS    = 5000;
-    uint32_t MinDurationMS = 25;
-    uint32_t MaxDurationMS = 50;
-    FastTimer delaytimer;
-    FastTimer durationtimer;
-}
-FlashInfo;
 }; // class c_InputGateControl
+
+// -----------------------------------------------------------------------------
+// ---------- FSM Definitions --------------------------------------------------
+// -----------------------------------------------------------------------------
+class FsmInputGateCommon
+{
+public:
+    FsmInputGateCommon() {}
+    virtual ~FsmInputGateCommon() {}
+    virtual void init (c_InputGateControl * pParent) = 0;
+    virtual void poll (c_InputGateControl * pParent) = 0;
+    virtual String name () = 0;
+    virtual void Button_Open_Pressed (c_InputGateControl * pParent) {}
+    virtual void Button_Lights_Pressed (c_InputGateControl * pParent) {}
+    virtual void Button_Play_Pressed (c_InputGateControl * pParent) {}
+    virtual void Button_Skip_Pressed (c_InputGateControl * pParent) {}
+    virtual void Button_Stop_Pressed (c_InputGateControl * pParent) {}
+
+}; // FsmInputGateCommon
+
+// -----------------------------------------------------------------------------
+class FsmInputGateBooting final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Booting");}
+}; // FsmInputGateBooting
+
+// -----------------------------------------------------------------------------
+class FsmInputGateIdle final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Idle");}
+    void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGateIdle
+
+// -----------------------------------------------------------------------------
+class FsmInputGateOpening final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Opening");}
+    void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGateOpening
+
+// -----------------------------------------------------------------------------
+class FsmInputGateOpen final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Open");}
+    void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGateOpen
+
+// -----------------------------------------------------------------------------
+class FsmInputGateClosing final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Closing");}
+}; // FsmInputGateClosing
+
+// -----------------------------------------------------------------------------
+class FsmInputGateLights final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Lights On");}
+    void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGateLights
+
+// -----------------------------------------------------------------------------
+class FsmInputGatePlaying final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Playing");}
+    // void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGateLights
+
+// -----------------------------------------------------------------------------
+class FsmInputGatePaused final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Paused");}
+    // void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGatePaused

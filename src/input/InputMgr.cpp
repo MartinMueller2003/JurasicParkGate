@@ -30,8 +30,11 @@
 #include "InputMQTT.h"
 #include "InputAlexa.h"
 #include "InputButtons.hpp"
+#include "InputGateControl.hpp"
 // needs to be last
 #include "InputMgr.hpp"
+
+static c_InputGateControl InputGateControl;
 
 // -----------------------------------------------------------------------------
 
@@ -115,6 +118,9 @@ void c_InputMgr::Begin (uint32_t BufferSize)
         InstantiateNewInputChannel (e_InputChannelIds (CurrentInput.DriverId), e_InputType::InputType_Disabled);
         // DEBUG_V ("");
     }
+
+    InputGateControl.Begin();
+    InputGateControl.SetBufferInfo(BufferSize);
 
     HasBeenInitialized = true;
 
@@ -273,6 +279,8 @@ void c_InputMgr::CreateNewConfig ()
     // buttons are always enabled
     InstantiateNewInputChannel (e_InputChannelIds::InputChannelId_Start, e_InputType::InputType_Buttons, false);
 
+    InputGateControl.GetConfig(JsonConfig);
+
     // DEBUG_V ("");
 
     // Record the default configuration
@@ -307,6 +315,9 @@ void c_InputMgr::GetStatus (JsonObject & jsonStatus)
         CurrentInput.pInputChannelDriver->GetStatus (channelStatus);
         // _ DEBUG_V("");
     }
+
+    JsonObject GateStatus = InputStatus.createNestedObject ();
+    InputGateControl.GetStatus(GateStatus);
 
     // _ DEBUG_END;
 }  // GetStatus
@@ -602,6 +613,7 @@ void c_InputMgr::Process ()
                 break;
             }
         }
+        InputGateControl.Process();
 
         if ( (false == aBlankTimerIsRunning) && (config.BlankDelay != 0) )
         {
@@ -647,6 +659,7 @@ bool c_InputMgr::ProcessJsonConfig (JsonObject & jsonConfig)
 
         uint8_t TempVersion = !InputChannelMgrData;
         setFromJSON (TempVersion, InputChannelMgrData, CN_cfgver);
+        InputGateControl.SetConfig(InputChannelMgrData);
 
         // DEBUG_V (String ("TempVersion: ") + String (TempVersion));
         // DEBUG_V (String ("CurrentConfigVersion: ") + String (CurrentConfigVersion));
@@ -800,6 +813,8 @@ void c_InputMgr::SetBufferInfo (uint32_t BufferSize)
 
     // DEBUG_V ("InputDataBufferSize: " + String (InputDataBufferSize));
 
+    InputGateControl.SetBufferInfo(BufferSize);
+
     // pass through each active interface and set the buffer info
     // for each Input channel
     for (int ChannelIndex = int(InputChannelId_Start);
@@ -830,9 +845,10 @@ void c_InputMgr::SetOperationalState (bool ActiveFlag)
             // DEBUG_V ("");
         }
     }
+    InputGateControl.SetOperationalState(ActiveFlag);
 
     // DEBUG_END;
-}  // SetOutputState
+}  // SetOperationalState
 
 // -----------------------------------------------------------------------------
 void c_InputMgr::NetworkStateChanged (bool _IsConnected)
@@ -850,7 +866,7 @@ void c_InputMgr::NetworkStateChanged (bool _IsConnected)
             InputChannel.pInputChannelDriver->NetworkStateChanged (IsConnected);
         }
     }
-
+    InputGateControl.NetworkStateChanged(_IsConnected);
     // DEBUG_END;
 }  // NetworkStateChanged
 

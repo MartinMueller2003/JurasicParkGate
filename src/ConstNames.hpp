@@ -98,6 +98,7 @@ extern const CN_PROGMEM char    CN_files[];
 extern const CN_PROGMEM char    CN_Frequency[];
 extern const CN_PROGMEM char    CN_gateway[];
 extern const CN_PROGMEM char    CN_g[];
+extern const CN_PROGMEM char    CN_gate[];
 extern const CN_PROGMEM char    CN_gamma[];
 extern const CN_PROGMEM char    CN_get[];
 extern const CN_PROGMEM char    CN_gen_ser_hdr[];
