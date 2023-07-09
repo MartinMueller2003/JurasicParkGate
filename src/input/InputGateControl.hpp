@@ -92,6 +92,7 @@ protected:
 
     friend class FsmInputGateBooting ;
     friend class FsmInputGateIdle;
+    friend class FsmInputGateOpeningIntro;
     friend class FsmInputGateOpening;
     friend class FsmInputGateOpen;
     friend class FsmInputGateClosing;
@@ -180,6 +181,21 @@ public:
     // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateIdle
+
+// -----------------------------------------------------------------------------
+class FsmInputGateOpeningIntro final : public FsmInputGateCommon
+{
+public:
+    void init (c_InputGateControl * pParent) override;
+    void poll (c_InputGateControl * pParent) override;
+    String name () {return F("Intro");}
+    void Button_Open_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+
+}; // FsmInputGateOpening
 
 // -----------------------------------------------------------------------------
 class FsmInputGateOpening final : public FsmInputGateCommon
