@@ -82,6 +82,12 @@ void Process ();                                       ///< Call from loop(),  r
 void GetDriverName (String & sDriverName) { sDriverName = "Gate"; }                                                                           ///< get the name for the instantiated driver
 void SetBufferInfo (uint32_t BufferSize);
 
+void Button_Open_Pressed ();
+void Button_Lights_Pressed ();
+void Button_Play_Pressed ();
+void Button_Skip_Pressed ();
+void Button_Stop_Pressed ();
+
 protected:
 
     friend class FsmInputGateBooting ;

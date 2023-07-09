@@ -17,6 +17,7 @@
  *
  */
 #include "InputGateControl.hpp"
+#include "InputButtons.hpp"
 
 // -----------------------------------------------------------------------------
 // Local Structure and Data Definitions
@@ -58,13 +59,116 @@ void c_InputGateControl::Begin ()
         return;
     }
 
+    // button handlers
+    InputButtons.RegisterButtonHandler(0, 
+        [] (void * UserInfo)
+            {
+                if (UserInfo)
+                {
+                    static_cast <c_InputGateControl *> (UserInfo)->Button_Open_Pressed ();
+                }
+            },
+            this);
+
+    InputButtons.RegisterButtonHandler(1, 
+        [] (void * UserInfo)
+            {
+                if (UserInfo)
+                {
+                    static_cast <c_InputGateControl *> (UserInfo)->Button_Lights_Pressed ();
+                }
+            },
+            this);
+
+    InputButtons.RegisterButtonHandler(2, 
+        [] (void * UserInfo)
+            {
+                if (UserInfo)
+                {
+                    static_cast <c_InputGateControl *> (UserInfo)->Button_Play_Pressed ();
+                }
+            },
+            this);
+
+
+    InputButtons.RegisterButtonHandler(3, 
+        [] (void * UserInfo)
+            {
+                if (UserInfo)
+                {
+                    static_cast <c_InputGateControl *> (UserInfo)->Button_Skip_Pressed ();
+                }
+            },
+            this);
+
+    InputButtons.RegisterButtonHandler(4, 
+        [] (void * UserInfo)
+            {
+                if (UserInfo)
+                {
+                    static_cast <c_InputGateControl *> (UserInfo)->Button_Stop_Pressed ();
+                }
+            },
+            this);
+
     HasBeenInitialized = true;
 
     validateConfiguration ();
+
     // DEBUG_V ("");
 
     // DEBUG_END;
 }  // Begin
+
+// -----------------------------------------------------------------------------
+void c_InputGateControl::Button_Open_Pressed () 
+{
+    DEBUG_START;
+
+    if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Open_Pressed(this); }
+
+    DEBUG_END;
+}
+
+// -----------------------------------------------------------------------------
+void c_InputGateControl::Button_Lights_Pressed () 
+{
+    DEBUG_START;
+
+    if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Lights_Pressed(this); }
+
+    DEBUG_END;
+}
+
+// -----------------------------------------------------------------------------
+void c_InputGateControl::Button_Play_Pressed () 
+{
+    DEBUG_START;
+
+    if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Play_Pressed(this); }
+
+    DEBUG_END;
+}
+
+// -----------------------------------------------------------------------------
+void c_InputGateControl::Button_Skip_Pressed () 
+{
+    DEBUG_START;
+
+    if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Skip_Pressed(this); }
+
+    DEBUG_END;
+}
+
+// -----------------------------------------------------------------------------
+void c_InputGateControl::Button_Stop_Pressed () 
+{
+    DEBUG_START;
+
+    if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Stop_Pressed(this); }
+
+    DEBUG_END;
+}
 
 // -----------------------------------------------------------------------------
 void c_InputGateControl::GetConfig (JsonObject & jsonConfig)
@@ -543,11 +647,11 @@ void FsmInputGateBooting::init(c_InputGateControl * pParent)
 // -----------------------------------------------------------------------------
 void FsmInputGateBooting::poll(c_InputGateControl * pParent)
 {
-    DEBUG_START;
+    // _ DEBUG_START;
 
     FsmInputGateIdle_Imp.init(pParent);
 
-    DEBUG_END;
+    // _ DEBUG_END;
 } // FsmInputGateBooting::init
 
 // -----------------------------------------------------------------------------
@@ -574,6 +678,8 @@ void FsmInputGateIdle::Button_Open_Pressed (c_InputGateControl * pParent)
 {
     DEBUG_START;
 
+    FsmInputGateOpening_Imp.init(pParent);
+
     DEBUG_END;
 } // FsmInputGateIdle::Button_Open_Pressed
 
@@ -582,6 +688,8 @@ void FsmInputGateIdle::Button_Lights_Pressed (c_InputGateControl * pParent)
 {
     DEBUG_START;
 
+    FsmInputGateLights_Imp.init(pParent);
+
     DEBUG_END;
 } // FsmInputGateIdle::Button_Lights_Pressed
 
@@ -589,6 +697,8 @@ void FsmInputGateIdle::Button_Lights_Pressed (c_InputGateControl * pParent)
 void FsmInputGateIdle::Button_Play_Pressed (c_InputGateControl * pParent)
 {
     DEBUG_START;
+
+    FsmInputGatePlaying_Imp.init(pParent);
 
     DEBUG_END;
 } // FsmInputGateIdle::Button_Play_Pressed
