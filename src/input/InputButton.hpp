@@ -30,17 +30,14 @@ bool SetConfig (JsonObject & jsonConfig);           ///< Set a new config in the
 void GetConfig (JsonObject & jsonConfig);           ///< Get the current config used by the driver
 void GetStatus (JsonObject & jsonStatus);
 void Process ();                                    ///< Call from loop(),  renders Input data
-void GetDriverName (String & sDriverName)
-{
-    sDriverName = Name;
-}                                                   ///< get the name for the instantiated driver
+void GetDriverName (String & sDriverName) { sDriverName = Name; }                                                   ///< get the name for the instantiated driver
 void SetBufferInfo (uint32_t BufferSize);
 void NetworkStateChanged (bool IsConnected);        // used by poorly designed rx functions
-void SetName (String & value)
-{
-    Name = value;
-}
+void SetName (String & value) { Name = value; }
+void RegisterButtonHandler(void (*callback)(void *), void * context);
+
 protected:
+void generatateCallback();
 
 enum Polarity_t
 {
@@ -64,12 +61,15 @@ bool Enabled                = true;
 uint32_t InputDebounceCount = 0;
 FastTimer InputHoldTimer;
 uint32_t LongPushDelayMS    = 2000;
-fsm_InputButton_state* CurrentFsmState = nullptr;             // initialized in constructor
+fsm_InputButton_state* CurrentFsmState = nullptr;
+
+void (* callback) (void *) = nullptr;
+void * context = nullptr;
 
 friend class fsm_InputButton_boot;
 friend class fsm_InputButton_off_state;
-friend class fsm_InputButton_on_wait_long_state;
 friend class fsm_InputButton_wait_for_off_state;
+
 }; // c_InputButton
 
 /*****************************************************************************/
@@ -81,44 +81,27 @@ class fsm_InputButton_state{
 public:
 virtual void Poll (c_InputButton & pInputButton) = 0;
 virtual void Init (c_InputButton & pInputButton) = 0;
-virtual~fsm_InputButton_state ()
-{}
+virtual~fsm_InputButton_state () {}
 private:
-    #define MIN_INPUT_STABLE_VALUE 50
+    #define MIN_INPUT_STABLE_VALUE 100
 }; // fsm_InputButton_state
 
 /*****************************************************************************/
-// input is unknown and unreachable
-//
 class fsm_InputButton_boot final : public fsm_InputButton_state {
 public:
 void Poll (c_InputButton & pInputButton) override;
 void Init (c_InputButton & pInputButton) override;
-~fsm_InputButton_boot () override
-{}
+~fsm_InputButton_boot () override {}
 }; // fsm_InputButton_boot
 
 /*****************************************************************************/
 // input is off and stable
-//
 class fsm_InputButton_off_state final : public fsm_InputButton_state {
 public:
 void Poll (c_InputButton & pInputButton) override;
 void Init (c_InputButton & pInputButton) override;
-~fsm_InputButton_off_state () override
-{}
+~fsm_InputButton_off_state () override {}
 }; // fsm_InputButton_off_state
-
-/*****************************************************************************/
-// input is always reported as on
-//
-class fsm_InputButton_on_wait_long_state final : public fsm_InputButton_state {
-public:
-void Poll (c_InputButton & pInputButton) override;
-void Init (c_InputButton & pInputButton) override;
-~fsm_InputButton_on_wait_long_state () override
-{}
-}; // fsm_InputButton_on_wait_long_state
 
 /*****************************************************************************/
 // input is always reported as on
@@ -127,6 +110,5 @@ class fsm_InputButton_wait_for_off_state final : public fsm_InputButton_state {
 public:
 void Poll (c_InputButton & pInputButton) override;
 void Init (c_InputButton & pInputButton) override;
-~fsm_InputButton_wait_for_off_state () override
-{}
+~fsm_InputButton_wait_for_off_state () override {}
 }; // fsm_InputButton_wait_for_off_state

@@ -36,15 +36,24 @@ static String DefaultButtonNames[]
 /* Code                                                                      */
 /*****************************************************************************/
 
-c_InputButtons::c_InputButtons (c_InputMgr::e_InputChannelIds   NewInputChannelId,
- c_InputMgr::e_InputType                                        NewChannelType,
- uint32_t                                                       BufferSize) :
-    c_InputCommon (NewInputChannelId, NewChannelType, BufferSize)
+c_InputButtons::c_InputButtons () :
+    c_InputCommon (c_InputMgr::e_InputChannelIds::InputChannelId_Start, c_InputMgr::e_InputType::InputType_Buttons, 32)
 {
+} // c_InputButtons
+
+/*****************************************************************************/
+void c_InputButtons::SetParms (c_InputMgr::e_InputChannelIds   NewInputChannelId,
+ c_InputMgr::e_InputType                                        NewChannelType,
+ uint32_t                                                       NewBufferSize)
+ {
     // DEBUG_START;
 
     // DEBUG_V(String("NewInputChannelId: ") + String(int(NewInputChannelId)));
     // DEBUG_V(String("   NewChannelType: ") + String(int(NewChannelType)));
+
+    InputChannelId = NewInputChannelId;
+    ChannelType = NewChannelType;
+    InputDataBufferSize = NewBufferSize;
 
     uint32_t index = 0;
     for (auto & CurrentButton : Buttons)
@@ -53,7 +62,7 @@ c_InputButtons::c_InputButtons (c_InputMgr::e_InputChannelIds   NewInputChannelI
     }
 
     // DEBUG_END;
-}  // c_InputButtons
+}  // SetParms
 
 /*****************************************************************************/
 void c_InputButtons::Begin ()
@@ -167,7 +176,7 @@ bool c_InputButtons::SetConfig (JsonObject & JsonData)
         }
 
         // send the config to the button
-        Buttons[uint32_t (CurrentButtonJsonData[CN_id])].SetConfig (CurrentButtonJsonData);
+        Buttons[index].SetConfig (CurrentButtonJsonData);
     }
 
     // DEBUG_END;
@@ -191,3 +200,5 @@ void c_InputButtons::Process (void)
 void c_InputButtons::NetworkStateChanged (bool IsConnected)
 {
 }                                                               // NetworkStateChanged
+
+c_InputButtons InputButtons;

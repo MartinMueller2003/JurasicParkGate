@@ -28,7 +28,6 @@
 
 fsm_InputButton_boot                fsm_InputButton_boot_imp;
 fsm_InputButton_off_state           fsm_InputButton_off_state_imp;
-fsm_InputButton_on_wait_long_state  fsm_InputButton_on_wait_long_state_imp;
 fsm_InputButton_wait_for_off_state  fsm_InputButton_wait_for_off_state_imp;
 
 /*****************************************************************************/
@@ -93,16 +92,24 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
     setFromJSON (   GpioId,    JsonData,   CN_GPIO);
     setFromJSON (   Polarity,  JsonData,   M_POLARITY);
 
-    polarity = (String (CN_ActiveHigh) == Polarity)?ActiveHigh : ActiveLow;
+    polarity = (String (CN_ActiveHigh).equals (Polarity))?ActiveHigh : ActiveLow;
 
-    if ( (oldInputId != GpioId) || (false == Enabled) )
+    if ( (oldInputId != GpioId))
     {
-        pinMode (   oldInputId, INPUT);
-        pinMode (   GpioId,     INPUT_PULLUP);
+        pinMode (oldInputId, INPUT);
+    }
+
+    pinMode (   GpioId,     INPUT_PULLUP);
+
+    if (false == Enabled)
+    {
         fsm_InputButton_boot_imp.Init (*this);
     }
 
-    // DEBUG_V (String ("GpioId: ") + String (GpioId));
+    // DEBUG_V (String ("    Name: ") + Name);
+    // DEBUG_V (String ("Polarity: ") + Polarity);
+    // DEBUG_V (String (" Enabled: ") + String (Enabled));
+    // DEBUG_V (String ("  GpioId: ") + String (GpioId));
 
     // DEBUG_END;
     return(true);
@@ -113,7 +120,14 @@ void c_InputButton::Process (void)
 {
     // _ DEBUG_START;
 
-    CurrentFsmState->Poll (*this);
+    // _ DEBUG_V (String ("    Name: ") + Name);
+    // _ DEBUG_V (String (" Enabled: ") + String (Enabled));
+    // _ DEBUG_V (String ("  GpioId: ") + String (GpioId));
+
+    if(nullptr != CurrentFsmState)
+    {
+        CurrentFsmState->Poll (*this);
+    }
 
     // _ DEBUG_END;
 }  // Poll
@@ -121,6 +135,8 @@ void c_InputButton::Process (void)
 /*****************************************************************************/
 bool c_InputButton::ReadInput (void)
 {
+    // DEBUG_START;
+
     // read the input
     bool bInputValue = digitalRead (GpioId);
 
@@ -131,8 +147,13 @@ bool c_InputButton::ReadInput (void)
         bInputValue = !bInputValue;
     }
 
-    // DEBUG_V (String ("GpioId:    ") + String (GpioId));
+    // DEBUG_V (String ("       Name: ") + Name);
+    // DEBUG_V (String ("    Enabled: ") + String(Enabled));
+    // DEBUG_V (String ("     GpioId: ") + String (GpioId));
     // DEBUG_V (String ("bInputValue: ") + String (bInputValue));
+
+    // DEBUG_END;
+
     return(bInputValue);
 }  // ReadInput
 
@@ -140,6 +161,31 @@ bool c_InputButton::ReadInput (void)
 void c_InputButton::NetworkStateChanged (bool IsConnected)
 {
 }                                                              // NetworkStateChanged
+
+/*****************************************************************************/
+void c_InputButton::RegisterButtonHandler(void (*_callback)(void *), void * _context)
+{
+    // DEBUG_START;
+
+    callback = _callback;
+    context = _context;
+
+    // DEBUG_END;
+} // RegisterButtonHandler
+
+/*****************************************************************************/
+void c_InputButton::generatateCallback()
+{
+    // DEBUG_START;
+
+    if(nullptr != callback)
+    {
+        (*callback)(context);
+    }
+
+    // DEBUG_END;
+}
+
 
 /*****************************************************************************/
 /*	FSM                                                                      */
@@ -164,6 +210,10 @@ void fsm_InputButton_boot::Poll (c_InputButton & pInputButton)
 {
     // _ DEBUG_START;
 
+    // _ DEBUG_V (String ("    Name: ") + pInputButton.Name);
+    // _ DEBUG_V (String (" Enabled: ") + String (pInputButton.Enabled));
+    // _ DEBUG_V (String ("  GpioId: ") + String (pInputButton.GpioId));
+
     // start normal operation
     if (pInputButton.Enabled)
     {
@@ -182,6 +232,10 @@ void fsm_InputButton_off_state::Init (c_InputButton & pInputButton)
     // DEBUG_START;
 
     // DEBUG_V ("Entring OFF State");
+    // DEBUG_V (String ("    Name: ") + pInputButton.Name);
+    // DEBUG_V (String (" Enabled: ") + String (pInputButton.Enabled));
+    // DEBUG_V (String ("  GpioId: ") + String (pInputButton.GpioId));
+
     pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
     pInputButton.CurrentFsmState    = &fsm_InputButton_off_state_imp;
 
@@ -192,85 +246,50 @@ void fsm_InputButton_off_state::Init (c_InputButton & pInputButton)
 // Input was off
 void fsm_InputButton_off_state::Poll (c_InputButton & pInputButton)
 {
-    // _ DEBUG_START;
+    // DEBUG_START;
 
-    // read the input
-    bool bInputValue = pInputButton.ReadInput ();
-
-    // If the input is "on"
-    if (true == bInputValue)
+    do // once 
     {
-        // decrement the counter
-        if (0 == --pInputButton.InputDebounceCount)
+        if(!pInputButton.Enabled)
         {
-            // we really are on
-            fsm_InputButton_on_wait_long_state_imp.Init (pInputButton);
+            fsm_InputButton_boot_imp.Init(pInputButton);
+            break;
         }
-    }
-    else  // still off
-    {
-        // _ DEBUG_V ("reset the debounce counter");
-        pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
-    }
 
-    // _ DEBUG_END;
+        // read the input
+        bool bInputValue = pInputButton.ReadInput ();
+
+        // If the input is "on"
+        if (true == bInputValue)
+        {
+            // decrement the counter
+            if (0 == --pInputButton.InputDebounceCount)
+            {
+                // we really are on
+                fsm_InputButton_wait_for_off_state_imp.Init (pInputButton);
+            }
+        }
+        else  // still off
+        {
+            // _ DEBUG_V ("reset the debounce counter");
+            pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
+        }
+    } while(false);
+
+    // DEBUG_END;
 }  // fsm_InputButton_off_state::Poll
 
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
-// Input is always on
-void fsm_InputButton_on_wait_long_state::Init (c_InputButton & pInputButton)
-{
-    // DEBUG_START;
-
-    // DEBUG_V ("Entring Wait Long State");
-    pInputButton.InputHoldTimer.StartTimer (pInputButton.LongPushDelayMS);
-    pInputButton.CurrentFsmState = &fsm_InputButton_on_wait_long_state_imp;
-
-    // DEBUG_END;
-}  // fsm_InputButton_on_wait_long_state::Init
-
-/*****************************************************************************/
-// Input is on and is stable
-void fsm_InputButton_on_wait_long_state::Poll (c_InputButton & pInputButton)
-{
-    // _ DEBUG_START;
-
-    // read the input
-    bool bInputValue = pInputButton.ReadInput ();
-
-    // If the input is "on"
-    if (true == bInputValue)
-    {
-        // _ DEBUG_V("");
-        // decrement the counter
-        if ( pInputButton.InputHoldTimer.IsExpired () )
-        {
-            // we really are on
-            fsm_InputButton_wait_for_off_state_imp.Init (pInputButton);
-            // _ DEBUG_V("HadLongPush = true")
-        }
-    }
-    else  // Turned off
-    {
-        // _ DEBUG_V("HadShortPush = true")
-        fsm_InputButton_wait_for_off_state_imp.Init (pInputButton);
-    }
-
-    // _ DEBUG_END;
-}  // fsm_InputButton_on_wait_long_state::Poll
-
-/*****************************************************************************/
-/*****************************************************************************/
-/*****************************************************************************/
-// Input is always on
+// Input is on
 void fsm_InputButton_wait_for_off_state::Init (c_InputButton & pInputButton)
 {
     // DEBUG_START;
 
     // DEBUG_V ("Entring Wait OFF State");
     pInputButton.CurrentFsmState = &fsm_InputButton_wait_for_off_state_imp;
+    pInputButton.generatateCallback();
 
     // DEBUG_END;
 }  // fsm_InputButton_wait_for_off_state::Init
@@ -279,7 +298,7 @@ void fsm_InputButton_wait_for_off_state::Init (c_InputButton & pInputButton)
 // Input is on and is stable
 void fsm_InputButton_wait_for_off_state::Poll (c_InputButton & pInputButton)
 {
-    // _ DEBUG_START;
+    // DEBUG_START;
 
     // read the input
     bool bInputValue = pInputButton.ReadInput ();
@@ -290,7 +309,12 @@ void fsm_InputButton_wait_for_off_state::Poll (c_InputButton & pInputButton)
         fsm_InputButton_off_state_imp.Init (pInputButton);
     }
 
-    // _ DEBUG_END;
+    if(!pInputButton.Enabled)
+    {
+        fsm_InputButton_boot_imp.Init(pInputButton);
+    }
+
+    // DEBUG_END;
 }  // fsm_InputButton_wait_for_off_state::Poll
 
 /*****************************************************************************/

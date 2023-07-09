@@ -25,9 +25,11 @@
 /*****************************************************************************/
 class c_InputButtons : public c_InputCommon {
 public:
-c_InputButtons (c_InputMgr::e_InputChannelIds   NewInputChannelId,
- c_InputMgr::e_InputType                        NewChannelType,
- uint32_t                                       BufferSize);
+
+c_InputButtons ();
+void SetParms (c_InputMgr::e_InputChannelIds  NewInputChannelId,
+ c_InputMgr::e_InputType                      NewChannelType,
+ uint32_t                                     BufferSize);
 
 enum InputValue_t
 {
@@ -41,12 +43,10 @@ bool SetConfig (JsonObject & jsonConfig);           ///< Set a new config in the
 void GetConfig (JsonObject & jsonConfig);           ///< Get the current config used by the driver
 void GetStatus (JsonObject & jsonStatus);
 void Process ();                                    ///< Call from loop(),  renders Input data
-void GetDriverName (String & sDriverName)
-{
-    sDriverName = F ("Buttons");
-}                                                   ///< get the name for the instantiated driver
+void GetDriverName (String & sDriverName) { sDriverName = F ("Buttons"); }                                                   ///< get the name for the instantiated driver
 void SetBufferInfo (uint32_t BufferSize);
 void NetworkStateChanged (bool IsConnected);        // used by poorly designed rx functions
+void RegisterButtonHandler(uint32_t ButtonId, void (*callback)(void *), void * context) {Buttons[ButtonId].RegisterButtonHandler(callback, context);}
 
     #define NumButtons 5
 
@@ -54,3 +54,5 @@ protected:
 
 c_InputButton Buttons[NumButtons];
 }; // c_InputButtons
+
+extern c_InputButtons InputButtons;
