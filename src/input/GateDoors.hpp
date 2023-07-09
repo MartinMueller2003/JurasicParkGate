@@ -40,6 +40,9 @@ void GetStatus (JsonObject & json);
 void Open();
 void Close();
 
+bool IsOpen() {return true;}
+bool IsClosed() {return true;}
+
 void GetDriverName    (String & Name) {Name = "GateDoors";}
 
 }; // c_GateDoors

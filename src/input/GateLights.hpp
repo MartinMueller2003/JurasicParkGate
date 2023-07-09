@@ -42,6 +42,82 @@ void Off();
 
 void GetDriverName    (String & Name) {Name = "GateLights";}
 
+
+// dCRGB red, green, blue 0->1.0
+struct dCRGB
+{
+    double r;
+    double g;
+    double b;
+    dCRGB operator= (dCRGB a)
+    {
+        r = a.r;
+        g = a.g;
+        b = a.b;
+
+        return(a);
+    } // =
+};
+
+// CRGB red, green, blue 0->255
+struct CRGB
+{
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+};
+
+// dCHSV hue 0->360 sat 0->1.0 val 0->1.0
+struct dCHSV
+{
+    double h;
+    double s;
+    double v;
+};
+
+// typedef uint16_t(c_InputGateControl::* EffectFunc)(void);
+typedef struct MQTTConfiguration_s
+{
+    String effect;
+    bool mirror;
+    bool allLeds;
+    uint8_t brightness;
+    bool whiteChannel;
+    CRGB color;
+} MQTTConfiguration_s;
+
+    #define MIN_EFFECT_DELAY        10
+    #define MAX_EFFECT_DELAY        65535
+    #define DEFAULT_EFFECT_DELAY    1000
+
+using timeType = decltype( millis () );
+
+uint32_t PixelCount = 0;
+CRGB FireColor         = {183, 0, 255};                    /* Externally controlled effect color */
+
+void setPixel (uint16_t idx,
+ CRGB                   color);
+void GetPixel (uint16_t pixelId,
+ CRGB &                 out);
+void setRange (uint16_t first,
+ uint16_t               len,
+ CRGB                   color);
+void clearRange (uint16_t   first,
+ uint16_t                   len);
+void setAll (CRGB color);
+
+CRGB colorWheel (uint8_t pos);
+dCHSV rgb2hsv (CRGB in);
+CRGB hsv2rgb (dCHSV in);
+
+void setColor (String & NewColor);
+void setBrightness (float brightness);
+void setSpeed (uint16_t speed);
+void setDelay (uint16_t delay);
+void PollFlash ();
+
+void clearAll ();
+
 }; // c_GateLights
 
 extern c_GateLights GateLights;

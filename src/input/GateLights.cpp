@@ -98,12 +98,5 @@ void c_GateLights::Off ()
     // DEBUG_END;
 }  // Off
 
-{
-    // DEBUG_START;
-
-
-    // DEBUG_END;
-}  // ResumePlaying
-
 // create a global instance of the Gate Audio
 c_GateLights GateLights;

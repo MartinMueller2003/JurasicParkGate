@@ -192,23 +192,6 @@ void c_InputGateControl::GetConfig (JsonObject & jsonConfig)
 }  // GetConfig
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::GetMqttEffectList (JsonObject & jsonConfig)
-{
-    DEBUG_START;
-    JsonArray EffectsArray = jsonConfig.createNestedArray (CN_effect_list);
-
-    DEBUG_END;
-}  // GetMqttEffectList
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::GetMqttConfig (MQTTConfiguration_s & mqttConfig)
-{
-    DEBUG_START;
-
-    DEBUG_END;
-}  // GetMqttConfig
-
-// -----------------------------------------------------------------------------
 void c_InputGateControl::GetStatus (JsonObject & jsonStatus)
 {
     // DEBUG_START;
@@ -290,351 +273,12 @@ bool c_InputGateControl::SetConfig (ArduinoJson::JsonObject & jsonConfig)
 }  // SetConfig
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::SetMqttConfig (MQTTConfiguration_s & mqttConfig)
-{
-    DEBUG_START;
-
-    DEBUG_END;
-}  // SetConfig
-
-// -----------------------------------------------------------------------------
 void c_InputGateControl::validateConfiguration ()
 {
     // DEBUG_START;
 
     // DEBUG_END;
 }  // validateConfiguration
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::setBrightness (float brightness)
-{
-    DEBUG_START;
-
-    DEBUG_END;
-} // c_InputGateControl::setBrightness
-
-// -----------------------------------------------------------------------------
-// Yukky maths here. Input speeds from 1..10 get mapped to 17782..100
-void c_InputGateControl::setSpeed (uint16_t speed)
-{
-    DEBUG_START;
-
-    DEBUG_END;
-}
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::setDelay (uint16_t delay)
-{
-    DEBUG_START;
-
-    DEBUG_END;
-}  // setDelay
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::setColor (String & NewColor)
-{
-    DEBUG_START;
-
-    DEBUG_V ("NewColor: " + NewColor);
-
-    // Parse the color string into rgb values
-
-    uint32_t intValue = strtoul (NewColor.substring (1).c_str (), nullptr, 16);
-    DEBUG_V (String ("intValue: ") + String (intValue, 16));
-/*
-    EffectColor.r = uint8_t ( (intValue >> 16) & 0xFF );
-    EffectColor.g = uint8_t ( (intValue >> 8) & 0xFF );
-    EffectColor.b = uint8_t ( (intValue >> 0) & 0xFF );
-*/
-    DEBUG_END;
-}  // setColor
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::setPixel (uint16_t pixelId, CRGB color)
-{
-    DEBUG_START;
-
-    DEBUG_V (String ("IsInputChannelActive: ") + String(IsInputChannelActive));
-    DEBUG_V (String ("pixelId: ") + pixelId);
-    DEBUG_V (String ("PixelCount: ") + PixelCount);
-
-//    if ( (true == IsInputChannelActive) && (pixelId < PixelCount) )
-    {
-        uint8_t PixelBuffer[sizeof (CRGB) + 1];
-
-        DEBUG_V (String ("color.r: ") + String (color.r));
-        DEBUG_V (String ("color.g: ") + String (color.g));
-        DEBUG_V (String ("color.b: ") + String (color.b));
-
-        PixelBuffer[0] = color.r;
-        PixelBuffer[1] = color.g;
-        PixelBuffer[2] = color.b;
-
-        OutputMgr.WriteChannelData (pixelId * 3, 3, PixelBuffer);
-    }
-
-    DEBUG_END;
-}  // setPixel
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::GetPixel (uint16_t pixelId, CRGB & out)
-{
-    DEBUG_START;
-
-    DEBUG_V (String ("IsInputChannelActive: ") + String(IsInputChannelActive));
-    DEBUG_V (String ("pixelId: ") + pixelId);
-    DEBUG_V (String ("PixelCount: ") + PixelCount);
-
-//    if (pixelId < PixelCount)
-    {
-        byte PixelData[sizeof (CRGB)];
-        OutputMgr.ReadChannelData (uint32_t (3 * pixelId), sizeof (PixelData), PixelData);
-
-        out.r = PixelData[0];
-        out.g = PixelData[1];
-        out.b = PixelData[2];
-    }
-
-    DEBUG_END;
-}  // getPixel
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::setRange (uint16_t FirstPixelId, uint16_t NumberOfPixels, CRGB color)
-{
-    for (uint16_t i = FirstPixelId; i < min (uint32_t (FirstPixelId + NumberOfPixels), PixelCount); i++)
-    {
-        setPixel (i, color);
-    }
-}  // setRange
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::clearRange (uint16_t FirstPixelId, uint16_t NumberOfPixels)
-{
-    for (uint16_t i = FirstPixelId; i < min (uint32_t (FirstPixelId + NumberOfPixels), PixelCount); i++)
-    {
-        setPixel (i, {0, 0, 0});
-    }
-} // c_InputGateControl::clearRange
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::setAll (CRGB color)
-{
-    setRange (0, PixelCount, color);
-}                                                                                 // setAll
-
-// -----------------------------------------------------------------------------
-void c_InputGateControl::clearAll ()
-{
-    clearRange (0, PixelCount);
-}                                                                    // clearAll
-
-// -----------------------------------------------------------------------------
-c_InputGateControl::CRGB c_InputGateControl::colorWheel (uint8_t pos)
-{
-    CRGB Response =
-    {0, 0, 0};
-
-    pos = 255 - pos;
-
-    if (pos < 85)
-    {
-        Response =
-        {uint8_t (255 - pos * 3), 0, uint8_t (pos * 3)};
-    }
-    else
-    if (pos < 170)
-    {
-        pos     -= 85;
-        Response =
-        {0, uint8_t (pos * 3), uint8_t (255 - pos * 3)};
-    }
-    else
-    {
-        pos     -= 170;
-        Response =
-        {uint8_t (pos * 3), uint8_t (255 - pos * 3), 0};
-    }
-
-    return(Response);
-}  // colorWheel
-
-/*
-// -----------------------------------------------------------------------------
-uint16_t c_InputGateControl::effectFireFlicker ()
-{
-    DEBUG_START;
-
-    byte    rev_intensity = 6;   // more=less intensive, less=more intensive
-    byte    lum           = max ( EffectColor.r, max (EffectColor.g, EffectColor.b) ) / rev_intensity;
-
-    for (uint16_t i = 0; i < PixelCount; i++)
-    {
-        uint8_t flicker = random (lum);
-        setPixel (
-            i,
-            CRGB{
-            uint8_t (   max (EffectColor.r - flicker, 0) ),
-            uint8_t (   max (EffectColor.g - flicker, 0) ),
-            uint8_t (   max (EffectColor.b - flicker, 0) )
-        });
-    }
-
-    EffectStep = (1 + EffectStep) % PixelCount;
-
-    DEBUG_END;
-    return(EffectDelay / 10);
-}  // effectFireFlicker
-*/
-
-// -----------------------------------------------------------------------------
-// dCHSV hue 0->360 sat 0->1.0 val 0->1.0
-c_InputGateControl::dCHSV c_InputGateControl::rgb2hsv (CRGB in_int)
-{
-    dCHSV   out;
-    dCRGB   in =
-    {double(in_int.r) / double(255.0), double(in_int.g) / double(255.0), double(in_int.b) / double(255.0)};
-    double  min, max, delta;
-
-    min = in.r < in.g?in.r : in.g;
-    min = min < in.b?min : in.b;
-
-    max = in.r > in.g?in.r : in.g;
-    max = max > in.b?max : in.b;
-
-    out.v = max;
-    delta = max - min;
-
-    if (delta < 0.00001)
-    {
-        out.s = 0;
-        out.h = 0;   // undefined, maybe nan?
-
-        return(out);
-    }
-
-    if (max > 0.0)              // NOTE: if Max is == 0, this divide would cause a crash
-    {
-        out.s = (delta / max);  // s
-    }
-    else
-    {
-        // if max is 0, then r = g = b = 0
-        // s = 0, v is undefined
-        out.s = 0.0;
-        out.h = NAN;                              // its now undefined
-
-        return(out);
-    }
-
-    if (in.r >= max)                            // > is bogus, just keeps compilor happy
-    {
-        out.h = (in.g - in.b) / delta;          // between yellow & magenta
-    }
-    else
-    if (in.g >= max)
-    {
-        out.h = 2.0 + (in.b - in.r) / delta;  // between cyan & yellow
-    }
-    else
-    {
-        out.h = 4.0 + (in.r - in.g) / delta;  // between magenta & cyan
-    }
-
-    out.h *= 60.0;                              // degrees
-
-    if (out.h < 0.0) out.h += 360.0;
-
-    return(out);
-} // c_InputGateControl::rgb2hsv
-
-// -----------------------------------------------------------------------------
-// dCHSV hue 0->360 sat 0->1.0 val 0->1.0
-c_InputGateControl::CRGB c_InputGateControl::hsv2rgb (dCHSV in)
-{
-    double  hh, p, q, t, ff;
-    long    i;
-    dCRGB   out;
-    CRGB    out_int =
-    {0, 0, 0};
-
-    if (in.s <= 0.0)       // < is bogus, just shuts up warnings
-    {
-        out.r = in.v;
-        out.g = in.v;
-        out.b = in.v;
-    }
-    else
-    {
-        hh = in.h;
-
-        if (hh >= 360.0) hh = 0.0;
-
-        hh /= 60.0;
-        i   = (long)hh;
-        ff  = hh - i;
-        p   = in.v * (1.0 - in.s);
-        q   = in.v * ( 1.0 - (in.s * ff) );
-        t   = in.v * ( 1.0 - ( in.s * (1.0 - ff) ) );
-
-        switch (i)
-        {
-        case 0 :
-        {
-            out.r = in.v;
-            out.g = t;
-            out.b = p;
-            break;
-        }
-
-        case 1 :
-        {
-            out.r = q;
-            out.g = in.v;
-            out.b = p;
-            break;
-        }
-
-        case 2 :
-        {
-            out.r = p;
-            out.g = in.v;
-            out.b = t;
-            break;
-        }
-
-        case 3 :
-        {
-            out.r = p;
-            out.g = q;
-            out.b = in.v;
-            break;
-        }
-
-        case 4 :
-        {
-            out.r = t;
-            out.g = p;
-            out.b = in.v;
-            break;
-        }
-
-        case 5 :
-        default :
-        {
-            out.r = in.v;
-            out.g = p;
-            out.b = q;
-            break;
-        }
-        } // switch
-    }
-
-    out_int.r = min ( uint16_t (255), uint16_t (255 * out.r) );
-    out_int.g = min ( uint16_t (255), uint16_t (255 * out.g) );
-    out_int.b = min ( uint16_t (255), uint16_t (255 * out.b) );
-
-    return(out_int);
-} // c_InputGateControl::hsv2rgb
 
 // -----------------------------------------------------------------------------
 // ------------------ FSM Definitions ------------------------------------------
@@ -725,7 +369,8 @@ void FsmInputGateOpeningIntro::init(c_InputGateControl * pParent)
     GateLights.On();
     GateAudio.PlayIntro();
 
-    // TODO set up total cycle time
+    // set up total cycle time
+    pParent->fsmTimer = millis() + OPEN_TIME;
 
     DEBUG_END;
 } // FsmInputGateOpeningIntro::init
@@ -771,7 +416,11 @@ void FsmInputGateOpening::poll(c_InputGateControl * pParent)
 {
     // _ DEBUG_START;
 
-    // TODO Wait until total open time has expired, then move to closing the door
+    // Wait until the gate is open
+    if(GateDoors.IsOpen())
+    {
+        FsmInputGateOpen_Imp.init(pParent);
+    }
 
     // _ DEBUG_END;
 } // FsmInputGateOpening::init
@@ -804,7 +453,11 @@ void FsmInputGateOpen::poll(c_InputGateControl * pParent)
 {
     // _ DEBUG_START;
 
-    // TODO wait for the play timer to expire and then move to the closing state
+    // wait for the play timer to expire and then move to the closing state
+    if(millis() > pParent->fsmTimer)
+    {
+        FsmInputGateClosing_Imp.init(pParent);
+    }
 
     // _ DEBUG_END;
 } // FsmInputGateOpen::init
@@ -830,8 +483,6 @@ void FsmInputGateClosing::init(c_InputGateControl * pParent)
 
     GateDoors.Close();
 
-    // TODO start a closing timer
-
     DEBUG_END;
 } // FsmInputGateClosing::init
 
@@ -840,7 +491,10 @@ void FsmInputGateClosing::poll(c_InputGateControl * pParent)
 {
     // _ DEBUG_START;
 
-    // TOD when the closing timer expires, move to the idle state
+    if(GateDoors.IsClosed())
+    {
+        FsmInputGateIdle_Imp.init(pParent);
+    }
 
     // _ DEBUG_END;
 } // FsmInputGateClosing::init
@@ -975,7 +629,7 @@ void FsmInputGatePaused::poll(c_InputGateControl * pParent)
 } // FsmInputGatePaused::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePaused::Button_Play_Pressed (c_InputGateControl * pParent)111
+void FsmInputGatePaused::Button_Play_Pressed (c_InputGateControl * pParent)
 {
     DEBUG_START;
 
