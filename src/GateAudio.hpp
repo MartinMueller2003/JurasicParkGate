@@ -19,10 +19,13 @@
  */
 
 #include "JurasicParkGate.h"
-
+#include "DFRobotDFPlayerMini.h"
 class c_GateAudio
 {
 private:
+
+DFRobotDFPlayerMini Player;
+bool IsInstalled = false;
 
 protected:
 

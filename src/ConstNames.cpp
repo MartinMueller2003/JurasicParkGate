@@ -127,6 +127,7 @@ const CN_PROGMEM char   CN_miso_pin                 [] = "miso_pin";
 const CN_PROGMEM char   CN_mode                     [] = "mode";
 const CN_PROGMEM char   CN_mode_name                [] = "mode_name";
 const CN_PROGMEM char   CN_mosi_pin                 [] = "mosi_pin";
+const CN_PROGMEM char   CN_MP3                      [] = "MP3";
 const CN_PROGMEM char   CN_multicast                [] = "multicast";
 const CN_PROGMEM char   CN_name                     [] = "name";
 const CN_PROGMEM char   CN_NeedAutoConfig           [] = "NeedAutoConfig";

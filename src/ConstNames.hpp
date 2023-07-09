@@ -136,6 +136,7 @@ extern const CN_PROGMEM char    CN_miso_pin[];
 extern const CN_PROGMEM char    CN_mode [];
 extern const CN_PROGMEM char    CN_mode_name [];
 extern const CN_PROGMEM char    CN_mosi_pin[];
+extern const CN_PROGMEM char    CN_MP3 [];
 extern const CN_PROGMEM char    CN_multicast [];
 extern const CN_PROGMEM char    CN_name [];
 extern const CN_PROGMEM char    CN_NeedAutoConfig [];

@@ -44,6 +44,20 @@ void c_GateAudio::Begin ()
 
     do  // once
     {
+        if(!Player.begin(Serial1))
+        {
+            logcon(F("Failed to init the MP3 player"));
+            IsInstalled = false;
+        }
+
+        IsInstalled = true;
+
+        Player.setTimeOut(500); //Set serial communictaion time out 500ms
+          
+        // Player.volume(10);  //Set volume value (0~30).
+        Player.EQ(DFPLAYER_EQ_NORMAL);
+        Player.outputDevice(DFPLAYER_DEVICE_SD);
+
     } while (false);
 
     // DEBUG_END;
@@ -56,6 +70,11 @@ bool c_GateAudio::SetConfig (JsonObject & json)
 
     bool ConfigChanged = false;
 
+    JsonObject jsonMp3 = json[CN_MP3];
+
+    bool temp;
+    setFromJSON(temp, jsonMp3, F("hmm"));
+
     // DEBUG_END;
 
     return(ConfigChanged);
@@ -66,7 +85,8 @@ void c_GateAudio::GetConfig (JsonObject & json)
 {
     // DEBUG_START;
 
-    // json[CN_miso_pin]  = miso_pin;
+    JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
+    jsonMp3[F("hmm")]  = true;
 
     // DEBUG_END;
 }  // GetConfig
@@ -75,8 +95,8 @@ void c_GateAudio::GetConfig (JsonObject & json)
 void c_GateAudio::GetStatus (JsonObject & json)
 {
     // DEBUG_START;
-
-//        json[F ("size")] = LittleFS.totalBytes ();
+    JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
+    jsonMp3[F ("installed")] = IsInstalled;
 
     // DEBUG_END;
 }  // GetConfig
@@ -86,6 +106,11 @@ void c_GateAudio::PlayIntro ()
 {
     // DEBUG_START;
 
+    if(IsInstalled)
+    {
+        Player.advertise(1);
+    }
+
     // DEBUG_END;
 }  // PlayIntro
 
@@ -93,7 +118,11 @@ void c_GateAudio::PlayIntro ()
 void c_GateAudio::PlayCurrentSelection ()
 {
     // DEBUG_START;
-
+    if(IsInstalled)
+    {
+        long maxFilesCount = Player.readFileCountsInFolder(1);
+        Player.play(random(maxFilesCount));
+    }
 
     // DEBUG_END;
 }  // PlayCurrentSelection
@@ -103,6 +132,10 @@ void c_GateAudio::PausePlaying ()
 {
     // DEBUG_START;
 
+    if(IsInstalled)
+    {
+        Player.pause(); 
+    }
 
     // DEBUG_END;
 }  // PausePlaying
@@ -112,6 +145,11 @@ void c_GateAudio::StopPlaying ()
 {
     // DEBUG_START;
 
+    // DEBUG_START;
+    if(IsInstalled)
+    {
+        Player.stop(); 
+    }
 
     // DEBUG_END;
 }  // StopPlaying
@@ -120,7 +158,10 @@ void c_GateAudio::StopPlaying ()
 void c_GateAudio::NextSong ()
 {
     // DEBUG_START;
-
+    if(IsInstalled)
+    {
+        Player.next(); 
+    }
 
     // DEBUG_END;
 }  // NextSong
@@ -130,6 +171,10 @@ void c_GateAudio::ResumePlaying ()
 {
     // DEBUG_START;
 
+    if(IsInstalled)
+    {
+        Player.start();
+    }
 
     // DEBUG_END;
 }  // ResumePlaying

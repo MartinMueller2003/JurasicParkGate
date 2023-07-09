@@ -63,6 +63,10 @@ void c_InputGateControl::Begin ()
         return;
     }
 
+    GateAudio.Begin();
+    GateDoors.Begin();
+    GateLights.Begin();
+
     // button handlers
     InputButtons.RegisterButtonHandler(0, 
         [] (void * UserInfo)
@@ -187,6 +191,10 @@ void c_InputGateControl::GetConfig (JsonObject & jsonConfig)
     JsonObject Config = jsonConfig[CN_gate];
     Config["Foo"]  = "Bar";
 
+    GateAudio.GetConfig(jsonConfig);
+    GateDoors.GetConfig(jsonConfig);
+    GateLights.GetConfig(jsonConfig);
+
     // DEBUG_END;
 
 }  // GetConfig
@@ -197,6 +205,9 @@ void c_InputGateControl::GetStatus (JsonObject & jsonStatus)
     // DEBUG_START;
 
     JsonObject Status = jsonStatus.createNestedObject ( F ("Gate Control") );
+    GateAudio.GetStatus(Status);
+    GateDoors.GetStatus(Status);
+    GateLights.GetStatus(Status);
 
     // DEBUG_END;
 }  // GetStatus
@@ -264,6 +275,10 @@ bool c_InputGateControl::SetConfig (ArduinoJson::JsonObject & jsonConfig)
         SetBufferInfo (InputDataBufferSize);
 
         validateConfiguration ();
+
+        GateAudio.SetConfig(jsonConfig);
+        GateDoors.SetConfig(jsonConfig);
+        GateLights.SetConfig(jsonConfig);
 
     } while (false);
 
