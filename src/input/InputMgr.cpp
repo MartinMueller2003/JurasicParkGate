@@ -436,7 +436,8 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             {
                 logcon (String ( F ("Starting Button for channel '") ) + ChannelIndex + "'.");
                 // DEBUG_V ("c_InputButtons");
-                InputChannelDrivers[ChannelIndex].pInputChannelDriver = new c_InputButtons (ChannelIndex, InputType_Buttons, InputDataBufferSize);
+                InputChannelDrivers[ChannelIndex].pInputChannelDriver = &InputButtons;
+                InputButtons.SetParms (ChannelIndex, InputType_Buttons, InputDataBufferSize);
                 // DEBUG_V ("c_InputButtons");
             }
             else
@@ -613,6 +614,7 @@ void c_InputMgr::Process ()
                 break;
             }
         }
+        
         InputGateControl.Process();
 
         if ( (false == aBlankTimerIsRunning) && (config.BlankDelay != 0) )
