@@ -233,7 +233,6 @@ void fsm_InputButton_off_state::Init (c_InputButton & pInputButton)
 
     // DEBUG_V ("Entring OFF State");
     // DEBUG_V (String ("    Name: ") + pInputButton.Name);
-    // DEBUG_V (String (" Enabled: ") + String (pInputButton.Enabled));
     // DEBUG_V (String ("  GpioId: ") + String (pInputButton.GpioId));
 
     pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
@@ -248,33 +247,24 @@ void fsm_InputButton_off_state::Poll (c_InputButton & pInputButton)
 {
     // DEBUG_START;
 
-    do // once 
+    // read the input
+    bool bInputValue = pInputButton.ReadInput ();
+
+    // If the input is "on"
+    if (true == bInputValue)
     {
-        if(!pInputButton.Enabled)
+        // decrement the counter
+        if (0 == --pInputButton.InputDebounceCount)
         {
-            fsm_InputButton_boot_imp.Init(pInputButton);
-            break;
+            // we really are on
+            fsm_InputButton_wait_for_off_state_imp.Init (pInputButton);
         }
-
-        // read the input
-        bool bInputValue = pInputButton.ReadInput ();
-
-        // If the input is "on"
-        if (true == bInputValue)
-        {
-            // decrement the counter
-            if (0 == --pInputButton.InputDebounceCount)
-            {
-                // we really are on
-                fsm_InputButton_wait_for_off_state_imp.Init (pInputButton);
-            }
-        }
-        else  // still off
-        {
-            // _ DEBUG_V ("reset the debounce counter");
-            pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
-        }
-    } while(false);
+    }
+    else  // still off
+    {
+        // _ DEBUG_V ("reset the debounce counter");
+        pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
+    }
 
     // DEBUG_END;
 }  // fsm_InputButton_off_state::Poll
@@ -290,6 +280,7 @@ void fsm_InputButton_wait_for_off_state::Init (c_InputButton & pInputButton)
     // DEBUG_V ("Entring Wait OFF State");
     pInputButton.CurrentFsmState = &fsm_InputButton_wait_for_off_state_imp;
     pInputButton.generatateCallback();
+    pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
 
     // DEBUG_END;
 }  // fsm_InputButton_wait_for_off_state::Init
@@ -306,12 +297,15 @@ void fsm_InputButton_wait_for_off_state::Poll (c_InputButton & pInputButton)
     // If the input is "on" then we wait for it to go off
     if (false == bInputValue)
     {
-        fsm_InputButton_off_state_imp.Init (pInputButton);
+        if(0 == --pInputButton.InputDebounceCount)
+        {
+            // we really are off
+            fsm_InputButton_off_state_imp.Init (pInputButton);
+        }
     }
-
-    if(!pInputButton.Enabled)
+    else
     {
-        fsm_InputButton_boot_imp.Init(pInputButton);
+        pInputButton.InputDebounceCount = MIN_INPUT_STABLE_VALUE;
     }
 
     // DEBUG_END;

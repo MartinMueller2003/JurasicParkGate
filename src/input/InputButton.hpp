@@ -83,7 +83,7 @@ virtual void Poll (c_InputButton & pInputButton) = 0;
 virtual void Init (c_InputButton & pInputButton) = 0;
 virtual~fsm_InputButton_state () {}
 private:
-    #define MIN_INPUT_STABLE_VALUE 100
+    #define MIN_INPUT_STABLE_VALUE 200
 }; // fsm_InputButton_state
 
 /*****************************************************************************/
