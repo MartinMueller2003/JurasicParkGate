@@ -112,6 +112,8 @@ void c_InputMgr::Begin (uint32_t BufferSize)
     // prevent recalls
     if (true == HasBeenInitialized) {return;}
 
+    InputGateControl.Begin ();
+
     // make sure the pointers are set up properly
     for (auto & CurrentInput : InputChannelDrivers)
     {
@@ -119,7 +121,6 @@ void c_InputMgr::Begin (uint32_t BufferSize)
         // DEBUG_V ("");
     }
 
-    InputGateControl.Begin();
     InputGateControl.SetBufferInfo(BufferSize);
 
     HasBeenInitialized = true;
