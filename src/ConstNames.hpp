@@ -164,6 +164,7 @@ extern const CN_PROGMEM char    CN_plussigns [];
 extern const CN_PROGMEM char    CN_power_pin[];
 extern const CN_PROGMEM char    CN_prependnullcount [];
 extern const CN_PROGMEM char    CN_pwm [];
+extern const CN_PROGMEM char    CN_randomize[];
 extern const CN_PROGMEM char    CN_Relay[];
 extern const CN_PROGMEM char    CN_remote[];
 extern const CN_PROGMEM char    CN_r[];

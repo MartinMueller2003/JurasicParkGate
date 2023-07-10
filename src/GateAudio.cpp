@@ -48,6 +48,7 @@ void c_GateAudio::Begin ()
         {
             logcon(F("Failed to init the MP3 player"));
             IsInstalled = false;
+            break;
         }
 
         IsInstalled = true;
@@ -72,8 +73,7 @@ bool c_GateAudio::SetConfig (JsonObject & json)
 
     JsonObject jsonMp3 = json[CN_MP3];
 
-    bool temp;
-    setFromJSON(temp, jsonMp3, F("hmm"));
+    setFromJSON(randomize, jsonMp3, CN_randomize);
 
     // DEBUG_END;
 
@@ -86,7 +86,7 @@ void c_GateAudio::GetConfig (JsonObject & json)
     // DEBUG_START;
 
     JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
-    jsonMp3[F("hmm")]  = true;
+    jsonMp3[CN_randomize]  = randomize;
 
     // DEBUG_END;
 }  // GetConfig
@@ -97,6 +97,7 @@ void c_GateAudio::GetStatus (JsonObject & json)
     // DEBUG_START;
     JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
     jsonMp3[F ("installed")] = IsInstalled;
+    jsonMp3[F ("playing")] = (IsIdle) ? -1 : FileNumberToPlay;
 
     // DEBUG_END;
 }  // GetConfig
@@ -120,8 +121,11 @@ void c_GateAudio::PlayCurrentSelection ()
     // DEBUG_START;
     if(IsInstalled)
     {
-        long maxFilesCount = Player.readFileCountsInFolder(1);
-        Player.play(random(maxFilesCount));
+        if(randomize)
+        {
+            FileNumberToPlay = uint8_t(random(Player.readFileCountsInFolder(1)));
+        }
+        Player.playFolder(1, FileNumberToPlay);
     }
 
     // DEBUG_END;

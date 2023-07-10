@@ -156,6 +156,7 @@ const CN_PROGMEM char   CN_power_pin                [] = "power_pin";
 const CN_PROGMEM char   CN_prependnullcount         [] = "prependnullcount";
 const CN_PROGMEM char   CN_pwm                      [] = "pwm";
 const CN_PROGMEM char   CN_r                        [] = "r";
+const CN_PROGMEM char   CN_randomize                [] = "randomize";
 const CN_PROGMEM char   CN_Relay                    [] = "Relay";
 const CN_PROGMEM char   CN_remote                   [] = "remote";
 const CN_PROGMEM char   CN_rev                      [] = "rev";

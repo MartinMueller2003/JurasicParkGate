@@ -26,6 +26,8 @@ private:
 
 DFRobotDFPlayerMini Player;
 bool IsInstalled = false;
+bool randomize = true;
+uint8_t FileNumberToPlay = 1;
 
 protected:
 
