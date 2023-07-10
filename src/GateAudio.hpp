@@ -27,7 +27,8 @@ private:
 DFRobotDFPlayerMini Player;
 bool IsInstalled = false;
 bool randomize = true;
-uint8_t FileNumberToPlay = 1;
+uint8_t FileNumberToPlay = 0;
+int LastPlayerStatus = -1;
 
 protected:
 
@@ -48,7 +49,7 @@ void PausePlaying();
 void ResumePlaying();
 void StopPlaying();
 void NextSong();
-bool IsIdle() {return true;}
+bool IsIdle();
 
 void GetDriverName    (String & Name) {Name = "GateAudio";}
 

@@ -97,7 +97,15 @@ void c_GateAudio::GetStatus (JsonObject & json)
     // DEBUG_START;
     JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
     jsonMp3[F ("installed")] = IsInstalled;
-    jsonMp3[F ("playing")] = (IsIdle) ? -1 : FileNumberToPlay;
+    jsonMp3[F ("LastPlayerStatus")] = LastPlayerStatus;
+    if(IsIdle())
+    {
+        jsonMp3[F ("playing")] = uint8_t(-1);
+    }
+    else
+    {
+        jsonMp3[F ("playing")] = FileNumberToPlay;
+    }
 
     // DEBUG_END;
 }  // GetConfig
@@ -181,6 +189,29 @@ void c_GateAudio::ResumePlaying ()
     }
 
     // DEBUG_END;
+}  // ResumePlaying
+
+// -----------------------------------------------------------------------------
+bool c_GateAudio::IsIdle ()
+{
+    // DEBUG_START;
+
+    if(IsInstalled)
+    {
+        int newPlayerStatus = Player.readState();
+        if(-1 != newPlayerStatus) // ignore failed status reads
+        {
+            if(LastPlayerStatus != newPlayerStatus)
+            {
+                DEBUG_V(String("newPlayerStatus: ") + String(newPlayerStatus));
+            }
+            LastPlayerStatus = newPlayerStatus;
+        }
+    }
+
+    // DEBUG_END;
+
+    return 0 == LastPlayerStatus;
 }  // ResumePlaying
 
 // create a global instance of the Gate Audio
