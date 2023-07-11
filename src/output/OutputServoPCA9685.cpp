@@ -37,7 +37,7 @@ c_OutputServoPCA9685::c_OutputServoPCA9685 (c_OutputMgr::e_OutputChannelIds Outp
     for (ServoPCA9685Channel_t & currentServoPCA9685Channel : OutputList)
     {
         currentServoPCA9685Channel.Id            = id++;
-        currentServoPCA9685Channel.Enabled       = false;
+        currentServoPCA9685Channel.Enabled       = true;
         currentServoPCA9685Channel.MinLevel      = SERVO_PCA9685_OUTPUT_MIN_PULSE_WIDTH;
         currentServoPCA9685Channel.MaxLevel      = SERVO_PCA9685_OUTPUT_MAX_PULSE_WIDTH;
         currentServoPCA9685Channel.PreviousValue = 0;

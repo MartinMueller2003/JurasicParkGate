@@ -30,15 +30,15 @@ private:
 
 typedef struct ServoPCA9685Channel_s
 {
-    uint8_t Id            = -1;
-    bool Enabled       = false;
+    uint8_t Id             = -1;
+    bool Enabled           = true;
     uint16_t MinLevel      = SERVO_PCA9685_OUTPUT_MIN_PULSE_WIDTH;
     uint16_t MaxLevel      = SERVO_PCA9685_OUTPUT_MAX_PULSE_WIDTH;
     uint16_t PreviousValue = 0;
-    bool IsReversed    = false;
-    bool Is16Bit       = false;
-    bool IsScaled      = true;
-    uint8_t HomeValue     = 0;
+    bool IsReversed        = false;
+    bool Is16Bit           = false;
+    bool IsScaled          = true;
+    uint8_t HomeValue      = 0;
 } ServoPCA9685Channel_t;
 
 public:
