@@ -2084,6 +2084,17 @@ function ProcessReceivedJsonStatusMessage(data) {
             $('#DoorsStatus #Position').text(DoorStatus.channel);
             $('#DoorsStatus #TimeElapsed').text(DoorStatus.time);
         }
+
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'MP3')) 
+        {
+            let AudioStatus = GateStatus.MP3;
+            console.log("AudioStatus: " + AudioStatus);
+            $('#AudioStatus #installed').text((AudioStatus.installed) ? "Installed" : "Not Installed");
+            console.log("installed: " + $('#AudioStatus #installed').text());
+
+            $('#AudioStatus #LastPlayerStatus').text(AudioStatus.LastPlayerStatus);
+            $('#AudioStatus #playing').text(AudioStatus.playing);
+        }
     }
 
     // Device Refresh is dynamic
