@@ -31,6 +31,7 @@ uint8_t doorChannels[2] = {12, 28};
 uint32_t TimeToOpenMS = 45000;
 uint32_t TimeToCloseMS = 20000;
 uint32_t TimeStartedMS = 0;
+uint32_t TimeElapsedMS = 0;
 uint8_t CurrentPosition = 0;
 
 #define FULL_OPEN_VALUE 255

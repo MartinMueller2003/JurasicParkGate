@@ -137,7 +137,7 @@ void c_GateDoors::GetStatus (JsonObject & json)
     JsonObject jsonDoors = json.createNestedObject(CN_doors);
     jsonDoors[CN_state] = CurrentFsmState->name();
     jsonDoors[CN_channel] = CurrentPosition;
-    jsonDoors[CN_time] = millis() - TimeStartedMS;
+    jsonDoors[CN_time] = TimeElapsedMS / 1000;
 
     // DEBUG_END;
 }  // GetConfig
@@ -281,16 +281,16 @@ void FsmDoorStateOpening::poll(c_GateDoors * pParent)
     // _ DEBUG_START;
 
     // Update the current door position
-    uint32_t timeElapsed = min((uint32_t(millis()) - pParent->TimeStartedMS), pParent->TimeToOpenMS);
-    pParent->CurrentPosition = map(timeElapsed, 0, pParent->TimeToOpenMS, CLOSED_VALUE, FULL_OPEN_VALUE);
+    pParent->TimeElapsedMS = min((uint32_t(millis()) - pParent->TimeStartedMS), pParent->TimeToOpenMS);
+    pParent->CurrentPosition = map(pParent->TimeElapsedMS, 0, pParent->TimeToOpenMS, CLOSED_VALUE, FULL_OPEN_VALUE);
 
     // _ DEBUG_V(String("            now: ") + String(millis()));
     // _ DEBUG_V(String("   TimeToOpenMS: ") + String(pParent->TimeToOpenMS));
-    // _ DEBUG_V(String("    timeElapsed: ") + String(timeElapsed));
+    // _ DEBUG_V(String("  TimeElapsedMS: ") + String(pParent->TimeElapsedMS));
     // _ DEBUG_V(String("CurrentPosition: ") + String(pParent->CurrentPosition));
 
     // are we done?
-    if(timeElapsed >= pParent->TimeToOpenMS)
+    if(pParent->TimeElapsedMS >= pParent->TimeToOpenMS)
     {
         FsmDoorStateOpen_Imp.init(pParent);
     }
@@ -383,16 +383,16 @@ void FsmDoorStateClosing::poll(c_GateDoors * pParent)
     // _ DEBUG_START;
 
     // output current door position
-    uint32_t timeElapsed = min((uint32_t(millis()) - pParent->TimeStartedMS), pParent->TimeToCloseMS);
-    pParent-> CurrentPosition = map(timeElapsed, 0, pParent->TimeToCloseMS, FULL_OPEN_VALUE, CLOSED_VALUE);
+    pParent->TimeElapsedMS = min((uint32_t(millis()) - pParent->TimeStartedMS), pParent->TimeToCloseMS);
+    pParent-> CurrentPosition = map(pParent->TimeElapsedMS, 0, pParent->TimeToCloseMS, FULL_OPEN_VALUE, CLOSED_VALUE);
 
     // _ DEBUG_V(String("            now: ") + String(millis()));
     // _ DEBUG_V(String("  TimeToCloseMS: ") + String(pParent->TimeToCloseMS));
-    // _ DEBUG_V(String("    timeElapsed: ") + String(timeElapsed));
+    // _ DEBUG_V(String("  TimeElapsedMS: ") + String(pParent->TimeElapsedMS));
     // _ DEBUG_V(String("CurrentPosition: ") + String(pParent->CurrentPosition));
 
     // are we done?
-    if(timeElapsed >= pParent->TimeToCloseMS)
+    if(pParent->TimeElapsedMS >= pParent->TimeToCloseMS)
     {
         FsmDoorStateClosed_Imp.init(pParent);
     }
