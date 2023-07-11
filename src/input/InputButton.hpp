@@ -25,14 +25,15 @@ class c_InputButton{
 public:
 c_InputButton ();
 
-void Begin ();                                      ///< set up the operating environment based on the current config (or defaults)
-bool SetConfig (JsonObject & jsonConfig);           ///< Set a new config in the driver
-void GetConfig (JsonObject & jsonConfig);           ///< Get the current config used by the driver
+void Begin ();
+void SetGpio (gpio_num_t value) {GpioId = value;}
+bool SetConfig (JsonObject & jsonConfig);
+void GetConfig (JsonObject & jsonConfig);
 void GetStatus (JsonObject & jsonStatus);
-void Process ();                                    ///< Call from loop(),  renders Input data
+void Process ();
 void GetDriverName (String & sDriverName) { sDriverName = Name; }                                                   ///< get the name for the instantiated driver
 void SetBufferInfo (uint32_t BufferSize);
-void NetworkStateChanged (bool IsConnected);        // used by poorly designed rx functions
+void NetworkStateChanged (bool IsConnected);
 void SetName (String & value) { Name = value; }
 void RegisterButtonHandler(void (*callback)(void *), void * context);
 
@@ -54,7 +55,7 @@ bool ReadInput (void);
     #define M_POLARITY      CN_polarity
 
 String Name;
-uint32_t GpioId             = 0;
+gpio_num_t GpioId           = gpio_num_t::GPIO_NUM_0;
 uint32_t TriggerChannel     = uint32_t (32);
 Polarity_t polarity         = Polarity_t::ActiveLow;
 bool Enabled                = true;

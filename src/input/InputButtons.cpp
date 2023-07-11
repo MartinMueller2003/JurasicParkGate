@@ -32,6 +32,11 @@ static String DefaultButtonNames[]
     {"Stop"},
 };
 
+static const gpio_num_t DefaultButtonGpios[] = 
+{ 
+    gpio_num_t(32),  gpio_num_t(33) , gpio_num_t(25), gpio_num_t(26), gpio_num_t(27)
+};
+
 /*****************************************************************************/
 /* Code                                                                      */
 /*****************************************************************************/
@@ -39,6 +44,13 @@ static String DefaultButtonNames[]
 c_InputButtons::c_InputButtons () :
     c_InputCommon (c_InputMgr::e_InputChannelIds::InputChannelId_Start, c_InputMgr::e_InputType::InputType_Buttons, 32)
 {
+    int index = 0;
+    for (auto & CurrentButton : Buttons)
+    {
+        // send the config to the button
+        CurrentButton.SetGpio (DefaultButtonGpios[index++]);
+    }
+
 } // c_InputButtons
 
 /*****************************************************************************/
@@ -71,6 +83,7 @@ void c_InputButtons::Begin ()
 
     // DEBUG_V ("InputDataBufferSize: " + String(InputDataBufferSize));
 
+    int index = 0;
     for (auto & CurrentButton : Buttons)
     {
         // send the config to the button

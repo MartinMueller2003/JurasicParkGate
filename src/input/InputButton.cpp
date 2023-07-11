@@ -36,6 +36,7 @@ fsm_InputButton_wait_for_off_state  fsm_InputButton_wait_for_off_state_imp;
 c_InputButton::c_InputButton ()
 {
     // DEBUG_START;
+
     fsm_InputButton_boot_imp.Init (*this);  // currently redundant, but might Init() might do more ... so important to leave this
 
     // DEBUG_END;
@@ -47,6 +48,7 @@ void c_InputButton::Begin ()
     // DEBUG_START;
 
     // DEBUG_V(String("Name: ") + Name);
+    pinMode (GpioId, INPUT_PULLUP);
 
     // DEBUG_END;
 } // c_InputButton::Begin
