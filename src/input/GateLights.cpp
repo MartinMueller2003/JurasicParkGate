@@ -97,8 +97,7 @@ void c_GateLights::Off ()
 {
     // DEBUG_START;
 
-    // TODO - Restore Enabled = false;
-    Enabled = true;
+    Enabled = false;
     clearAll();
 
     // DEBUG_END;
@@ -207,7 +206,6 @@ void c_GateLights::clearRange (uint16_t FirstPixelId, uint16_t NumberOfPixels)
         setPixel (i, {0, 0, 0});
     }
 } // clearRange
-
 
 // create a global instance of the Gate Audio
 c_GateLights GateLights;

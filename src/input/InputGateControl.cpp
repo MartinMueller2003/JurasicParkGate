@@ -205,6 +205,9 @@ void c_InputGateControl::GetStatus (JsonObject & jsonStatus)
     // DEBUG_START;
 
     JsonObject Status = jsonStatus.createNestedObject ( F ("GateControl") );
+
+    Status[CN_state] = CurrentFsmState->name();
+
     GateAudio.GetStatus(Status);
     GateDoors.GetStatus(Status);
     GateLights.GetStatus(Status);

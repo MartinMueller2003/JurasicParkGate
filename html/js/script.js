@@ -2077,6 +2077,11 @@ function ProcessReceivedJsonStatusMessage(data) {
     {
         let GateStatus = InputStatus.GateControl;
 
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'state')) 
+        {
+            $('#GateStatus #State').text(GateStatus.state);
+        }
+
         if (GateStatus.hasOwnProperty.call(GateStatus, 'doors')) 
         {
             let DoorStatus = GateStatus.doors;
@@ -2088,9 +2093,9 @@ function ProcessReceivedJsonStatusMessage(data) {
         if (GateStatus.hasOwnProperty.call(GateStatus, 'MP3')) 
         {
             let AudioStatus = GateStatus.MP3;
-            console.log("AudioStatus: " + AudioStatus);
+            // console.log("AudioStatus: " + AudioStatus);
             $('#AudioStatus #installed').text((AudioStatus.installed) ? "Installed" : "Not Installed");
-            console.log("installed: " + $('#AudioStatus #installed').text());
+            // console.log("installed: " + $('#AudioStatus #installed').text());
 
             $('#AudioStatus #LastPlayerStatus').text(AudioStatus.LastPlayerStatus);
             $('#AudioStatus #playing').text(AudioStatus.playing);
