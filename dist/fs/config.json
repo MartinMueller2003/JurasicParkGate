@@ -1,0 +1,20 @@
+{
+  "cfgver": 1.0,
+  "init": true,
+  "device": {
+    "id": "JurrasicParkGate"
+  },
+  "network": {
+    "ssid": "",
+    "passphrase": "",
+    "hostname": "",
+    "ip": "",
+    "netmask": "",
+    "gateway": "",
+    "dhcp": true,
+    "sta_timeout": 15.0,
+    "ap_fallback": false,
+    "ap_timeout": 120.0,
+    "ap_reboot": true
+  }
+}
