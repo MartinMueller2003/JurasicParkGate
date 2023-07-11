@@ -190,6 +190,25 @@
                         </table>
                     </fieldset>
                 </div>
+                <div class="col-sm-6" id="DoorsStatus">
+                    <fieldset>
+                        <legend class="jpg-legend">Door Status</legend>
+                        <table class="jpg-table">
+                            <tr>
+                                <td width="33%">State </td>
+                                <td><span id="State"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="33%">Position </td>
+                                <td><span id="Position"></span></td>
+                            </tr>
+                            <tr>
+                                <td width="33%">Elapsed </td>
+                                <td><span id="TimeElapsed"></span></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </div>
             </div>
         </div>
 
@@ -432,8 +451,42 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="DoorsOpen">Door Open Time (s)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control is-valid col-sm-2" id="DoorsOpen" step="1" min="5" max="600" value="0" required
+                                title="Time it takes to open the doors.">
+                        </div>
+
+                        <label class="control-label col-sm-2" for="DoorsClose">Door Close Time (s)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control is-valid col-sm-2" id="DoorsClose" step="1" min="5" max="600" value="0" required
+                                title="Time it takes to close the doors.">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="AudioRand">Randomize Audio</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" class="form-control col-sm-2" id="AudioRand" title="Control music order.">
+                        </div>
+                    </div>
+
                     <!-- Advanced Mode -->
                     <div class="hidden AdvancedMode">
+                        <div class="form-group hidden AdvancedMode">
+                            <label class="control-label col-sm-2" for="DoorLeftIo">Left Door Channel</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control is-valid col-sm-2" id="DoorLeftIo" step="1" min="0" max="32" value="33" required
+                                    title="Output channel for the left door.">
+                            </div>
+                            <label class="control-label col-sm-2" for="DoorRightIo">Right Door Channel</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control is-valid col-sm-2" id="DoorRightIo" step="1" min="0" max="32" value="33" required
+                                    title="Output channel for the Right door.">
+                            </div>
+                        </div>
+
                         <div class="form-group hidden AdvancedMode">
                             <label class="control-label col-sm-2 esp32" for="miso_pin">SD MISO Pin</label>
                             <div class="col-sm-4 esp32">

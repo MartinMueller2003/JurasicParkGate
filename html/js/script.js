@@ -1058,6 +1058,19 @@ function ProcessReceivedJsonConfigMessage(JsonConfigData) {
         // save the config for later use.
         Input_Config = JsonConfigData.input_config;
         CreateOptionsFromConfig("input", Input_Config);
+
+        if ({}.hasOwnProperty.call(Input_Config, "doors")) {
+            let doorconfig = Input_Config.doors;
+            $('#DoorsOpen').val(doorconfig.open);
+            $('#DoorsClose').val(doorconfig.close);
+            $('#DoorLeftIo').val(doorconfig.channels[0].channel);
+            $('#DoorRightIo').val(doorconfig.channels[1].channel);
+        }
+
+        if ({}.hasOwnProperty.call(Input_Config, "MP3")) {
+            let audioconfig = Input_Config.MP3;
+            $('#AudioRand').prop("checked", audioconfig.randomize);
+        }
     }
 
     // is this a device config?
@@ -1283,8 +1296,28 @@ function submitNetworkConfig() {
 
 } // submitNetworkConfig
 
+function ExtractConfigFromHtmlPage(JsonConfig, SectionName) {
+    jQuery.each(JsonConfig, function (SectionName, CurrentConfigurationData) {
+        console.info("SectionName: " + SectionName);
+        console.info("CurrentConfigurationData: " + CurrentConfigurationData);
+
+        if("doors" === SectionName)
+        {
+            CurrentConfigurationData.open = $('#DoorsOpen').val();
+            CurrentConfigurationData.close = $('#DoorsClose').val();
+            CurrentConfigurationData.channels[0].channel = $('#DoorLeftIo').val();
+            CurrentConfigurationData.channels[1].channel = $('#DoorRightIo').val();
+        }
+
+        if("MP3" === SectionName)
+        {
+            CurrentConfigurationData.randomize = $('#AudioRand').prop("checked");
+        }
+    });
+
+} // ExtractConfigFromHtmlPage
+
 function ExtractChannelConfigFromHtmlPage(JsonConfig, SectionName) {
-    // for each option channel:
     jQuery.each(JsonConfig, function (DisplayedChannelId, CurrentChannelConfigurationData) {
         let elementids = [];
         let modeControlName = '#' + SectionName + 'mode' + DisplayedChannelId;
@@ -1450,7 +1483,6 @@ function ExtractChannelConfigFromHtmlPage(JsonConfig, SectionName) {
         else {
             ExtractConfigFromHtmlPages(elementids, modeControlName, ChannelConfig);
         }
-
     });
 } // ExtractChannelConfigFromHtmlPage
 
@@ -1506,6 +1538,7 @@ function ValidateConfigFields(ElementList) {
 
 // Build dynamic JSON config submission for "Device" tab
 function submitDeviceConfig() {
+    ExtractConfigFromHtmlPage(Input_Config, "input");
     ExtractChannelConfigFromHtmlPage(Input_Config.channels, "input");
     ExtractChannelConfigFromHtmlPage(Output_Config.channels, "output");
 
@@ -2036,6 +2069,20 @@ function ProcessReceivedJsonStatusMessage(data) {
         }
         else {
             $('#RelayStatus').addClass("hidden")
+        }
+    }
+
+    InputStatus = Status.input[2];
+    if ({}.hasOwnProperty.call(InputStatus, 'GateControl')) 
+    {
+        let GateStatus = InputStatus.GateControl;
+
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'doors')) 
+        {
+            let DoorStatus = GateStatus.doors;
+            $('#DoorsStatus #State').text(DoorStatus.state);
+            $('#DoorsStatus #Position').text(DoorStatus.channel);
+            $('#DoorsStatus #TimeElapsed').text(DoorStatus.time);
         }
     }
 
