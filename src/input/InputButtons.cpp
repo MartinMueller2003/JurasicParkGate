@@ -90,7 +90,7 @@ void c_InputButtons::GetConfig (JsonObject & JsonData)
     // make sure an array exists
     if ( false == JsonData.containsKey (CN_buttons) )
     {
-        DEBUG_V ("Create Button array");
+        // DEBUG_V ("Create Button array");
         JsonData.createNestedArray (CN_buttons);
     }
 
@@ -153,7 +153,7 @@ bool c_InputButtons::SetConfig (JsonObject & JsonData)
 
     if ( false == JsonData.containsKey (CN_buttons) )
     {
-        DEBUG_V ("Create Button array");
+        // DEBUG_V ("Create Button array");
         JsonData.createNestedArray (CN_buttons);
     }
 
