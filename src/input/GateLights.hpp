@@ -32,7 +32,7 @@ c_GateLights ();
 virtual ~c_GateLights ();
 
 void Begin     ();
-void Poll      () {}
+void Poll      ();
 void GetConfig (JsonObject & json);
 bool SetConfig (JsonObject & json);
 void GetStatus (JsonObject & json);
@@ -41,7 +41,6 @@ void On();
 void Off();
 
 void GetDriverName    (String & Name) {Name = "GateLights";}
-
 
 // dCRGB red, green, blue 0->1.0
 struct dCRGB
@@ -92,8 +91,7 @@ typedef struct MQTTConfiguration_s
 
 using timeType = decltype( millis () );
 
-uint32_t PixelCount = 0;
-CRGB FireColor         = {183, 0, 255};                    /* Externally controlled effect color */
+uint32_t PixelCount = 8;
 
 void setPixel (uint16_t idx,
  CRGB                   color);
@@ -117,6 +115,13 @@ void setDelay (uint16_t delay);
 void PollFlash ();
 
 void clearAll ();
+
+CRGB EffectColor        = {255, 200, 10};
+uint16_t EffectDelay        = 1000;
+uint32_t EffectWait = 32;                                   /* How long to wait for the effect to run again */
+FastTimer EffectDelayTimer;
+bool Enabled = false;
+uint32_t EffectBrightness = 1;
 
 }; // c_GateLights
 
