@@ -2079,26 +2079,29 @@ function ProcessReceivedJsonStatusMessage(data) {
 
         if (GateStatus.hasOwnProperty.call(GateStatus, 'state')) 
         {
-            $('#GateStatus #State').text(GateStatus.state);
+            $('#GateStatus #State').text(" " + GateStatus.state);
         }
 
         if (GateStatus.hasOwnProperty.call(GateStatus, 'doors')) 
         {
             let DoorStatus = GateStatus.doors;
-            $('#DoorsStatus #State').text(DoorStatus.state);
-            $('#DoorsStatus #Position').text(DoorStatus.channel);
-            $('#DoorsStatus #TimeElapsed').text(DoorStatus.time);
+            $('#DoorsStatus #State').text(" " + DoorStatus.state);
+            $('#DoorsStatus #Position').text(" " + DoorStatus.channel);
+            $('#DoorsStatus #TimeElapsed').text(" " + DoorStatus.time);
         }
 
         if (GateStatus.hasOwnProperty.call(GateStatus, 'MP3')) 
         {
             let AudioStatus = GateStatus.MP3;
-            // console.log("AudioStatus: " + AudioStatus);
-            $('#AudioStatus #installed').text((AudioStatus.installed) ? "Installed" : "Not Installed");
-            // console.log("installed: " + $('#AudioStatus #installed').text());
+            $('#AudioStatus #installed').text((AudioStatus.installed) ? " Yes" : " No");
+            $('#AudioStatus #LastPlayerStatus').text(" " + AudioStatus.LastPlayerStatus);
+            $('#AudioStatus #playing').text(" " + AudioStatus.playing);
+        }
 
-            $('#AudioStatus #LastPlayerStatus').text(AudioStatus.LastPlayerStatus);
-            $('#AudioStatus #playing').text(AudioStatus.playing);
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'lights')) 
+        {
+            let LightsStatus = GateStatus.lights;
+            $('#LightsStatus #Enabled').text((LightsStatus.enabled) ? " Yes" : " No");
         }
     }
 

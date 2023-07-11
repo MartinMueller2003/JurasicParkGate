@@ -433,6 +433,12 @@ void FsmInputGateOpening::poll(c_InputGateControl * pParent)
 {
     // _ DEBUG_START;
 
+    // if the current song has completed, move to the next one
+    if(GateAudio.IsIdle())
+    {
+        GateAudio.NextSong();
+    }
+
     // Wait until the gate is open
     if(GateDoors.IsOpen())
     {
@@ -470,10 +476,10 @@ void FsmInputGateOpen::poll(c_InputGateControl * pParent)
 {
     // _ DEBUG_START;
 
-    // wait for the play timer to expire and then move to the closing state
-    if(millis() > pParent->fsmTimer)
+    // if the current song has completed, move to the next one
+    if(GateAudio.IsIdle())
     {
-        FsmInputGateClosing_Imp.init(pParent);
+        GateAudio.NextSong();
     }
 
     // _ DEBUG_END;

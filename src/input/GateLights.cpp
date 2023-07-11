@@ -76,8 +76,8 @@ void c_GateLights::GetConfig (JsonObject & json)
 void c_GateLights::GetStatus (JsonObject & json)
 {
     // DEBUG_START;
-
-//        json[F ("size")] = LittleFS.totalBytes ();
+    JsonObject LightsStatus = json.createNestedObject(F("lights"));
+    LightsStatus[CN_enabled] = Enabled;
 
     // DEBUG_END;
 }  // GetConfig
