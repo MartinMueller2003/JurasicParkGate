@@ -208,6 +208,11 @@ bool c_GateAudio::IsIdle ()
             LastPlayerStatus = newPlayerStatus;
         }
     }
+    else
+    {
+        // show we are idle
+        LastPlayerStatus = 0; 
+    }
 
     // DEBUG_END;
 
