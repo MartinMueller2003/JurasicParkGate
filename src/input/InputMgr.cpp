@@ -410,8 +410,12 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
                 logcon ( String ( F ("Shutting Down '") ) + DriverName + String ( F ("' on Input: ") ) + String (ChannelIndex) );
             }
 
-            // DEBUG_V ("Delete old driver instance");
-            delete InputChannelDrivers[ChannelIndex].pInputChannelDriver;
+            // do not delete the buttons object
+            if(e_InputType::InputType_Buttons != InputChannelDrivers[ChannelIndex].pInputChannelDriver->GetInputType ())
+            {
+                // DEBUG_V ("Delete old driver instance");
+                delete InputChannelDrivers[ChannelIndex].pInputChannelDriver;
+            }
             InputChannelDrivers[ChannelIndex].pInputChannelDriver = nullptr;
 
             // DEBUG_V ("");
