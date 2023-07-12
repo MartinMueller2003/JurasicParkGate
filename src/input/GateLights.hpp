@@ -91,7 +91,7 @@ typedef struct MQTTConfiguration_s
 
 using timeType = decltype( millis () );
 
-uint32_t PixelCount = 8;
+uint32_t PixelCount = 10;
 
 void setPixel (uint16_t idx,
  CRGB                   color);

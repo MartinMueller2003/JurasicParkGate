@@ -27,7 +27,7 @@ protected:
 
 void SetChannelData(uint8_t);
 
-uint8_t doorChannels[2] = {12, 28};
+uint8_t doorChannels[2] = {15, 31};
 uint32_t TimeToOpenMS = 45000;
 uint32_t TimeToCloseMS = 20000;
 uint32_t TimeStartedMS = 0;

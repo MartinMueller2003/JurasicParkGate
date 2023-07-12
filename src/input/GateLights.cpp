@@ -167,16 +167,18 @@ void c_GateLights::setPixel (uint16_t pixelId, CRGB color)
     // DEBUG_START;
 
     // DEBUG_V (String ("IsInputChannelActive: ") + String(IsInputChannelActive));
-    // DEBUG_V (String ("pixelId: ") + pixelId);
-    // DEBUG_V (String ("PixelCount: ") + PixelCount);
+    // DEBUG_V(String("     pixelId: ") + String(pixelId));
+    // DEBUG_V(String("  PixelCount: ") + String(PixelCount));
 
     uint32_t StartChannel = pixelId * 3;
 
-    if(pixelId > 3)
+    if(pixelId >= (PixelCount / 2))
     {
-        // skip the last 4 channels on the device
-        StartChannel += 4;
+        // skip the last 1 channel on the 16 channel device. Move to the next relay device
+        StartChannel = ((pixelId - (PixelCount / 2)) * 3) + 16;
     }
+
+    // DEBUG_V(String("StartChannel: ") + String(StartChannel));
 
     if ( pixelId < PixelCount)
     {
