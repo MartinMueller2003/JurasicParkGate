@@ -44,7 +44,8 @@ void c_GateAudio::Begin ()
 
     do  // once
     {
-        if(!Player.begin(Serial1))
+        // TX 17 RX 16
+        if(!Player.begin(Serial2))
         {
             logcon(F("Failed to init the MP3 player"));
             IsInstalled = false;
