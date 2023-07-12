@@ -73,6 +73,17 @@ void c_OutputServoPCA9685::Begin ()
     {
         Wire.begin(int (DEFAULT_I2C_SDA), int (DEFAULT_I2C_SCL));
 
+        DEBUG_V(String("I2C_Address: ") + String(I2C_Address))
+        Wire.beginTransmission(I2C_Address);
+        int error = Wire.endTransmission();
+
+        if (error == 0)
+        {
+            FoundDevice = true;
+        }
+
+        DEBUG_V(String("FoundDevice: ") + String(FoundDevice))
+
         // DEBUG_V("Allocate PWM");
         pwm = new Adafruit_PWMServoDriver (I2C_Address, Wire);
 
@@ -339,3 +350,12 @@ uint32_t c_OutputServoPCA9685::Poll ()
     // DEBUG_END;
     return(0);
 }  // render
+
+// ----------------------------------------------------------------------------
+void c_OutputServoPCA9685::GetStatus (JsonObject & jsonStatus)
+{
+    c_OutputCommon::GetStatus (jsonStatus);
+    jsonStatus[F("I2C_Address")] = I2C_Address;
+    jsonStatus[CN_en] = FoundDevice;
+
+} // GetStatus

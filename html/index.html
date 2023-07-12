@@ -143,112 +143,94 @@
                         </table>
                     </fieldset>
                 </div>
-                <div class="col-sm-6 hidden" id="RelayStatus">
-                    <fieldset>
-                        <legend class="jpg-legend">Relay Status</legend>
-                        <table class="jpg-table">
-                            <thead>
+                <div>
+                    <div class="col-sm-6" id="GateStatus">
+                        <fieldset>
+                            <legend class="jpg-legend">Gate Status</legend>
+                            <table class="jpg-table">
                                 <tr>
-                                    <th width="30%">Output</th>
-                                    <th width="20%">value</th>
+                                    <td width="33%">State </td>
+                                    <td><span id="State"></span></td>
                                 </tr>
-                            </thead>
-                            <tbody id="RelayStatusTable">
+                            </table>
+                            <legend class="jpg-legend"></legend>
+                        </fieldset>
+                    </div>
+                    <div class="col-sm-6" id="DoorsStatus">
+                        <fieldset>
+                            <legend class="jpg-legend">Door Status</legend>
+                            <table class="jpg-table">
                                 <tr>
-                                    <td>1</td>
-                                    <td><output type="text" id="RelayValue_0"></td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td><output type="text" id="RelayValue_1"></td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td><output type="text" id="RelayValue_2"></td>
+                                    <td width="33%">State </td>
+                                    <td><span id="State"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>4</td>
-                                    <td><output type="text" id="RelayValue_3"></td>
+                                    <td width="33%">Position </td>
+                                    <td><span id="Position"></span></td>
+                                </tr>
+                            </table>
+                            <legend class="jpg-legend"></legend>
+                        </fieldset>
+                    </div>
+                    <div class="col-sm-6" id="AudioStatus">
+                        <fieldset>
+                            <legend class="jpg-legend">Audio Status</legend>
+                            <table class="jpg-table">
+                                <tr>
+                                    <td width="33%">Installed </td>
+                                    <td><span id="installed"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>5</td>
-                                    <td><output type="text" id="RelayValue_4"></td>
+                                    <td width="33%">Status </td>
+                                    <td><span id="LastPlayerStatus"></span></td>
                                 </tr>
                                 <tr>
-                                    <td>6</td>
-                                    <td><output type="text" id="RelayValue_5"></td>
+                                    <td width="33%">Track </td>
+                                    <td><span id="playing"></span></td>
                                 </tr>
+                            </table>
+                            <legend class="jpg-legend"></legend>
+                        </fieldset>
+                    </div>
+                    <div class="col-sm-6" id="LightsStatus">
+                        <fieldset>
+                            <legend class="jpg-legend">Lights Status</legend>
+                            <table class="jpg-table">
                                 <tr>
-                                    <td>7</td>
-                                    <td><output type="text" id="RelayValue_6"></td>
+                                    <td width="33%">Enabled </td>
+                                    <td><span id="Enabled"></span></td>
                                 </tr>
-                                <tr>
-                                    <td>8</td>
-                                    <td><output type="text" id="RelayValue_7"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6" id="GateStatus">
-                    <fieldset>
-                        <legend class="jpg-legend">Gate Status</legend>
-                        <table class="jpg-table">
-                            <tr>
-                                <td width="33%">State </td>
-                                <td><span id="State"></span></td>
-                            </tr>
-                        </table>
-                        <legend class="jpg-legend"></legend>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6" id="DoorsStatus">
-                    <fieldset>
-                        <legend class="jpg-legend">Door Status</legend>
-                        <table class="jpg-table">
-                            <tr>
-                                <td width="33%">State </td>
-                                <td><span id="State"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Position </td>
-                                <td><span id="Position"></span></td>
-                            </tr>
-                        </table>
-                        <legend class="jpg-legend"></legend>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6" id="AudioStatus">
-                    <fieldset>
-                        <legend class="jpg-legend">Audio Status</legend>
-                        <table class="jpg-table">
-                            <tr>
-                                <td width="33%">Installed </td>
-                                <td><span id="installed"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Status </td>
-                                <td><span id="LastPlayerStatus"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="33%">Track </td>
-                                <td><span id="playing"></span></td>
-                            </tr>
-                        </table>
-                        <legend class="jpg-legend"></legend>
-                    </fieldset>
-                </div>
-                <div class="col-sm-6" id="LightsStatus">
-                    <fieldset>
-                        <legend class="jpg-legend">Lights Status</legend>
-                        <table class="jpg-table">
-                            <tr>
-                                <td width="33%">Enabled </td>
-                                <td><span id="Enabled"></span></td>
-                            </tr>
-                        </table>
-                        <legend class="jpg-legend"></legend>
-                    </fieldset>
+                            </table>
+                            <legend class="jpg-legend"></legend>
+                        </fieldset>
+                    </div>
+                    <div class="col-sm-6" id="RelayStatus">
+                        <fieldset>
+                            <legend class="jpg-legend">Relay Status</legend>
+                            <table class="jpg-table">
+                                <thead>
+                                    <tr>
+                                        <th width="5%">ID</th>
+                                        <th width="5%">I2C Address</th>
+                                        <th width="5%">Installed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="RelayStatusTable">
+                                    <tr>
+                                        <td id="Id_0">a</td>
+                                        <td id="RelayI2c_0">500</td>
+                                        <td id="RelayEnabled_0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td id="Id_1">b</td>
+                                        <td id="RelayI2c_1">600</td>
+                                        <td id="RelayEnabled_1"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <legend class="jpg-legend"></legend>
+                        </fieldset>
+                    </div>
                 </div>
             </div>
         </div>

@@ -2057,20 +2057,13 @@ function ProcessReceivedJsonStatusMessage(data) {
 
     InputStatus = Status.input[1];
 
-    let OutputStatus = Status.output[1];
-    if(undefined !== OutputStatus)
+    Status.output.forEach(function (currentPCAstatus)
     {
-        if ({}.hasOwnProperty.call(OutputStatus, 'Relay')) {
-            $('#RelayStatus').removeClass("hidden")
-    
-            OutputStatus.Relay.forEach(function (currentRelay) {
-                $('#RelayValue_' + currentRelay.id).text(currentRelay.activevalue);
-            });
-        }
-        else {
-            $('#RelayStatus').addClass("hidden")
-        }
-    }
+        // console.info("id: " + currentPCAstatus.id);
+        $('#RelayStatusTable' + ' #Id_'           + currentPCAstatus.id).text(currentPCAstatus.id + 1);
+        $('#RelayStatusTable' + ' #RelayI2c_'     + currentPCAstatus.id).text(currentPCAstatus.I2C_Address);
+        $('#RelayStatusTable' + ' #RelayEnabled_' + currentPCAstatus.id).text(currentPCAstatus.en);
+    });
 
     InputStatus = Status.input[2];
     if ({}.hasOwnProperty.call(InputStatus, 'GateControl')) 

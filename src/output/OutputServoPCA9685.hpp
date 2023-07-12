@@ -56,10 +56,7 @@ bool SetConfig (ArduinoJson::JsonObject & jsonConfig);     ///< Set a new config
 void GetConfig (ArduinoJson::JsonObject & jsonConfig);     ///< Get the current config used by the driver
 uint32_t Poll ();                                          ///< Call from loop(),  renders output data
 void GetDriverName (String & sDriverName);
-void GetStatus (ArduinoJson::JsonObject & jsonStatus)
-{
-    c_OutputCommon::GetStatus (jsonStatus);
-}
+void GetStatus (ArduinoJson::JsonObject & jsonStatus);
 uint32_t GetNumOutputBufferBytesNeeded ()
 {
     return(OutputBufferSize);
@@ -91,7 +88,9 @@ Adafruit_PWMServoDriver* pwm             = nullptr;
 float UpdateFrequency = SERVO_PCA9685_UPDATE_FREQUENCY;
 
 // non config data
-String OutputName;
-uint16_t Num_Channels = OM_SERVO_PCA9685_CHANNEL_LIMIT;
-uint8_t I2C_Address  = PCA9685_I2C_ADDRESS;
+String      OutputName;
+uint16_t    Num_Channels = OM_SERVO_PCA9685_CHANNEL_LIMIT;
+uint8_t     I2C_Address  = PCA9685_I2C_ADDRESS;
+bool        FoundDevice  = false;
+
 }; // c_OutputServoPCA9685
