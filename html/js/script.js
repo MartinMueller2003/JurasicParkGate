@@ -2062,7 +2062,7 @@ function ProcessReceivedJsonStatusMessage(data) {
         // console.info("id: " + currentPCAstatus.id);
         $('#RelayStatusTable' + ' #Id_'           + currentPCAstatus.id).text(currentPCAstatus.id + 1);
         $('#RelayStatusTable' + ' #RelayI2c_'     + currentPCAstatus.id).text(currentPCAstatus.I2C_Address);
-        $('#RelayStatusTable' + ' #RelayEnabled_' + currentPCAstatus.id).text(currentPCAstatus.en);
+        $('#RelayStatusTable' + ' #RelayEnabled_' + currentPCAstatus.id).text((currentPCAstatus.en) ? "Yes" : "No");
     });
 
     InputStatus = Status.input[2];
