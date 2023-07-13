@@ -90,15 +90,16 @@ bool c_GateDoors::SetConfig (JsonObject & json)
         for(auto CurrentChannel : jsonDoorChannels)
         {
             uint index = uint(-1);
-            setFromJSON(index, jsonDoors, CN_id);
+            setFromJSON(index, CurrentChannel, CN_id);
 
             if(index >= sizeof(doorChannels))
             {
+                DEBUG_V(String("index: ") + String(index));
                 logcon (F("Invalid door channel index. skipping"));
                 continue;
             }
 
-            ConfigChanged |= setFromJSON(doorChannels[index], jsonDoors, CN_channel);
+            ConfigChanged |= setFromJSON(doorChannels[index], CurrentChannel, CN_channel);
         }
 
     } while(false);
