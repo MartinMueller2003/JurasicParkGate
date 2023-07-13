@@ -69,20 +69,27 @@ void c_OutputServoPCA9685::Begin ()
 {
     // DEBUG_START;
 
-    if (!HasBeenInitialized)
+    do // once
     {
+        if (HasBeenInitialized)
+        {
+            break;
+        }
+
         Wire.begin(int (DEFAULT_I2C_SDA), int (DEFAULT_I2C_SCL));
 
-        DEBUG_V(String("I2C_Address: ") + String(I2C_Address))
+        // DEBUG_V(String("I2C_Address: ") + String(I2C_Address));
         Wire.beginTransmission(I2C_Address);
         int error = Wire.endTransmission();
 
-        if (error == 0)
+        if (error != 0)
         {
-            FoundDevice = true;
+            // DEBUG_V(String("I2C error: ") + String(error));
+            logcon(String(F("ERROR: Could not find PCA device at address ")) + String(I2C_Address));
+            break;
         }
 
-        DEBUG_V(String("FoundDevice: ") + String(FoundDevice))
+        FoundDevice = true;
 
         // DEBUG_V("Allocate PWM");
         pwm = new Adafruit_PWMServoDriver (I2C_Address, Wire);
@@ -95,7 +102,9 @@ void c_OutputServoPCA9685::Begin ()
         validate ();
 
         HasBeenInitialized = true;
-    }
+    } while (false);
+
+    // DEBUG_V(String("FoundDevice: ") + String(FoundDevice))
 
     // DEBUG_END;
 }  // Begin
@@ -172,6 +181,10 @@ bool c_OutputServoPCA9685::SetConfig (ArduinoJson::JsonObject & jsonConfig)
 
     do  // once
     {
+        if(!FoundDevice)
+        {
+            break;
+        }
         // extern void PrettyPrint (JsonObject & jsonStuff, String Name);
 
         // PrettyPrint (jsonConfig, String("c_OutputServoPCA9685::SetConfig"));
@@ -276,9 +289,10 @@ uint32_t c_OutputServoPCA9685::Poll ()
     // DEBUG_START;
 
     uint8_t OutputDataIndex = 0;
-    ReportNewFrame ();
-
-    for (ServoPCA9685Channel_t & currentServoPCA9685 : OutputList)
+    if(FoundDevice)
+    {
+        ReportNewFrame ();
+        for (ServoPCA9685Channel_t & currentServoPCA9685 : OutputList)
     {
         // DEBUG_V (String("OutputDataIndex: ") + String(OutputDataIndex));
         // DEBUG_V (String ("       Enabled: ") + String (currentServoPCA9685.Enabled));
@@ -346,6 +360,7 @@ uint32_t c_OutputServoPCA9685::Poll ()
 
         ++OutputDataIndex;
     }
+    }
 
     // DEBUG_END;
     return(0);
@@ -354,8 +369,12 @@ uint32_t c_OutputServoPCA9685::Poll ()
 // ----------------------------------------------------------------------------
 void c_OutputServoPCA9685::GetStatus (JsonObject & jsonStatus)
 {
+    // DEBUG_START;
+
     c_OutputCommon::GetStatus (jsonStatus);
     jsonStatus[F("I2C_Address")] = I2C_Address;
     jsonStatus[CN_en] = FoundDevice;
+
+    // DEBUG_END;
 
 } // GetStatus
