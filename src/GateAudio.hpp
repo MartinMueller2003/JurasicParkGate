@@ -29,6 +29,7 @@ bool IsInstalled = false;
 bool randomize = true;
 uint8_t FileNumberToPlay = 0;
 int LastPlayerStatus = -1;
+uint32_t NumFiles = 0;
 
 protected:
 

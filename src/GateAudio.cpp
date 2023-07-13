@@ -18,7 +18,9 @@
  */
 
 #include "JurasicParkGate.h"
-#include <Int64String.h>
+#   include <soc/uart_reg.h>
+#   include <driver/uart.h>
+#   include <driver/gpio.h>
 
 #include "GateAudio.hpp"
 
@@ -44,21 +46,41 @@ void c_GateAudio::Begin ()
 
     do  // once
     {
-        // TX 17 RX 16
-        if(!Player.begin(Serial2))
+        // TX 19 RX 18
+        ESP_ERROR_CHECK(uart_set_pin(UART_NUM_2,
+                             19,
+                             18,
+                             UART_PIN_NO_CHANGE,
+                             UART_PIN_NO_CHANGE));
+        Serial2.begin(9600, SERIAL_8N1, 18, 19, false);
+        Player.begin(Serial2, false, true);
+        uint8_t PlayerType = Player.readType();
+        // DEBUG_V(String("command: ") + String(Player._handleCommand, HEX));
+        // DEBUG_V(String("PlayerType: ") + String(PlayerType, HEX));
+        if(DFPlayerCardOnline != PlayerType)
         {
-            logcon(F("Failed to init the MP3 player"));
+            // readType() != DFPlayerCardOnline
+            logcon(String(F("Failed to init the MP3 player. Error: ")) + String(Player.readType()));
             IsInstalled = false;
             break;
         }
 
         IsInstalled = true;
 
-        Player.setTimeOut(500); //Set serial communictaion time out 500ms
+        Player.setTimeOut(1000); //Set serial communictaion time out 500ms
+        delay(10);
           
         // Player.volume(10);  //Set volume value (0~30).
         Player.EQ(DFPLAYER_EQ_NORMAL);
+        delay(10);
         Player.outputDevice(DFPLAYER_DEVICE_SD);
+        delay(10);
+
+        Player.outputDevice(DFPLAYER_DEVICE_SD);
+        delay(10);
+
+        NumFiles = Player.readFileCounts(DFPLAYER_DEVICE_SD);
+        logcon(String(F("Player NumFiles: ")) + String(NumFiles));
 
     } while (false);
 
@@ -158,7 +180,6 @@ void c_GateAudio::StopPlaying ()
 {
     // DEBUG_START;
 
-    // DEBUG_START;
     if(IsInstalled)
     {
         Player.stop(); 
@@ -195,7 +216,7 @@ void c_GateAudio::ResumePlaying ()
 // -----------------------------------------------------------------------------
 bool c_GateAudio::IsIdle ()
 {
-    // DEBUG_START;
+    // _ DEBUG_START;
 
     if(IsInstalled)
     {
@@ -204,7 +225,7 @@ bool c_GateAudio::IsIdle ()
         {
             if(LastPlayerStatus != newPlayerStatus)
             {
-                DEBUG_V(String("newPlayerStatus: ") + String(newPlayerStatus));
+                // DEBUG_V(String("newPlayerStatus: ") + String(newPlayerStatus));
             }
             LastPlayerStatus = newPlayerStatus;
         }
@@ -215,7 +236,7 @@ bool c_GateAudio::IsIdle ()
         LastPlayerStatus = 0; 
     }
 
-    // DEBUG_END;
+    // _ DEBUG_END;
 
     return 0 == LastPlayerStatus;
 }  // ResumePlaying
