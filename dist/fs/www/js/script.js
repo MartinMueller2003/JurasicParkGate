@@ -2057,32 +2057,44 @@ function ProcessReceivedJsonStatusMessage(data) {
 
     InputStatus = Status.input[1];
 
-    let OutputStatus = Status.output[1];
-    if(undefined !== OutputStatus)
+    Status.output.forEach(function (currentPCAstatus)
     {
-        if ({}.hasOwnProperty.call(OutputStatus, 'Relay')) {
-            $('#RelayStatus').removeClass("hidden")
-    
-            OutputStatus.Relay.forEach(function (currentRelay) {
-                $('#RelayValue_' + currentRelay.id).text(currentRelay.activevalue);
-            });
-        }
-        else {
-            $('#RelayStatus').addClass("hidden")
-        }
-    }
+        // console.info("id: " + currentPCAstatus.id);
+        $('#RelayStatusTable' + ' #Id_'           + currentPCAstatus.id).text(currentPCAstatus.id + 1);
+        $('#RelayStatusTable' + ' #RelayI2c_'     + currentPCAstatus.id).text(currentPCAstatus.I2C_Address);
+        $('#RelayStatusTable' + ' #RelayEnabled_' + currentPCAstatus.id).text((currentPCAstatus.en) ? "Yes" : "No");
+    });
 
     InputStatus = Status.input[2];
     if ({}.hasOwnProperty.call(InputStatus, 'GateControl')) 
     {
         let GateStatus = InputStatus.GateControl;
 
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'state')) 
+        {
+            $('#GateStatus #State').text(" " + GateStatus.state);
+        }
+
         if (GateStatus.hasOwnProperty.call(GateStatus, 'doors')) 
         {
             let DoorStatus = GateStatus.doors;
-            $('#DoorsStatus #State').text(DoorStatus.state);
-            $('#DoorsStatus #Position').text(DoorStatus.channel);
-            $('#DoorsStatus #TimeElapsed').text(DoorStatus.time);
+            $('#DoorsStatus #State').text(" " + DoorStatus.state);
+            $('#DoorsStatus #Position').text(" " + DoorStatus.channel);
+            $('#DoorsStatus #TimeElapsed').text(" " + DoorStatus.time);
+        }
+
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'MP3')) 
+        {
+            let AudioStatus = GateStatus.MP3;
+            $('#AudioStatus #installed').text((AudioStatus.installed) ? " Yes" : " No");
+            $('#AudioStatus #LastPlayerStatus').text(" " + AudioStatus.LastPlayerStatus);
+            $('#AudioStatus #playing').text(" " + AudioStatus.playing);
+        }
+
+        if (GateStatus.hasOwnProperty.call(GateStatus, 'lights')) 
+        {
+            let LightsStatus = GateStatus.lights;
+            $('#LightsStatus #Enabled').text((LightsStatus.enabled) ? " Yes" : " No");
         }
     }
 
