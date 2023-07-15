@@ -254,7 +254,7 @@ bool c_NetworkMgr::Validate ()
             String  chipId = int64String (ESP.getEfuseMac (), HEX);
         #endif // ifdef ARDUINO_ARCH_ESP8266
         // DEBUG_V ("Setting Hostname default");
-        hostname = "esps-" + String (chipId);
+        hostname = "jpg-" + String (chipId);
         Changed  = true;
     }
 

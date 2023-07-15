@@ -73,8 +73,8 @@ static void _u0_putc(char c){
 //
 /////////////////////////////////////////////////////////
 
-#ifdef ESPS_VERSION
-const String VERSION = STRING(ESPS_VERSION);
+#ifdef JPG_VERSION
+const String VERSION = STRING(JPG_VERSION);
 #else
 const String VERSION = "1.x-dev";
 #endif

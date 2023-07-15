@@ -24,6 +24,9 @@
 #define DEFAULT_I2C_SDA gpio_num_t::GPIO_NUM_22
 #define DEFAULT_I2C_SCL gpio_num_t::GPIO_NUM_23
 
+#define DEFAULT_UART_TX gpio_num_t::GPIO_NUM_19
+#define DEFAULT_UART_RX gpio_num_t::GPIO_NUM_18
+
 // File Manager
 #define SUPPORT_SD
 #define SD_CARD_MISO_PIN    gpio_num_t::GPIO_NUM_2

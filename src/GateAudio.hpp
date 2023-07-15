@@ -23,6 +23,7 @@
 class c_GateAudio
 {
 private:
+void printDetail(uint8_t type, int value);
 
 DFRobotDFPlayerMini Player;
 bool IsInstalled = false;

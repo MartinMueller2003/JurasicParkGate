@@ -12,16 +12,16 @@
   visibility: hidden;
 }
 
-.esps {
+.jpg {
    text-align: center;
 }
 
-.esps-legend {
+.jpg-legend {
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
-.esps-table {
+.jpg-table {
     margin-left: 10px;
     border-spacing: 10px;
     width: 100%;

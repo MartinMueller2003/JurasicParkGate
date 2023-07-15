@@ -2,7 +2,7 @@
 import os, json
 
 version = "dev"
-RELEASE = "ESPS_RELEASE"
+RELEASE = "JPG_RELEASE"
 
 with open("dist/firmware/VERSION", "r") as file:
     version = file.readline().rstrip()
