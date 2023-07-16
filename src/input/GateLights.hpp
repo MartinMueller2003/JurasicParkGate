@@ -20,8 +20,7 @@
 
 #include "JurasicParkGate.h"
 
-class c_GateLights
-{
+class c_GateLights{
 private:
 
 protected:

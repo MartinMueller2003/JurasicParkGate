@@ -76,7 +76,7 @@ void c_OutputServoPCA9685::Begin ()
             break;
         }
 
-        Wire.begin(int (DEFAULT_I2C_SDA), int (DEFAULT_I2C_SCL));
+        Wire.begin( int (DEFAULT_I2C_SDA), int (DEFAULT_I2C_SCL) );
 
         // DEBUG_V(String("I2C_Address: ") + String(I2C_Address));
         Wire.beginTransmission(I2C_Address);
@@ -85,7 +85,7 @@ void c_OutputServoPCA9685::Begin ()
         if (error != 0)
         {
             // DEBUG_V(String("I2C error: ") + String(error));
-            logcon(String(F("ERROR: Could not find PCA device at address ")) + String(I2C_Address));
+            logcon( String( F("ERROR: Could not find PCA device at address ") ) + String(I2C_Address) );
             break;
         }
 
@@ -289,77 +289,78 @@ uint32_t c_OutputServoPCA9685::Poll ()
     // DEBUG_START;
 
     uint8_t OutputDataIndex = 0;
+
     if(FoundDevice)
     {
         ReportNewFrame ();
         for (ServoPCA9685Channel_t & currentServoPCA9685 : OutputList)
-    {
-        // DEBUG_V (String("OutputDataIndex: ") + String(OutputDataIndex));
-        // DEBUG_V (String ("       Enabled: ") + String (currentServoPCA9685.Enabled));
-        if (currentServoPCA9685.Enabled)
         {
-            uint16_t    MaxScaledValue = 255;
-            uint16_t    MinScaledValue = 0;
-            uint16_t    newOutputValue = pOutputBuffer[OutputDataIndex];
-
-            if (0 == newOutputValue)
+            // DEBUG_V (String("OutputDataIndex: ") + String(OutputDataIndex));
+            // DEBUG_V (String ("       Enabled: ") + String (currentServoPCA9685.Enabled));
+            if (currentServoPCA9685.Enabled)
             {
-                newOutputValue = currentServoPCA9685.HomeValue;
-            }
+                uint16_t    MaxScaledValue = 255;
+                uint16_t    MinScaledValue = 0;
+                uint16_t    newOutputValue = pOutputBuffer[OutputDataIndex];
 
-            if (currentServoPCA9685.Is16Bit)
-            {
-                // DEBUG_V ("16 Bit Mode");
-                newOutputValue  = (pOutputBuffer[(OutputDataIndex * 2) + 0] << 0);
-                newOutputValue += (pOutputBuffer[(OutputDataIndex * 2) + 1] << 8);
-                MaxScaledValue  = uint16_t (-1);
-            }
-
-            // DEBUG_V (String ("newOutputValue: ") + String (newOutputValue));
-            // DEBUG_V (String (" PreviousValue: ") + String (currentServoPCA9685.PreviousValue));
-
-            if (newOutputValue != currentServoPCA9685.PreviousValue)
-            {
-                // DEBUG_V (String ("ChannelId: ") + String (OutputDataIndex));
-                // DEBUG_V (String (" MinLevel: ") + String (currentServoPCA9685.MinLevel));
-                // DEBUG_V (String (" MaxLevel: ") + String (currentServoPCA9685.MaxLevel));
-                currentServoPCA9685.PreviousValue = newOutputValue;
-
-                if (currentServoPCA9685.IsReversed)
+                if (0 == newOutputValue)
                 {
-                    // DEBUG_V (String("Reverse Lookup"));
-                    MinScaledValue = MaxScaledValue;
-                    MaxScaledValue = 0;
+                    newOutputValue = currentServoPCA9685.HomeValue;
                 }
 
-                uint16_t Final_value = newOutputValue;
-
-                if (currentServoPCA9685.IsScaled)
+                if (currentServoPCA9685.Is16Bit)
                 {
-                    // DEBUG_V (String ("Is Scalled"));
-                    // DEBUG_V (String ("newOutputValue: ") + String (newOutputValue));
-                    // DEBUG_V (String ("      MinLevel: ") + String (currentServoPCA9685.MinLevel));
-                    // DEBUG_V (String ("      MaxLevel: ") + String (currentServoPCA9685.MaxLevel));
-                    // DEBUG_V (String ("MinScaledValue: ") + String (MinScaledValue));
-                    // DEBUG_V (String ("MaxScaledValue: ") + String (MaxScaledValue));
-
-                    uint16_t pulse_width = map (
-                        newOutputValue,
-                        MinScaledValue,
-                        MaxScaledValue,
-                        currentServoPCA9685.MinLevel,
-                        currentServoPCA9685.MaxLevel);
-                    Final_value = int( ( float(pulse_width) / float(MicroSecondsInASecond) ) * float(UpdateFrequency) * 4096.0 );
-                    // DEBUG_V (String ("pulse_width: ") + String (pulse_width));
-                    // DEBUG_V (String ("Final_value: ") + String (Final_value));
+                    // DEBUG_V ("16 Bit Mode");
+                    newOutputValue  = (pOutputBuffer[(OutputDataIndex * 2) + 0] << 0);
+                    newOutputValue += (pOutputBuffer[(OutputDataIndex * 2) + 1] << 8);
+                    MaxScaledValue  = uint16_t (-1);
                 }
 
-                pwm->setPWM (OutputDataIndex, 0, Final_value);
+                // DEBUG_V (String ("newOutputValue: ") + String (newOutputValue));
+                // DEBUG_V (String (" PreviousValue: ") + String (currentServoPCA9685.PreviousValue));
+
+                if (newOutputValue != currentServoPCA9685.PreviousValue)
+                {
+                    // DEBUG_V (String ("ChannelId: ") + String (OutputDataIndex));
+                    // DEBUG_V (String (" MinLevel: ") + String (currentServoPCA9685.MinLevel));
+                    // DEBUG_V (String (" MaxLevel: ") + String (currentServoPCA9685.MaxLevel));
+                    currentServoPCA9685.PreviousValue = newOutputValue;
+
+                    if (currentServoPCA9685.IsReversed)
+                    {
+                        // DEBUG_V (String("Reverse Lookup"));
+                        MinScaledValue = MaxScaledValue;
+                        MaxScaledValue = 0;
+                    }
+
+                    uint16_t Final_value = newOutputValue;
+
+                    if (currentServoPCA9685.IsScaled)
+                    {
+                        // DEBUG_V (String ("Is Scalled"));
+                        // DEBUG_V (String ("newOutputValue: ") + String (newOutputValue));
+                        // DEBUG_V (String ("      MinLevel: ") + String (currentServoPCA9685.MinLevel));
+                        // DEBUG_V (String ("      MaxLevel: ") + String (currentServoPCA9685.MaxLevel));
+                        // DEBUG_V (String ("MinScaledValue: ") + String (MinScaledValue));
+                        // DEBUG_V (String ("MaxScaledValue: ") + String (MaxScaledValue));
+
+                        uint16_t pulse_width = map (
+                            newOutputValue,
+                            MinScaledValue,
+                            MaxScaledValue,
+                            currentServoPCA9685.MinLevel,
+                            currentServoPCA9685.MaxLevel);
+                        Final_value = int( ( float(pulse_width) / float(MicroSecondsInASecond) ) * float(UpdateFrequency) * 4096.0 );
+                        // DEBUG_V (String ("pulse_width: ") + String (pulse_width));
+                        // DEBUG_V (String ("Final_value: ") + String (Final_value));
+                    }
+
+                    pwm->setPWM (OutputDataIndex, 0, Final_value);
+                }
             }
+
+            ++OutputDataIndex;
         }
-
-        ++OutputDataIndex;
-    }
     }
 
     // DEBUG_END;

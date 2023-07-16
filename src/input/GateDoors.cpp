@@ -20,11 +20,11 @@
 #include "GateDoors.hpp"
 #include "OutputMgr.hpp"
 
-    FsmDoorStateBooting FsmDoorStateBooting_Imp;
-    FsmDoorStateClosed  FsmDoorStateClosed_Imp;
-    FsmDoorStateOpening FsmDoorStateOpening_Imp;
-    FsmDoorStateOpen    FsmDoorStateOpen_Imp;
-    FsmDoorStateClosing FsmDoorStateClosing_Imp;
+FsmDoorStateBooting FsmDoorStateBooting_Imp;
+FsmDoorStateClosed  FsmDoorStateClosed_Imp;
+FsmDoorStateOpening FsmDoorStateOpening_Imp;
+FsmDoorStateOpen    FsmDoorStateOpen_Imp;
+FsmDoorStateClosing FsmDoorStateClosing_Imp;
 
 // -----------------------------------------------------------------------------
 ///< Start up the driver and put it into a safe mode
@@ -49,9 +49,7 @@ void c_GateDoors::Begin ()
     // DEBUG_START;
 
     do  // once
-    {
-
-    } while (false);
+    {} while (false);
 
     // DEBUG_END;
 }  // begin
@@ -65,14 +63,14 @@ bool c_GateDoors::SetConfig (JsonObject & json)
 
     do // once
     {
-        if(!json.containsKey(CN_doors))
+        if( !json.containsKey(CN_doors) )
         {
-            logcon(F("No Door configuration. Using defaults"));
+            logcon( F("No Door configuration. Using defaults") );
             break;
         }
-        JsonObject jsonDoors = json[CN_doors];
+        JsonObject  jsonDoors = json[CN_doors];
 
-        uint32_t TimeToOpenSec = TimeToOpenMS / 1000;
+        uint32_t    TimeToOpenSec = TimeToOpenMS / 1000;
         ConfigChanged |= setFromJSON(TimeToOpenSec,  jsonDoors, CN_open);
         TimeToOpenMS = TimeToOpenSec * 1000;
 
@@ -80,9 +78,9 @@ bool c_GateDoors::SetConfig (JsonObject & json)
         ConfigChanged |= setFromJSON(TimeToCloseSec, jsonDoors, CN_close);
         TimeToCloseMS = TimeToCloseSec * 1000;
 
-        if(!jsonDoors.containsKey(CN_channels))
+        if( !jsonDoors.containsKey(CN_channels) )
         {
-            logcon(F("No Door Channel configuration. Using defaults"));
+            logcon( F("No Door Channel configuration. Using defaults") );
             break;
         }
         JsonArray jsonDoorChannels = jsonDoors[CN_channels];
@@ -92,10 +90,10 @@ bool c_GateDoors::SetConfig (JsonObject & json)
             uint index = uint(-1);
             setFromJSON(index, CurrentChannel, CN_id);
 
-            if(index >= sizeof(doorChannels))
+            if( index >= sizeof(doorChannels) )
             {
-                DEBUG_V(String("index: ") + String(index));
-                logcon (F("Invalid door channel index. skipping"));
+                DEBUG_V( String("index: ") + String(index) );
+                logcon ( F("Invalid door channel index. skipping") );
                 continue;
             }
 
@@ -118,8 +116,8 @@ void c_GateDoors::GetConfig (JsonObject & json)
     jsonDoors[CN_open]  = TimeToOpenMS / 1000;
     jsonDoors[CN_close] = TimeToCloseMS / 1000;
 
-    JsonArray jsonDoorChannels = jsonDoors.createNestedArray(CN_channels);
-    uint index = 0;
+    JsonArray   jsonDoorChannels = jsonDoors.createNestedArray(CN_channels);
+    uint        index = 0;
     for(auto CurrentChannel : doorChannels)
     {
         JsonObject CurrentJsonDoorChannel = jsonDoorChannels.createNestedObject();
@@ -206,17 +204,17 @@ bool c_GateDoors::IsClosed()
 // -----------------------------------------------------------------------------
 // ------------------ FSM Definitions ------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmDoorStateBooting::init(c_GateDoors * pParent)
+void FsmDoorStateBooting::init(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
     pParent->CurrentFsmState = this;
-    
+
     // DEBUG_END;
 } // FsmDoorStateBooting::init
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateBooting::poll(c_GateDoors * pParent)
+void FsmDoorStateBooting::poll(c_GateDoors* pParent)
 {
     // _ DEBUG_START;
 
@@ -226,7 +224,7 @@ void FsmDoorStateBooting::poll(c_GateDoors * pParent)
 } // FsmDoorStateBooting::init
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosed::init(c_GateDoors * pParent)
+void FsmDoorStateClosed::init(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -235,12 +233,12 @@ void FsmDoorStateClosed::init(c_GateDoors * pParent)
     // write the closed door value to the input channels
     pParent->CurrentPosition = CLOSED_VALUE;
     pParent->SetChannelData(pParent->CurrentPosition);
-    
+
     // DEBUG_END;
 } // FsmDoorStateClosed::init
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosed::poll(c_GateDoors * pParent)
+void FsmDoorStateClosed::poll(c_GateDoors* pParent)
 {
     // _ DEBUG_START;
 
@@ -250,7 +248,7 @@ void FsmDoorStateClosed::poll(c_GateDoors * pParent)
 } // FsmDoorStateClosed::poll
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosed::Open(c_GateDoors * pParent)
+void FsmDoorStateClosed::Open(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -260,7 +258,7 @@ void FsmDoorStateClosed::Open(c_GateDoors * pParent)
 } // FsmDoorStateClosed::Open
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpening::init(c_GateDoors * pParent)
+void FsmDoorStateOpening::init(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -272,17 +270,17 @@ void FsmDoorStateOpening::init(c_GateDoors * pParent)
     // DEBUG_V(String("            now: ") + String(millis()));
     // DEBUG_V(String("  TimeStartedMS: ") + String(pParent->TimeStartedMS));
     // DEBUG_V(String("TimeRemainingMS: ") + String(TimeRemainingMS));
-    
+
     // DEBUG_END;
 } // FsmDoorStateOpening::init
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpening::poll(c_GateDoors * pParent)
+void FsmDoorStateOpening::poll(c_GateDoors* pParent)
 {
     // _ DEBUG_START;
 
     // Update the current door position
-    pParent->TimeElapsedMS = min((uint32_t(millis()) - pParent->TimeStartedMS), pParent->TimeToOpenMS);
+    pParent->TimeElapsedMS = min( (uint32_t( millis() ) - pParent->TimeStartedMS), pParent->TimeToOpenMS );
     pParent->CurrentPosition = map(pParent->TimeElapsedMS, 0, pParent->TimeToOpenMS, CLOSED_VALUE, FULL_OPEN_VALUE);
 
     // _ DEBUG_V(String("            now: ") + String(millis()));
@@ -304,7 +302,7 @@ void FsmDoorStateOpening::poll(c_GateDoors * pParent)
 } // FsmDoorStateOpening::poll
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpening::Open(c_GateDoors * pParent)
+void FsmDoorStateOpening::Open(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -315,7 +313,7 @@ void FsmDoorStateOpening::Open(c_GateDoors * pParent)
 } // FsmDoorStateOpening::Open
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpening::Close(c_GateDoors * pParent)
+void FsmDoorStateOpening::Close(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -326,7 +324,7 @@ void FsmDoorStateOpening::Close(c_GateDoors * pParent)
 } // FsmDoorStateOpening::Close
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpen::init(c_GateDoors * pParent)
+void FsmDoorStateOpen::init(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -340,7 +338,7 @@ void FsmDoorStateOpen::init(c_GateDoors * pParent)
 } // FsmDoorStateOpen::init
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpen::poll(c_GateDoors * pParent)
+void FsmDoorStateOpen::poll(c_GateDoors* pParent)
 {
     // _ DEBUG_START;
 
@@ -350,7 +348,7 @@ void FsmDoorStateOpen::poll(c_GateDoors * pParent)
 } // FsmDoorStateOpen::poll
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateOpen::Close(c_GateDoors * pParent)
+void FsmDoorStateOpen::Close(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -361,7 +359,7 @@ void FsmDoorStateOpen::Close(c_GateDoors * pParent)
 } // FsmDoorStateOpen::Close
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosing::init(c_GateDoors * pParent)
+void FsmDoorStateClosing::init(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -379,12 +377,12 @@ void FsmDoorStateClosing::init(c_GateDoors * pParent)
 } // FsmDoorStateClosing::init
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosing::poll(c_GateDoors * pParent)
+void FsmDoorStateClosing::poll(c_GateDoors* pParent)
 {
     // _ DEBUG_START;
 
     // output current door position
-    pParent->TimeElapsedMS = min((uint32_t(millis()) - pParent->TimeStartedMS), pParent->TimeToCloseMS);
+    pParent->TimeElapsedMS = min( (uint32_t( millis() ) - pParent->TimeStartedMS), pParent->TimeToCloseMS );
     pParent-> CurrentPosition = map(pParent->TimeElapsedMS, 0, pParent->TimeToCloseMS, FULL_OPEN_VALUE, CLOSED_VALUE);
 
     // _ DEBUG_V(String("            now: ") + String(millis()));
@@ -406,7 +404,7 @@ void FsmDoorStateClosing::poll(c_GateDoors * pParent)
 } // FsmDoorStateClosing::poll
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosing::Open(c_GateDoors * pParent)
+void FsmDoorStateClosing::Open(c_GateDoors* pParent)
 {
     // DEBUG_START;
 
@@ -417,7 +415,7 @@ void FsmDoorStateClosing::Open(c_GateDoors * pParent)
 } // FsmDoorStateClosing::Open
 
 // -----------------------------------------------------------------------------
-void FsmDoorStateClosing::Close(c_GateDoors * pParent)
+void FsmDoorStateClosing::Close(c_GateDoors* pParent)
 {
     // DEBUG_START;
 

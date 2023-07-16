@@ -44,21 +44,21 @@ void Button_Stop_Pressed ();
 
 protected:
 
-    friend class FsmInputGateCommon ;
-    friend class FsmInputGateBooting ;
-    friend class FsmInputGateIdle;
-    friend class FsmInputGateOpeningIntro;
-    friend class FsmInputGateOpening;
-    friend class FsmInputGateOpen;
-    friend class FsmInputGateClosing;
-    friend class FsmInputGateLights;
-    friend class FsmInputGatePlaying;
-    friend class FsmInputGatePaused;
-    FsmInputGateCommon * CurrentFsmState = nullptr;
+friend class FsmInputGateCommon;
+friend class FsmInputGateBooting;
+friend class FsmInputGateIdle;
+friend class FsmInputGateOpeningIntro;
+friend class FsmInputGateOpening;
+friend class FsmInputGateOpen;
+friend class FsmInputGateClosing;
+friend class FsmInputGateLights;
+friend class FsmInputGatePlaying;
+friend class FsmInputGatePaused;
+FsmInputGateCommon* CurrentFsmState = nullptr;
 
-    uint32_t fsmTimer = 0;
+uint32_t fsmTimer = 0;
 
-    #define OPEN_TIME   45000
+    #define OPEN_TIME 45000
 private:
 
 void validateConfiguration ();
@@ -70,145 +70,136 @@ bool HasBeenInitialized = false;
 // -----------------------------------------------------------------------------
 // ---------- FSM Definitions --------------------------------------------------
 // -----------------------------------------------------------------------------
-class FsmInputGateCommon
-{
+class FsmInputGateCommon{
 public:
-    FsmInputGateCommon() {}
-    virtual ~FsmInputGateCommon() {}
-    virtual void init (c_InputGateControl * pParent);
-            void init (c_InputGateControl * pParent, String name);
-    virtual void poll (c_InputGateControl * pParent) = 0;
-    virtual String name () = 0;
-    void GetDriverName (String & sDriverName) { _pParent->GetDriverName(sDriverName); }                                                                           ///< get the name for the instantiated driver
-    virtual void Button_Open_Pressed (c_InputGateControl * pParent) {}
-    virtual void Button_Lights_Pressed (c_InputGateControl * pParent) {}
-    virtual void Button_Play_Pressed (c_InputGateControl * pParent) {}
-    virtual void Button_Skip_Pressed (c_InputGateControl * pParent) {}
-    virtual void Button_Stop_Pressed (c_InputGateControl * pParent) {}
+FsmInputGateCommon() {}
+virtual ~FsmInputGateCommon() {}
+virtual void init (c_InputGateControl* pParent);
+void init (c_InputGateControl*  pParent,
+ String                         name);
+virtual void poll (c_InputGateControl* pParent) = 0;
+virtual String name () = 0;
+void GetDriverName (String & sDriverName) { _pParent->GetDriverName(sDriverName); }                                                                               ///< get the name for the instantiated driver
+virtual void Button_Open_Pressed (c_InputGateControl* pParent) {}
+virtual void Button_Lights_Pressed (c_InputGateControl* pParent) {}
+virtual void Button_Play_Pressed (c_InputGateControl* pParent) {}
+virtual void Button_Skip_Pressed (c_InputGateControl* pParent) {}
+virtual void Button_Stop_Pressed (c_InputGateControl* pParent) {}
 
 protected:
-    c_InputGateControl * _pParent = nullptr;
+c_InputGateControl* _pParent = nullptr;
 }; // FsmInputGateCommon
 
 // -----------------------------------------------------------------------------
-class FsmInputGateBooting final : public FsmInputGateCommon
-{
+class FsmInputGateBooting final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Booting");}
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Booting") );}
 }; // FsmInputGateBooting
 
 // -----------------------------------------------------------------------------
-class FsmInputGateIdle final : public FsmInputGateCommon
-{
+class FsmInputGateIdle final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Idle");}
-    void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Idle") );}
+void Button_Open_Pressed (c_InputGateControl* pParent) override;
+void Button_Lights_Pressed (c_InputGateControl* pParent) override;
+void Button_Play_Pressed (c_InputGateControl* pParent) override;
+// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+// void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateIdle
 
 // -----------------------------------------------------------------------------
-class FsmInputGateOpeningIntro final : public FsmInputGateCommon
-{
+class FsmInputGateOpeningIntro final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Intro");}
-    void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Intro") );}
+void Button_Open_Pressed (c_InputGateControl* pParent) override;
+// void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+// void Button_Play_Pressed (c_InputGateControl * pParent) override;
+// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+// void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateOpening
 
 // -----------------------------------------------------------------------------
-class FsmInputGateOpening final : public FsmInputGateCommon
-{
+class FsmInputGateOpening final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Opening");}
-    void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Opening") );}
+void Button_Open_Pressed (c_InputGateControl* pParent) override;
+// void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+// void Button_Play_Pressed (c_InputGateControl * pParent) override;
+// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+// void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateOpening
 
 // -----------------------------------------------------------------------------
-class FsmInputGateOpen final : public FsmInputGateCommon
-{
+class FsmInputGateOpen final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Open");}
-    void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Open") );}
+void Button_Open_Pressed (c_InputGateControl* pParent) override;
+// void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+// void Button_Play_Pressed (c_InputGateControl * pParent) override;
+// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+// void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateOpen
 
 // -----------------------------------------------------------------------------
-class FsmInputGateClosing final : public FsmInputGateCommon
-{
+class FsmInputGateClosing final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Closing");}
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Closing") );}
 }; // FsmInputGateClosing
 
 // -----------------------------------------------------------------------------
-class FsmInputGateLights final : public FsmInputGateCommon
-{
+class FsmInputGateLights final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Lights On");}
-    void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Lights On") );}
+void Button_Open_Pressed (c_InputGateControl* pParent) override;
+void Button_Lights_Pressed (c_InputGateControl* pParent) override;
+// void Button_Play_Pressed (c_InputGateControl * pParent) override;
+// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+// void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateLights
 
 // -----------------------------------------------------------------------------
-class FsmInputGatePlaying final : public FsmInputGateCommon
-{
+class FsmInputGatePlaying final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Playing");}
-    // void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Playing") );}
+// void Button_Open_Pressed (c_InputGateControl * pParent) override;
+// void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+void Button_Play_Pressed (c_InputGateControl* pParent) override;
+void Button_Skip_Pressed (c_InputGateControl* pParent) override;
+void Button_Stop_Pressed (c_InputGateControl* pParent) override;
 
 }; // FsmInputGateLights
 
 // -----------------------------------------------------------------------------
-class FsmInputGatePaused final : public FsmInputGateCommon
-{
+class FsmInputGatePaused final : public FsmInputGateCommon {
 public:
-    void init (c_InputGateControl * pParent) override;
-    void poll (c_InputGateControl * pParent) override;
-    String name () {return F("Paused");}
-    // void Button_Open_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-    void Button_Play_Pressed (c_InputGateControl * pParent) override;
-    // void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-    void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void init (c_InputGateControl* pParent) override;
+void poll (c_InputGateControl* pParent) override;
+String name () {return(F("Paused") );}
+// void Button_Open_Pressed (c_InputGateControl * pParent) override;
+// void Button_Lights_Pressed (c_InputGateControl * pParent) override;
+void Button_Play_Pressed (c_InputGateControl* pParent) override;
+// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+void Button_Stop_Pressed (c_InputGateControl* pParent) override;
 
 }; // FsmInputGatePaused

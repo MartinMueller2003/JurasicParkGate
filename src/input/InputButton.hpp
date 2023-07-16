@@ -35,7 +35,8 @@ void GetDriverName (String & sDriverName) { sDriverName = Name; }               
 void SetBufferInfo (uint32_t BufferSize);
 void NetworkStateChanged (bool IsConnected);
 void SetName (String & value) { Name = value; }
-void RegisterButtonHandler(void (*callback)(void *), void * context);
+void RegisterButtonHandler(void (*  callback )(void*),
+ void*                              context);
 
 protected:
 void generatateCallback();
@@ -64,8 +65,8 @@ FastTimer InputHoldTimer;
 uint32_t LongPushDelayMS    = 2000;
 fsm_InputButton_state* CurrentFsmState = nullptr;
 
-void (* callback) (void *) = nullptr;
-void * context = nullptr;
+void (* callback) (void*) = nullptr;
+void* context = nullptr;
 
 friend class fsm_InputButton_boot;
 friend class fsm_InputButton_off_state;

@@ -25,15 +25,15 @@
 // -----------------------------------------------------------------------------
 // Local Structure and Data Definitions
 // -----------------------------------------------------------------------------
-    FsmInputGateBooting         FsmInputGateBooting_Imp;
-    FsmInputGateIdle            FsmInputGateIdle_Imp;
-    FsmInputGateOpeningIntro    FsmInputGateOpeningIntro_Imp;
-    FsmInputGateOpening         FsmInputGateOpening_Imp;
-    FsmInputGateOpen            FsmInputGateOpen_Imp;
-    FsmInputGateClosing         FsmInputGateClosing_Imp;
-    FsmInputGateLights          FsmInputGateLights_Imp;
-    FsmInputGatePlaying         FsmInputGatePlaying_Imp;
-    FsmInputGatePaused          FsmInputGatePaused_Imp;
+FsmInputGateBooting         FsmInputGateBooting_Imp;
+FsmInputGateIdle            FsmInputGateIdle_Imp;
+FsmInputGateOpeningIntro    FsmInputGateOpeningIntro_Imp;
+FsmInputGateOpening         FsmInputGateOpening_Imp;
+FsmInputGateOpen            FsmInputGateOpen_Imp;
+FsmInputGateClosing         FsmInputGateClosing_Imp;
+FsmInputGateLights          FsmInputGateLights_Imp;
+FsmInputGatePlaying         FsmInputGatePlaying_Imp;
+FsmInputGatePaused          FsmInputGatePaused_Imp;
 
 // -----------------------------------------------------------------------------
 c_InputGateControl::c_InputGateControl () :
@@ -68,56 +68,56 @@ void c_InputGateControl::Begin ()
     GateLights.Begin();
 
     // button handlers
-    InputButtons.RegisterButtonHandler(0, 
-        [] (void * UserInfo)
-            {
-                if (UserInfo)
-                {
-                    static_cast <c_InputGateControl *> (UserInfo)->Button_Open_Pressed ();
-                }
-            },
-            this);
+    InputButtons.   RegisterButtonHandler(0,
+     [] (void* UserInfo)
+    {
+        if (UserInfo)
+        {
+            static_cast <c_InputGateControl*> (UserInfo)->Button_Open_Pressed ();
+        }
+    },
+     this);
 
-    InputButtons.RegisterButtonHandler(1, 
-        [] (void * UserInfo)
-            {
-                if (UserInfo)
-                {
-                    static_cast <c_InputGateControl *> (UserInfo)->Button_Lights_Pressed ();
-                }
-            },
-            this);
+    InputButtons.   RegisterButtonHandler(1,
+     [] (void* UserInfo)
+    {
+        if (UserInfo)
+        {
+            static_cast <c_InputGateControl*> (UserInfo)->Button_Lights_Pressed ();
+        }
+    },
+     this);
 
-    InputButtons.RegisterButtonHandler(2, 
-        [] (void * UserInfo)
-            {
-                if (UserInfo)
-                {
-                    static_cast <c_InputGateControl *> (UserInfo)->Button_Play_Pressed ();
-                }
-            },
-            this);
+    InputButtons.   RegisterButtonHandler(2,
+     [] (void* UserInfo)
+    {
+        if (UserInfo)
+        {
+            static_cast <c_InputGateControl*> (UserInfo)->Button_Play_Pressed ();
+        }
+    },
+     this);
 
 
-    InputButtons.RegisterButtonHandler(3, 
-        [] (void * UserInfo)
-            {
-                if (UserInfo)
-                {
-                    static_cast <c_InputGateControl *> (UserInfo)->Button_Skip_Pressed ();
-                }
-            },
-            this);
+    InputButtons.   RegisterButtonHandler(3,
+     [] (void* UserInfo)
+    {
+        if (UserInfo)
+        {
+            static_cast <c_InputGateControl*> (UserInfo)->Button_Skip_Pressed ();
+        }
+    },
+     this);
 
-    InputButtons.RegisterButtonHandler(4, 
-        [] (void * UserInfo)
-            {
-                if (UserInfo)
-                {
-                    static_cast <c_InputGateControl *> (UserInfo)->Button_Stop_Pressed ();
-                }
-            },
-            this);
+    InputButtons.   RegisterButtonHandler(4,
+     [] (void* UserInfo)
+    {
+        if (UserInfo)
+        {
+            static_cast <c_InputGateControl*> (UserInfo)->Button_Stop_Pressed ();
+        }
+    },
+     this);
 
     HasBeenInitialized = true;
 
@@ -129,54 +129,54 @@ void c_InputGateControl::Begin ()
 }  // Begin
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::Button_Open_Pressed () 
+void c_InputGateControl::Button_Open_Pressed ()
 {
     // DEBUG_START;
 
     if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Open_Pressed(this); }
 
     // DEBUG_END;
-}
+} // c_InputGateControl::Button_Open_Pressed
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::Button_Lights_Pressed () 
+void c_InputGateControl::Button_Lights_Pressed ()
 {
     // DEBUG_START;
 
     if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Lights_Pressed(this); }
 
     // DEBUG_END;
-}
+} // c_InputGateControl::Button_Lights_Pressed
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::Button_Play_Pressed () 
+void c_InputGateControl::Button_Play_Pressed ()
 {
     // DEBUG_START;
 
     if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Play_Pressed(this); }
 
     // DEBUG_END;
-}
+} // c_InputGateControl::Button_Play_Pressed
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::Button_Skip_Pressed () 
+void c_InputGateControl::Button_Skip_Pressed ()
 {
     // DEBUG_START;
 
     if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Skip_Pressed(this); }
 
     // DEBUG_END;
-}
+} // c_InputGateControl::Button_Skip_Pressed
 
 // -----------------------------------------------------------------------------
-void c_InputGateControl::Button_Stop_Pressed () 
+void c_InputGateControl::Button_Stop_Pressed ()
 {
     // DEBUG_START;
 
     if(nullptr != CurrentFsmState) { CurrentFsmState->Button_Stop_Pressed(this); }
 
     // DEBUG_END;
-}
+} // c_InputGateControl::Button_Stop_Pressed
 
 // -----------------------------------------------------------------------------
 void c_InputGateControl::GetConfig (JsonObject & jsonConfig)
@@ -301,28 +301,28 @@ void c_InputGateControl::validateConfiguration ()
 // ------------------ FSM Definitions ------------------------------------------
 // -----------------------------------------------------------------------------
 
-void FsmInputGateCommon::init(c_InputGateControl * pParent, String name) 
+void FsmInputGateCommon::init(c_InputGateControl* pParent, String name)
 {
-        _pParent = pParent;
-        pParent->CurrentFsmState = this;
-        pParent->fsmTimer = millis();
+    _pParent = pParent;
+    pParent->CurrentFsmState = this;
+    pParent->fsmTimer = millis();
 
-        logcon(String(F("Entering State: '")) + name + "'");
+    logcon(String( F("Entering State: '") ) + name + "'");
 
 } // FsmInputGateCommon::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateBooting::init(c_InputGateControl * pParent)
+void FsmInputGateBooting::init(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     // _ DEBUG_END;
 } // FsmInputGateBooting::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateBooting::poll(c_InputGateControl * pParent)
+void FsmInputGateBooting::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
@@ -333,11 +333,11 @@ void FsmInputGateBooting::poll(c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGateIdle::init(c_InputGateControl * pParent)
+void FsmInputGateIdle::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     GateDoors.Close();
     GateAudio.StopPlaying();
@@ -347,7 +347,7 @@ void FsmInputGateIdle::init(c_InputGateControl * pParent)
 } // FsmInputGateIdle::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateIdle::poll(c_InputGateControl * pParent)
+void FsmInputGateIdle::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
@@ -357,7 +357,7 @@ void FsmInputGateIdle::poll(c_InputGateControl * pParent)
 } // FsmInputGateIdle::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateIdle::Button_Open_Pressed (c_InputGateControl * pParent)
+void FsmInputGateIdle::Button_Open_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -367,7 +367,7 @@ void FsmInputGateIdle::Button_Open_Pressed (c_InputGateControl * pParent)
 } // FsmInputGateIdle::Button_Open_Pressed
 
 // -----------------------------------------------------------------------------
-void FsmInputGateIdle::Button_Lights_Pressed (c_InputGateControl * pParent)
+void FsmInputGateIdle::Button_Lights_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -377,7 +377,7 @@ void FsmInputGateIdle::Button_Lights_Pressed (c_InputGateControl * pParent)
 } // FsmInputGateIdle::Button_Lights_Pressed
 
 // -----------------------------------------------------------------------------
-void FsmInputGateIdle::Button_Play_Pressed (c_InputGateControl * pParent)
+void FsmInputGateIdle::Button_Play_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -388,11 +388,11 @@ void FsmInputGateIdle::Button_Play_Pressed (c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGateOpeningIntro::init(c_InputGateControl * pParent)
+void FsmInputGateOpeningIntro::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     GateDoors.Open();
     GateLights.On();
@@ -402,17 +402,18 @@ void FsmInputGateOpeningIntro::init(c_InputGateControl * pParent)
 } // FsmInputGateOpeningIntro::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateOpeningIntro::poll(c_InputGateControl * pParent)
+void FsmInputGateOpeningIntro::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
     uint32_t now = millis();
-    if(1000 < abs(int(now - pParent->fsmTimer)))
+
+    if( 1000 < abs( int(now - pParent->fsmTimer) ) )
     {
         pParent->fsmTimer += 1000;
 
         // When audio completes, next state
-        if(GateAudio.IsIdle())
+        if( GateAudio.IsIdle() )
         {
             // DEBUG_V("Audio is idle");
             FsmInputGateOpening_Imp.init(pParent);
@@ -423,7 +424,7 @@ void FsmInputGateOpeningIntro::poll(c_InputGateControl * pParent)
 } // FsmInputGateOpeningIntro::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateOpeningIntro::Button_Open_Pressed (c_InputGateControl * pParent)
+void FsmInputGateOpeningIntro::Button_Open_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -435,11 +436,11 @@ void FsmInputGateOpeningIntro::Button_Open_Pressed (c_InputGateControl * pParent
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGateOpening::init(c_InputGateControl * pParent)
+void FsmInputGateOpening::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     GateAudio.PlayCurrentSelection();
 
@@ -447,17 +448,18 @@ void FsmInputGateOpening::init(c_InputGateControl * pParent)
 } // FsmInputGateOpening::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateOpening::poll(c_InputGateControl * pParent)
+void FsmInputGateOpening::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
     uint32_t now = millis();
-    if(1000 < abs(int(now - pParent->fsmTimer)))
+
+    if( 1000 < abs( int(now - pParent->fsmTimer) ) )
     {
         pParent->fsmTimer += 1000;
 
         // if the current song has completed, move to the next one
-        if(GateAudio.IsIdle())
+        if( GateAudio.IsIdle() )
         {
             // DEBUG_V("Audio is idle");
             GateAudio.NextSong();
@@ -465,7 +467,7 @@ void FsmInputGateOpening::poll(c_InputGateControl * pParent)
     }
 
     // Wait until the gate is open
-    if(GateDoors.IsOpen())
+    if( GateDoors.IsOpen() )
     {
         FsmInputGateOpen_Imp.init(pParent);
     }
@@ -474,7 +476,7 @@ void FsmInputGateOpening::poll(c_InputGateControl * pParent)
 } // FsmInputGateOpening::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateOpening::Button_Open_Pressed (c_InputGateControl * pParent)
+void FsmInputGateOpening::Button_Open_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -486,11 +488,11 @@ void FsmInputGateOpening::Button_Open_Pressed (c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGateOpen::init(c_InputGateControl * pParent)
+void FsmInputGateOpen::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     // no actions
 
@@ -498,17 +500,18 @@ void FsmInputGateOpen::init(c_InputGateControl * pParent)
 } // FsmInputGateOpen::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateOpen::poll(c_InputGateControl * pParent)
+void FsmInputGateOpen::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
     uint32_t now = millis();
-    if(1000 < abs(int(now - pParent->fsmTimer)))
+
+    if( 1000 < abs( int(now - pParent->fsmTimer) ) )
     {
         pParent->fsmTimer += 1000;
 
         // if the current song has completed, move to the next one
-        if(GateAudio.IsIdle())
+        if( GateAudio.IsIdle() )
         {
             // DEBUG_V("Audio is idle");
             GateAudio.NextSong();
@@ -519,7 +522,7 @@ void FsmInputGateOpen::poll(c_InputGateControl * pParent)
 } // FsmInputGateOpen::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateOpen::Button_Open_Pressed (c_InputGateControl * pParent)
+void FsmInputGateOpen::Button_Open_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -531,11 +534,11 @@ void FsmInputGateOpen::Button_Open_Pressed (c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGateClosing::init(c_InputGateControl * pParent)
+void FsmInputGateClosing::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     GateDoors.Close();
 
@@ -543,11 +546,11 @@ void FsmInputGateClosing::init(c_InputGateControl * pParent)
 } // FsmInputGateClosing::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateClosing::poll(c_InputGateControl * pParent)
+void FsmInputGateClosing::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
-    if(GateDoors.IsClosed())
+    if( GateDoors.IsClosed() )
     {
         FsmInputGateIdle_Imp.init(pParent);
     }
@@ -557,11 +560,11 @@ void FsmInputGateClosing::poll(c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGateLights::init(c_InputGateControl * pParent)
+void FsmInputGateLights::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     // turn on the lights effect
     GateLights.On();
@@ -570,7 +573,7 @@ void FsmInputGateLights::init(c_InputGateControl * pParent)
 } // FsmInputGateLights::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateLights::poll(c_InputGateControl * pParent)
+void FsmInputGateLights::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
@@ -580,7 +583,7 @@ void FsmInputGateLights::poll(c_InputGateControl * pParent)
 } // FsmInputGateLights::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateLights::Button_Open_Pressed (c_InputGateControl * pParent)
+void FsmInputGateLights::Button_Open_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -592,7 +595,7 @@ void FsmInputGateLights::Button_Open_Pressed (c_InputGateControl * pParent)
 } // FsmInputGateLights::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGateLights::Button_Lights_Pressed (c_InputGateControl * pParent)
+void FsmInputGateLights::Button_Lights_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -604,26 +607,27 @@ void FsmInputGateLights::Button_Lights_Pressed (c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGatePlaying::init(c_InputGateControl * pParent)
+void FsmInputGatePlaying::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     // DEBUG_END;
 } // FsmInputGatePlaying::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePlaying::poll(c_InputGateControl * pParent)
+void FsmInputGatePlaying::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
     uint32_t now = millis();
-    if(1000 < abs(int(now - pParent->fsmTimer)))
+
+    if( 1000 < abs( int(now - pParent->fsmTimer) ) )
     {
         pParent->fsmTimer += 1000;
 
         // When audio completes, restart it
-        if(GateAudio.IsIdle())
+        if( GateAudio.IsIdle() )
         {
             // DEBUG_V("Audio is idle");
             GateAudio.PlayCurrentSelection();
@@ -634,7 +638,7 @@ void FsmInputGatePlaying::poll(c_InputGateControl * pParent)
 } // FsmInputGatePlaying::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePlaying::Button_Play_Pressed (c_InputGateControl * pParent)
+void FsmInputGatePlaying::Button_Play_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -644,7 +648,7 @@ void FsmInputGatePlaying::Button_Play_Pressed (c_InputGateControl * pParent)
 } // FsmInputGatePlaying::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePlaying::Button_Skip_Pressed (c_InputGateControl * pParent)
+void FsmInputGatePlaying::Button_Skip_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -655,7 +659,7 @@ void FsmInputGatePlaying::Button_Skip_Pressed (c_InputGateControl * pParent)
 } // FsmInputGatePlaying::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePlaying::Button_Stop_Pressed (c_InputGateControl * pParent)
+void FsmInputGatePlaying::Button_Stop_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -666,11 +670,11 @@ void FsmInputGatePlaying::Button_Stop_Pressed (c_InputGateControl * pParent)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void FsmInputGatePaused::init(c_InputGateControl * pParent)
+void FsmInputGatePaused::init(c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
-    FsmInputGateCommon::init(pParent, name());
+    FsmInputGateCommon::init( pParent, name() );
 
     // Tell audio to pause
     GateAudio.PausePlaying();
@@ -679,7 +683,7 @@ void FsmInputGatePaused::init(c_InputGateControl * pParent)
 } // FsmInputGatePaused::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePaused::poll(c_InputGateControl * pParent)
+void FsmInputGatePaused::poll(c_InputGateControl* pParent)
 {
     // _ DEBUG_START;
 
@@ -689,7 +693,7 @@ void FsmInputGatePaused::poll(c_InputGateControl * pParent)
 } // FsmInputGatePaused::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePaused::Button_Play_Pressed (c_InputGateControl * pParent)
+void FsmInputGatePaused::Button_Play_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 
@@ -702,7 +706,7 @@ void FsmInputGatePaused::Button_Play_Pressed (c_InputGateControl * pParent)
 } // FsmInputGatePaused::init
 
 // -----------------------------------------------------------------------------
-void FsmInputGatePaused::Button_Stop_Pressed (c_InputGateControl * pParent)
+void FsmInputGatePaused::Button_Stop_Pressed (c_InputGateControl* pParent)
 {
     // DEBUG_START;
 

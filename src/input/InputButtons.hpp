@@ -27,9 +27,9 @@ class c_InputButtons : public c_InputCommon {
 public:
 
 c_InputButtons ();
-void SetParms (c_InputMgr::e_InputChannelIds  NewInputChannelId,
- c_InputMgr::e_InputType                      NewChannelType,
- uint32_t                                     BufferSize);
+void SetParms (c_InputMgr::e_InputChannelIds    NewInputChannelId,
+ c_InputMgr::e_InputType                        NewChannelType,
+ uint32_t                                       BufferSize);
 
 enum InputValue_t
 {
@@ -46,7 +46,7 @@ void Process ();                                    ///< Call from loop(),  rend
 void GetDriverName (String & sDriverName) { sDriverName = F ("Buttons"); }                                                   ///< get the name for the instantiated driver
 void SetBufferInfo (uint32_t BufferSize);
 void NetworkStateChanged (bool IsConnected);        // used by poorly designed rx functions
-void RegisterButtonHandler(uint32_t ButtonId, void (*callback)(void *), void * context) {Buttons[ButtonId].RegisterButtonHandler(callback, context);}
+void RegisterButtonHandler(uint32_t ButtonId, void (*callback)(void*), void* context) {Buttons[ButtonId].RegisterButtonHandler(callback, context);}
 
     #define NumButtons 5
 

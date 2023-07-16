@@ -411,7 +411,7 @@ void c_InputMgr::InstantiateNewInputChannel (e_InputChannelIds ChannelIndex, e_I
             }
 
             // do not delete the buttons object
-            if(e_InputType::InputType_Buttons != InputChannelDrivers[ChannelIndex].pInputChannelDriver->GetInputType ())
+            if( e_InputType::InputType_Buttons != InputChannelDrivers[ChannelIndex].pInputChannelDriver->GetInputType () )
             {
                 // DEBUG_V ("Delete old driver instance");
                 delete InputChannelDrivers[ChannelIndex].pInputChannelDriver;
@@ -565,6 +565,7 @@ void c_InputMgr::LoadConfig ()
     }) )
     {
         logcon (CN_stars + String ( F (" Error loading Input Manager Config File ") ) + CN_stars);
+
         if (IsBooting)
         {
             // create a config file with default values
@@ -619,7 +620,7 @@ void c_InputMgr::Process ()
                 break;
             }
         }
-        
+
         InputGateControl.Process();
 
         if ( (false == aBlankTimerIsRunning) && (config.BlankDelay != 0) )

@@ -44,8 +44,7 @@ void c_GateLights::Begin ()
     // DEBUG_START;
 
     do  // once
-    {
-    } while (false);
+    {} while (false);
 
     // DEBUG_END;
 }  // begin
@@ -76,7 +75,7 @@ void c_GateLights::GetConfig (JsonObject & json)
 void c_GateLights::GetStatus (JsonObject & json)
 {
     // DEBUG_START;
-    JsonObject LightsStatus = json.createNestedObject(F("lights"));
+    JsonObject LightsStatus = json.createNestedObject( F("lights") );
     LightsStatus[CN_enabled] = Enabled;
 
     // DEBUG_END;
@@ -131,9 +130,9 @@ void c_GateLights::Poll ()
             setPixel (
                 i,
                 CRGB{
-                uint8_t ( red ),
-                uint8_t ( grn ),
-                uint8_t ( blu ),
+                uint8_t (   red ),
+                uint8_t (   grn ),
+                uint8_t (   blu ),
             });
         }
 
@@ -172,10 +171,10 @@ void c_GateLights::setPixel (uint16_t pixelId, CRGB color)
 
     uint32_t StartChannel = pixelId * 3;
 
-    if(pixelId >= (PixelCount / 2))
+    if( pixelId >= (PixelCount / 2) )
     {
         // skip the last 1 channel on the 16 channel device. Move to the next relay device
-        StartChannel = ((pixelId - (PixelCount / 2)) * 3) + 16;
+        StartChannel = ( ( pixelId - (PixelCount / 2) ) * 3 ) + 16;
     }
 
     // DEBUG_V(String("StartChannel: ") + String(StartChannel));

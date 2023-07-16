@@ -449,7 +449,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
             // DEBUG_V ();
             break;
         }
-*/
+ */
         case e_OutputType::OutputType_Servo_PCA9685 :
         {
             // if (CurrentOutputChannelDriver.PortType == OM_PortType_t::Relay)
@@ -477,7 +477,7 @@ void c_OutputMgr::InstantiateNewOutputChannel (DriverInfo_t & CurrentOutputChann
                 OutputType_Disabled);
             // DEBUG_V ();
             break;
-*/
+ */
         }
 
         default :

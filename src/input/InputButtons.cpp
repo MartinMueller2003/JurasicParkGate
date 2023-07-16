@@ -32,12 +32,12 @@ static String DefaultButtonNames[]
     {"Stop"},
 };
 
-static const gpio_num_t DefaultButtonGpios[] = 
-{ 
-    DEFAULT_OPEN_BTN, 
-    DEFAULT_LIGHTS_BTN, 
-    DEFAULT_PLAY_BTN, 
-    DEFAULT_SKIP_BTN, 
+static const gpio_num_t DefaultButtonGpios[] =
+{
+    DEFAULT_OPEN_BTN,
+    DEFAULT_LIGHTS_BTN,
+    DEFAULT_PLAY_BTN,
+    DEFAULT_SKIP_BTN,
     DEFAULT_STOP_BTN
 };
 
@@ -58,10 +58,10 @@ c_InputButtons::c_InputButtons () :
 } // c_InputButtons
 
 /*****************************************************************************/
-void c_InputButtons::SetParms (c_InputMgr::e_InputChannelIds   NewInputChannelId,
+void c_InputButtons::SetParms (c_InputMgr::e_InputChannelIds    NewInputChannelId,
  c_InputMgr::e_InputType                                        NewChannelType,
  uint32_t                                                       NewBufferSize)
- {
+{
     // DEBUG_START;
 
     // DEBUG_V(String("NewInputChannelId: ") + String(int(NewInputChannelId)));

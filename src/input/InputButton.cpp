@@ -89,19 +89,19 @@ bool c_InputButton::SetConfig (JsonObject & JsonData)
 
     uint32_t    oldInputId = GpioId;
 
-    setFromJSON (   Name,      JsonData,   M_NAME);
-    setFromJSON (   Enabled,   JsonData,   M_IO_ENABLED);
-    setFromJSON (   GpioId,    JsonData,   CN_GPIO);
-    setFromJSON (   Polarity,  JsonData,   M_POLARITY);
+    setFromJSON (   Name,       JsonData,   M_NAME);
+    setFromJSON (   Enabled,    JsonData,   M_IO_ENABLED);
+    setFromJSON (   GpioId,     JsonData,   CN_GPIO);
+    setFromJSON (   Polarity,   JsonData,   M_POLARITY);
 
-    polarity = (String (CN_ActiveHigh).equals (Polarity))?ActiveHigh : ActiveLow;
+    polarity = ( String (CN_ActiveHigh).equals (Polarity) )?ActiveHigh : ActiveLow;
 
-    if ( (oldInputId != GpioId))
+    if ( (oldInputId != GpioId) )
     {
         pinMode (oldInputId, INPUT);
     }
 
-    pinMode (   GpioId,     INPUT_PULLUP);
+    pinMode ( GpioId, INPUT_PULLUP);
 
     if (false == Enabled)
     {
@@ -165,7 +165,7 @@ void c_InputButton::NetworkStateChanged (bool IsConnected)
 }                                                              // NetworkStateChanged
 
 /*****************************************************************************/
-void c_InputButton::RegisterButtonHandler(void (*_callback)(void *), void * _context)
+void c_InputButton::RegisterButtonHandler(void (*_callback)(void*), void* _context)
 {
     // DEBUG_START;
 
@@ -186,7 +186,7 @@ void c_InputButton::generatateCallback()
     }
 
     // DEBUG_END;
-}
+} // c_InputButton::generatateCallback
 
 
 /*****************************************************************************/
