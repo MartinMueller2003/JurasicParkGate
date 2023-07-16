@@ -33,16 +33,16 @@ c_GateAudio::c_GateAudio ()
 ///< deallocate any resources and put the output channels into a safe state
 c_GateAudio::~c_GateAudio ()
 {
-    DEBUG_START;
+    // DEBUG_START;
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // ~c_GateAudio
 
 // -----------------------------------------------------------------------------
 ///< Start the module
 void c_GateAudio::Begin ()
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     do  // once
     {
@@ -55,8 +55,8 @@ void c_GateAudio::Begin ()
         Player.setTimeOut(1000); //Set serial communictaion time out
         Player.begin(Serial2, false, false, true);
         uint8_t PlayerType = Player.readType();
-        DEBUG_V(String("command: ") + String(Player._handleCommand, HEX));
-        DEBUG_V(String("PlayerType: ") + String(PlayerType, HEX));
+        // DEBUG_V(String("command: ") + String(Player._handleCommand, HEX));
+        // DEBUG_V(String("PlayerType: ") + String(PlayerType, HEX));
         if(DFPlayerCardOnline != PlayerType)
         {
             // readType() != DFPlayerCardOnline
@@ -79,13 +79,13 @@ void c_GateAudio::Begin ()
 
     } while (false);
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // begin
 
 // -----------------------------------------------------------------------------
 bool c_GateAudio::SetConfig (JsonObject & json)
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     bool ConfigChanged = false;
 
@@ -93,7 +93,7 @@ bool c_GateAudio::SetConfig (JsonObject & json)
 
     setFromJSON(randomize, jsonMp3, CN_randomize);
 
-    DEBUG_END;
+    // DEBUG_END;
 
     return(ConfigChanged);
 }  // SetConfig
@@ -101,12 +101,12 @@ bool c_GateAudio::SetConfig (JsonObject & json)
 // -----------------------------------------------------------------------------
 void c_GateAudio::GetConfig (JsonObject & json)
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
     jsonMp3[CN_randomize]  = randomize;
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // GetConfig
 
 // -----------------------------------------------------------------------------
@@ -131,20 +131,20 @@ void c_GateAudio::GetStatus (JsonObject & json)
 // -----------------------------------------------------------------------------
 void c_GateAudio::PlayIntro ()
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     if(IsInstalled)
     {
         Player.advertise(1);
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // PlayIntro
 
 // -----------------------------------------------------------------------------
 void c_GateAudio::PlayCurrentSelection ()
 {
-    DEBUG_START;
+    // DEBUG_START;
     if(IsInstalled)
     {
         if(randomize)
@@ -156,58 +156,58 @@ void c_GateAudio::PlayCurrentSelection ()
         Player.play(FileNumberToPlay);
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // PlayCurrentSelection
 
 // -----------------------------------------------------------------------------
 void c_GateAudio::PausePlaying ()
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     if(IsInstalled)
     {
         Player.pause(); 
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // PausePlaying
 
 // -----------------------------------------------------------------------------
 void c_GateAudio::StopPlaying ()
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     if(IsInstalled)
     {
         Player.stop(); 
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // StopPlaying
 
 // -----------------------------------------------------------------------------
 void c_GateAudio::NextSong ()
 {
-    DEBUG_START;
+    // DEBUG_START;
     if(IsInstalled)
     {
         Player.next(); 
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // NextSong
 
 // -----------------------------------------------------------------------------
 void c_GateAudio::ResumePlaying ()
 {
-    DEBUG_START;
+    // DEBUG_START;
 
     if(IsInstalled)
     {
         Player.start();
     }
 
-    DEBUG_END;
+    // DEBUG_END;
 }  // ResumePlaying
 
 // -----------------------------------------------------------------------------
@@ -223,7 +223,7 @@ bool c_GateAudio::IsIdle ()
         {
             if(LastPlayerStatus != newPlayerStatus)
             {
-                DEBUG_V(String("newPlayerStatus: ") + String(newPlayerStatus));
+                // DEBUG_V(String("newPlayerStatus: ") + String(newPlayerStatus));
             }
             LastPlayerStatus = newPlayerStatus;
         }
@@ -242,6 +242,7 @@ bool c_GateAudio::IsIdle ()
 // -----------------------------------------------------------------------------
 void c_GateAudio::printDetail(uint8_t type, int value)
 {
+  return;
     // DEBUG_START;
   switch (type)
   {
