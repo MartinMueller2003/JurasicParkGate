@@ -34,7 +34,11 @@ static String DefaultButtonNames[]
 
 static const gpio_num_t DefaultButtonGpios[] = 
 { 
-    gpio_num_t(32),  gpio_num_t(33) , gpio_num_t(25), gpio_num_t(26), gpio_num_t(27)
+    DEFAULT_OPEN_BTN, 
+    DEFAULT_LIGHTS_BTN, 
+    DEFAULT_PLAY_BTN, 
+    DEFAULT_SKIP_BTN, 
+    DEFAULT_STOP_BTN
 };
 
 /*****************************************************************************/

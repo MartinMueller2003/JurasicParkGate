@@ -27,6 +27,12 @@
 #define DEFAULT_UART_TX gpio_num_t::GPIO_NUM_19
 #define DEFAULT_UART_RX gpio_num_t::GPIO_NUM_18
 
+#define DEFAULT_OPEN_BTN    gpio_num_t::GPIO_NUM_32
+#define DEFAULT_LIGHTS_BTN  gpio_num_t::GPIO_NUM_33
+#define DEFAULT_PLAY_BTN    gpio_num_t::GPIO_NUM_25
+#define DEFAULT_SKIP_BTN    gpio_num_t::GPIO_NUM_26
+#define DEFAULT_STOP_BTN    gpio_num_t::GPIO_NUM_27
+
 // File Manager
 #define SUPPORT_SD
 #define SD_CARD_MISO_PIN    gpio_num_t::GPIO_NUM_2
