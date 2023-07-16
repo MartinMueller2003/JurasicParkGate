@@ -5,16 +5,16 @@
     "id": "JurrasicParkGate"
   },
   "network": {
-    "ssid": "",
-    "passphrase": "",
-    "hostname": "",
+    "ssid": "MaRtInG",
+    "passphrase": "martinshomenetwork",
+    "hostname": "MyGate",
     "ip": "",
     "netmask": "",
     "gateway": "",
     "dhcp": true,
     "sta_timeout": 15.0,
-    "ap_fallback": false,
+    "ap_fallback": true,
     "ap_timeout": 120.0,
-    "ap_reboot": true
+    "ap_reboot": false
   }
 }
