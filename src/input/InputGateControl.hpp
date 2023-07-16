@@ -44,6 +44,7 @@ void Button_Stop_Pressed ();
 
 protected:
 
+    friend class FsmInputGateCommon ;
     friend class FsmInputGateBooting ;
     friend class FsmInputGateIdle;
     friend class FsmInputGateOpeningIntro;
@@ -74,15 +75,19 @@ class FsmInputGateCommon
 public:
     FsmInputGateCommon() {}
     virtual ~FsmInputGateCommon() {}
-    virtual void init (c_InputGateControl * pParent) = 0;
+    virtual void init (c_InputGateControl * pParent);
+            void init (c_InputGateControl * pParent, String name);
     virtual void poll (c_InputGateControl * pParent) = 0;
     virtual String name () = 0;
+    void GetDriverName (String & sDriverName) { _pParent->GetDriverName(sDriverName); }                                                                           ///< get the name for the instantiated driver
     virtual void Button_Open_Pressed (c_InputGateControl * pParent) {}
     virtual void Button_Lights_Pressed (c_InputGateControl * pParent) {}
     virtual void Button_Play_Pressed (c_InputGateControl * pParent) {}
     virtual void Button_Skip_Pressed (c_InputGateControl * pParent) {}
     virtual void Button_Stop_Pressed (c_InputGateControl * pParent) {}
 
+protected:
+    c_InputGateControl * _pParent = nullptr;
 }; // FsmInputGateCommon
 
 // -----------------------------------------------------------------------------
