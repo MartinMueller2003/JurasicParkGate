@@ -46,21 +46,22 @@ void c_GateAudio::Begin ()
 
     do  // once
     {
-        ESP_ERROR_CHECK(uart_set_pin(UART_NUM_2,
-                             DEFAULT_UART_TX,
-                             DEFAULT_UART_RX,
-                             UART_PIN_NO_CHANGE,
-                             UART_PIN_NO_CHANGE));
+        ESP_ERROR_CHECK( uart_set_pin(UART_NUM_2,
+         DEFAULT_UART_TX,
+         DEFAULT_UART_RX,
+         UART_PIN_NO_CHANGE,
+         UART_PIN_NO_CHANGE) );
         Serial2.begin(9600, SERIAL_8N1, DEFAULT_UART_RX, DEFAULT_UART_TX, false);
         Player.setTimeOut(1000); //Set serial communictaion time out
         Player.begin(Serial2, false, false, true);
         uint8_t PlayerType = Player.readType();
+
         // DEBUG_V(String("command: ") + String(Player._handleCommand, HEX));
         // DEBUG_V(String("PlayerType: ") + String(PlayerType, HEX));
         if(DFPlayerCardOnline != PlayerType)
         {
             // readType() != DFPlayerCardOnline
-            logcon(String(F("Failed to init the MP3 player. Error: ")) + String(Player.readType()));
+            logcon( String( F("Failed to init the MP3 player. Error: ") ) + String( Player.readType() ) );
             IsInstalled = false;
             break;
         }
@@ -68,14 +69,23 @@ void c_GateAudio::Begin ()
         IsInstalled = true;
 
         Player.setTimeOut(500); //Set serial communictaion time out
-          
+
         // Player.volume(10);  //Set volume value (0~30).
         Player.volume(10);  //Set volume value. From 0 to 30
         Player.EQ(DFPLAYER_EQ_NORMAL);
         Player.outputDevice(DFPLAYER_DEVICE_SD);
 
-        NumFiles = Player.readFileCounts(DFPLAYER_DEVICE_SD);
-        logcon(String(F("Player NumFiles: ")) + String(NumFiles));
+        uint32_t NumFiles = Player.readFileCounts(DFPLAYER_DEVICE_SD);
+        logcon( String( F("Player NumFiles: ") ) + String(NumFiles) );
+        SongList.reserve(NumFiles);
+
+        for(int index = 0; index < NumFiles; ++index)
+        {
+            SongInfo_t NewSong;
+            NewSong.ReadyToPlay = true;
+            NewSong.SongId = index + 1;
+            SongList.push_back(NewSong);
+        }
 
     } while (false);
 
@@ -87,9 +97,9 @@ bool c_GateAudio::SetConfig (JsonObject & json)
 {
     // DEBUG_START;
 
-    bool ConfigChanged = false;
+    bool        ConfigChanged = false;
 
-    JsonObject jsonMp3 = json[CN_MP3];
+    JsonObject  jsonMp3 = json[CN_MP3];
 
     setFromJSON(randomize, jsonMp3, CN_randomize);
 
@@ -116,13 +126,14 @@ void c_GateAudio::GetStatus (JsonObject & json)
     JsonObject jsonMp3 = json.createNestedObject(CN_MP3);
     jsonMp3[F ("installed")] = IsInstalled;
     jsonMp3[F ("LastPlayerStatus")] = LastPlayerStatus;
-    if(IsIdle())
+
+    if( IsIdle() )
     {
         jsonMp3[F ("playing")] = uint8_t(-1);
     }
     else
     {
-        jsonMp3[F ("playing")] = FileNumberToPlay;
+        jsonMp3[F ("playing")] = LastFilePlayed;
     }
 
     // _ DEBUG_END;
@@ -147,13 +158,7 @@ void c_GateAudio::PlayCurrentSelection ()
     // DEBUG_START;
     if(IsInstalled)
     {
-        if(randomize)
-        {
-            FileNumberToPlay = uint8_t(random(NumFiles));
-        }
-        // Player.playFolder(1, FileNumberToPlay);
-        FileNumberToPlay = 1;
-        Player.play(FileNumberToPlay);
+        Player.play( getNextFileToPlay() );
     }
 
     // DEBUG_END;
@@ -166,7 +171,7 @@ void c_GateAudio::PausePlaying ()
 
     if(IsInstalled)
     {
-        Player.pause(); 
+        Player.pause();
     }
 
     // DEBUG_END;
@@ -179,7 +184,7 @@ void c_GateAudio::StopPlaying ()
 
     if(IsInstalled)
     {
-        Player.stop(); 
+        Player.stop();
     }
 
     // DEBUG_END;
@@ -191,7 +196,7 @@ void c_GateAudio::NextSong ()
     // DEBUG_START;
     if(IsInstalled)
     {
-        Player.next(); 
+        Player.play( getNextFileToPlay() );
     }
 
     // DEBUG_END;
@@ -218,7 +223,8 @@ bool c_GateAudio::IsIdle ()
     if(IsInstalled)
     {
         int newPlayerStatus = Player.readState();
-        printDetail(Player.readType(), Player.read()); //Print the detail message from DFPlayer to handle different errors and states.
+        printDetail( Player.readType(), Player.read() ); //Print the detail message from DFPlayer to handle different errors and states.
+
         if(-1 != newPlayerStatus) // ignore failed status reads
         {
             if(LastPlayerStatus != newPlayerStatus)
@@ -231,86 +237,235 @@ bool c_GateAudio::IsIdle ()
     else
     {
         // show we are idle
-        LastPlayerStatus = 0; 
+        LastPlayerStatus = 0;
     }
 
     // _ DEBUG_END;
 
-    return 0 == LastPlayerStatus;
+    return(0 == LastPlayerStatus);
 }  // ResumePlaying
 
 // -----------------------------------------------------------------------------
 void c_GateAudio::printDetail(uint8_t type, int value)
 {
-  return;
+    return;
+
     // DEBUG_START;
-  switch (type)
-  {
-    case TimeOut:
-      logcon(F("Time Out!"));
-      break;
-    case WrongStack:
-      logcon(F("Stack Wrong!"));
-      break;
-    case DFPlayerCardInserted:
-      logcon(F("Card Inserted!"));
-      break;
-    case DFPlayerCardRemoved:
-      logcon(F("Card Removed!"));
-      break;
-    case DFPlayerCardOnline:
-      logcon(F("Card Online!"));
-      break;
-    case DFPlayerUSBInserted:
-      logcon("USB Inserted!");
-      break;
-    case DFPlayerUSBRemoved:
-      logcon("USB Removed!");
-      break;
-    case DFPlayerPlayFinished:
-      logcon(String(F("Number:")) + String(value));
-      logcon(F(" Play Finished!"));
-      break;
-    case DFPlayerFeedBack:
-      logcon(F(" Player Feedback!"));
-      logcon(String(F("value: ")) + String(value));
-      break;
-    case DFPlayerError:
-      logcon(F("DFPlayerError:"));
-      switch (value) {
-        case Busy:
-          logcon(F("Card not found"));
-          break;
-        case Sleeping:
-          logcon(F("Sleeping"));
-          break;
-        case SerialWrongStack:
-          logcon(F("Get Wrong Stack"));
-          break;
-        case CheckSumNotMatch:
-          logcon(F("Check Sum Not Match"));
-          break;
-        case FileIndexOut:
-          logcon(F("File Index Out of Bound"));
-          break;
-        case FileMismatch:
-          logcon(F("Cannot Find File"));
-          break;
-        case Advertise:
-          logcon(F("In Advertise"));
-          break;
-        default:
-          logcon(String(F("type: value")) + String(value));
-          break;
-      }
-      break;
-    default:
-          logcon(String(F(" type: ")) + String(type));
-          logcon(String(F("value: ")) + String(value));
-      break;
-  }
-  // DEBUG_END;
-}
+    switch (type)
+    {
+    case TimeOut :
+    {
+        logcon( F("Time Out!") );
+        break;
+    }
+
+    case WrongStack :
+    {
+        logcon( F("Stack Wrong!") );
+        break;
+    }
+
+    case DFPlayerCardInserted :
+    {
+        logcon( F("Card Inserted!") );
+        break;
+    }
+
+    case DFPlayerCardRemoved :
+    {
+        logcon( F("Card Removed!") );
+        break;
+    }
+
+    case DFPlayerCardOnline :
+    {
+        logcon( F("Card Online!") );
+        break;
+    }
+
+    case DFPlayerUSBInserted :
+    {
+        logcon("USB Inserted!");
+        break;
+    }
+
+    case DFPlayerUSBRemoved :
+    {
+        logcon("USB Removed!");
+        break;
+    }
+
+    case DFPlayerPlayFinished :
+    {
+        logcon( String( F("Number:") ) + String(value) );
+        logcon( F(" Play Finished!") );
+        break;
+    }
+
+    case DFPlayerFeedBack :
+    {
+        logcon( F(" Player Feedback!") );
+        logcon( String( F("value: ") ) + String(value) );
+        break;
+    }
+
+    case DFPlayerError :
+    {
+        logcon( F("DFPlayerError:") );
+        switch (value)
+        {
+        case Busy :
+        {
+            logcon( F("Card not found") );
+            break;
+        }
+
+        case Sleeping :
+        {
+            logcon( F("Sleeping") );
+            break;
+        }
+
+        case SerialWrongStack :
+        {
+            logcon( F("Get Wrong Stack") );
+            break;
+        }
+
+        case CheckSumNotMatch :
+        {
+            logcon( F("Check Sum Not Match") );
+            break;
+        }
+
+        case FileIndexOut :
+        {
+            logcon( F("File Index Out of Bound") );
+            break;
+        }
+
+        case FileMismatch :
+        {
+            logcon( F("Cannot Find File") );
+            break;
+        }
+
+        case Advertise :
+        {
+            logcon( F("In Advertise") );
+            break;
+        }
+
+        default :
+        {
+            logcon( String( F("type: value") ) + String(value) );
+            break;
+        }
+        } // switch
+        break;
+    }
+
+    default :
+    {
+        logcon( String( F(" type: ") ) + String(type) );
+        logcon( String( F("value: ") ) + String(value) );
+        break;
+    }
+    } // switch
+      // DEBUG_END;
+} // c_GateAudio::printDetail
+
+// -----------------------------------------------------------------------------
+uint32_t c_GateAudio::getNextFileToPlay()
+{
+    // DEBUG_START;
+
+    uint32_t    SongToPlay = LastFilePlayed;
+
+    if(!randomize)
+    {
+        // DEBUG_V("Not Randomizing");
+        if( (SongToPlay >= SongList.size()) || (SongToPlay == 0) )
+        {
+            SongToPlay = SongList[0].SongId;
+        }
+    }
+    else
+    {
+        uint32_t    NumPlayableSongs = GetNumPlayableSongs();
+        if(0 == NumPlayableSongs)
+        {
+            NumPlayableSongs = RefreshPlayList();
+        }
+
+        uint32_t selector = random(1, NumPlayableSongs);
+        // DEBUG_V( String("selector: ") + String(selector) );
+
+        if(selector)
+        {
+            for(auto & currentSong : SongList)
+            {
+                // is the entry available?
+                if(currentSong.ReadyToPlay)
+                {
+                    if(0 == --selector)
+                    {
+                        // DEBUG_V("found the song to play");
+                        SongToPlay = currentSong.SongId;
+                        currentSong.ReadyToPlay = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if(SongToPlay == 0)
+    {
+        uint32_t dumpId = 0;
+        for(auto currentSong : SongList)
+        {
+            // DEBUG_V( String(currentSong.SongId) + ": " + String(currentSong.ReadyToPlay) );
+        }
+    }
+
+    LastFilePlayed = SongToPlay;
+    logcon( String("Playing: ") + String(SongToPlay) );
+    // DEBUG_END;
+    return(SongToPlay);
+
+} // getNextFileToPlay
+
+// -----------------------------------------------------------------------------
+uint32_t c_GateAudio::GetNumPlayableSongs()
+{
+    // DEBUG_START;
+    uint32_t response = 0;
+
+    for(auto & currentSong : SongList)
+    {
+        if(currentSong.ReadyToPlay) {++response;}
+    }
+    // DEBUG_V( String("Num Playable Songs: ") + String(response) );
+
+    // DEBUG_END;
+    return(response);
+
+} // GetNumPlayableSongs
+
+// -----------------------------------------------------------------------------
+uint32_t c_GateAudio::RefreshPlayList()
+{
+    // DEBUG_START;
+
+    for(auto & currentSong : SongList)
+    {
+        currentSong.ReadyToPlay = true;
+    }
+
+    // DEBUG_END;
+    return( SongList.size() );
+} // RefreshPlayList
 
 // create a global instance of the Gate Audio
 c_GateAudio GateAudio;

@@ -20,19 +20,29 @@
 
 #include "JurasicParkGate.h"
 #include "DFRobotDFPlayerMini.h"
-class c_GateAudio
-{
+#include <vector>
+class c_GateAudio{
 private:
-void printDetail(uint8_t type, int value);
+void printDetail(uint8_t    type,
+ int                        value);
+uint32_t getNextFileToPlay();
+uint32_t GetNumPlayableSongs();
+uint32_t RefreshPlayList();
+uint32_t LastFilePlayed = 0;
 
 DFRobotDFPlayerMini Player;
 bool IsInstalled = false;
 bool randomize = true;
-uint8_t FileNumberToPlay = 0;
 int LastPlayerStatus = -1;
-uint32_t NumFiles = 0;
 
 protected:
+struct SongInfo_t
+{
+    uint32_t SongId;
+    bool ReadyToPlay;
+};
+
+std::vector<SongInfo_t> SongList;
 
 public:
 
