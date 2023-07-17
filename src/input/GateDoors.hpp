@@ -86,7 +86,7 @@ FsmDoorStateBooting() {}
 virtual ~FsmDoorStateBooting() {}
 virtual void init (c_GateDoors* pParent);
 virtual void poll (c_GateDoors* pParent);
-virtual String name () {return(F("Booting") );}
+virtual String name () {return( F("Booting") );}
 // virtual void Open (c_GateDoors * pParent) {}
 // virtual void Close (c_GateDoors * pParent) {}
 
@@ -99,7 +99,7 @@ FsmDoorStateClosed() {}
 virtual ~FsmDoorStateClosed() {}
 virtual void init (c_GateDoors* pParent);
 virtual void poll (c_GateDoors* pParent);
-virtual String name () {return(F("Closed") );}
+virtual String name () {return( F("Closed") );}
 virtual void Open (c_GateDoors* pParent);
 // virtual void Close (c_GateDoors * pParent);
 
@@ -112,7 +112,7 @@ FsmDoorStateOpening() {}
 virtual ~FsmDoorStateOpening() {}
 virtual void init (c_GateDoors* pParent);
 virtual void poll (c_GateDoors* pParent);
-virtual String name () {return(F("Opening") );}
+virtual String name () {return( F("Opening") );}
 virtual void Open (c_GateDoors* pParent);
 virtual void Close (c_GateDoors* pParent);
 
@@ -125,7 +125,7 @@ FsmDoorStateOpen() {}
 virtual ~FsmDoorStateOpen() {}
 virtual void init (c_GateDoors* pParent);
 virtual void poll (c_GateDoors* pParent);
-virtual String name () {return(F("Open") );}
+virtual String name () {return( F("Open") );}
 // virtual void Open (c_GateDoors * pParent);
 virtual void Close (c_GateDoors* pParent);
 
@@ -138,7 +138,7 @@ FsmDoorStateClosing() {}
 virtual ~FsmDoorStateClosing() {}
 virtual void init (c_GateDoors* pParent);
 virtual void poll (c_GateDoors* pParent);
-virtual String name () {return(F("Closing") );}
+virtual String name () {return( F("Closing") );}
 virtual void Open (c_GateDoors* pParent);
 virtual void Close (c_GateDoors* pParent);
 

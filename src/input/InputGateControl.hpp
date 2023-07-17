@@ -95,7 +95,7 @@ class FsmInputGateBooting final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Booting") );}
+String name () {return( F("Booting") );}
 }; // FsmInputGateBooting
 
 // -----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ class FsmInputGateIdle final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Idle") );}
+String name () {return( F("Idle") );}
 void Button_Open_Pressed (c_InputGateControl* pParent) override;
 void Button_Lights_Pressed (c_InputGateControl* pParent) override;
 void Button_Play_Pressed (c_InputGateControl* pParent) override;
@@ -117,7 +117,7 @@ class FsmInputGateOpeningIntro final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Intro") );}
+String name () {return( F("Intro") );}
 void Button_Open_Pressed (c_InputGateControl* pParent) override;
 // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
 // void Button_Play_Pressed (c_InputGateControl * pParent) override;
@@ -131,7 +131,7 @@ class FsmInputGateOpening final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Opening") );}
+String name () {return( F("Opening") );}
 void Button_Open_Pressed (c_InputGateControl* pParent) override;
 // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
 // void Button_Play_Pressed (c_InputGateControl * pParent) override;
@@ -145,7 +145,7 @@ class FsmInputGateOpen final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Open") );}
+String name () {return( F("Open") );}
 void Button_Open_Pressed (c_InputGateControl* pParent) override;
 // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
 // void Button_Play_Pressed (c_InputGateControl * pParent) override;
@@ -159,7 +159,7 @@ class FsmInputGateClosing final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Closing") );}
+String name () {return( F("Closing") );}
 }; // FsmInputGateClosing
 
 // -----------------------------------------------------------------------------
@@ -167,7 +167,7 @@ class FsmInputGateLights final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Lights On") );}
+String name () {return( F("Lights On") );}
 void Button_Open_Pressed (c_InputGateControl* pParent) override;
 void Button_Lights_Pressed (c_InputGateControl* pParent) override;
 // void Button_Play_Pressed (c_InputGateControl * pParent) override;
@@ -181,7 +181,7 @@ class FsmInputGatePlaying final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Playing") );}
+String name () {return( F("Playing") );}
 // void Button_Open_Pressed (c_InputGateControl * pParent) override;
 // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
 void Button_Play_Pressed (c_InputGateControl* pParent) override;
@@ -195,7 +195,7 @@ class FsmInputGatePaused final : public FsmInputGateCommon {
 public:
 void init (c_InputGateControl* pParent) override;
 void poll (c_InputGateControl* pParent) override;
-String name () {return(F("Paused") );}
+String name () {return( F("Paused") );}
 // void Button_Open_Pressed (c_InputGateControl * pParent) override;
 // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
 void Button_Play_Pressed (c_InputGateControl* pParent) override;
