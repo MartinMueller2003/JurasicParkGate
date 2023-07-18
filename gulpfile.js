@@ -40,7 +40,7 @@ gulp.task('css', function() {
 gulp.task('js', function() {
     return gulp.src(['html/js/*.js'])
         .pipe(plumber())
-        .pipe(terser({ 'toplevel': true }))
+        /* .pipe(terser({ 'toplevel': true }))*/
         .pipe(gzip())
         .pipe(gulp.dest('src/data/www/js'));
 });
