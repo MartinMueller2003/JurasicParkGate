@@ -533,6 +533,36 @@ void FsmInputGateOpen::Button_Open_Pressed (c_InputGateControl* pParent)
 } // FsmInputGateOpen::Button_Open_Pressed
 
 // -----------------------------------------------------------------------------
+void FsmInputGateOpen::Button_Play_Pressed (c_InputGateControl* pParent)
+{
+    // DEBUG_START;
+
+    GateAudio.PlayCurrentSelection();
+
+    // DEBUG_END;
+} // FsmInputGateOpen::Button_Play_Pressed
+
+// -----------------------------------------------------------------------------
+void FsmInputGateOpen::Button_Skip_Pressed (c_InputGateControl* pParent)
+{
+    // DEBUG_START;
+
+    GateAudio.NextSong();
+
+    // DEBUG_END;
+} // FsmInputGateOpen::Button_Skip_Pressed
+
+// -----------------------------------------------------------------------------
+void FsmInputGateOpen::Button_Stop_Pressed (c_InputGateControl* pParent)
+{
+    // DEBUG_START;
+
+    GateAudio.PausePlaying();
+
+    // DEBUG_END;
+} // FsmInputGateOpen::Button_Stop_Pressed
+
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 void FsmInputGateClosing::init(c_InputGateControl* pParent)
 {
@@ -592,7 +622,7 @@ void FsmInputGateLights::Button_Open_Pressed (c_InputGateControl* pParent)
     FsmInputGateOpeningIntro_Imp.init(pParent);
 
     // DEBUG_END;
-} // FsmInputGateLights::init
+} // FsmInputGateLights::Button_Open_Pressed
 
 // -----------------------------------------------------------------------------
 void FsmInputGateLights::Button_Lights_Pressed (c_InputGateControl* pParent)
@@ -603,7 +633,7 @@ void FsmInputGateLights::Button_Lights_Pressed (c_InputGateControl* pParent)
     FsmInputGateIdle_Imp.init(pParent);
 
     // DEBUG_END;
-} // FsmInputGateLights::init
+} // FsmInputGateLights::Button_Lights_Pressed
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -645,7 +675,7 @@ void FsmInputGatePlaying::Button_Play_Pressed (c_InputGateControl* pParent)
     FsmInputGatePaused_Imp.init(pParent);
 
     // DEBUG_END;
-} // FsmInputGatePlaying::init
+} // FsmInputGatePlaying::Button_Play_Pressed
 
 // -----------------------------------------------------------------------------
 void FsmInputGatePlaying::Button_Skip_Pressed (c_InputGateControl* pParent)
@@ -656,7 +686,7 @@ void FsmInputGatePlaying::Button_Skip_Pressed (c_InputGateControl* pParent)
     GateAudio.NextSong();
 
     // DEBUG_END;
-} // FsmInputGatePlaying::init
+} // FsmInputGatePlaying::Button_Skip_Pressed
 
 // -----------------------------------------------------------------------------
 void FsmInputGatePlaying::Button_Stop_Pressed (c_InputGateControl* pParent)
@@ -666,7 +696,7 @@ void FsmInputGatePlaying::Button_Stop_Pressed (c_InputGateControl* pParent)
     FsmInputGateIdle_Imp.init(pParent);
 
     // DEBUG_END;
-} // FsmInputGatePlaying::init
+} // FsmInputGatePlaying::Button_Stop_Pressed
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -703,7 +733,7 @@ void FsmInputGatePaused::Button_Play_Pressed (c_InputGateControl* pParent)
     FsmInputGatePlaying_Imp.init(pParent);
 
     // DEBUG_END;
-} // FsmInputGatePaused::init
+} // FsmInputGatePaused::Button_Play_Pressed
 
 // -----------------------------------------------------------------------------
 void FsmInputGatePaused::Button_Stop_Pressed (c_InputGateControl* pParent)
@@ -713,6 +743,6 @@ void FsmInputGatePaused::Button_Stop_Pressed (c_InputGateControl* pParent)
     FsmInputGateIdle_Imp.init(pParent);
 
     // DEBUG_END;
-} // FsmInputGatePaused::init
+} // FsmInputGatePaused::Button_Stop_Pressed
 
 // -----------------------------------------------------------------------------

@@ -148,9 +148,9 @@ void poll (c_InputGateControl* pParent) override;
 String name () {return( F("Open") );}
 void Button_Open_Pressed (c_InputGateControl* pParent) override;
 // void Button_Lights_Pressed (c_InputGateControl * pParent) override;
-// void Button_Play_Pressed (c_InputGateControl * pParent) override;
-// void Button_Skip_Pressed (c_InputGateControl * pParent) override;
-// void Button_Stop_Pressed (c_InputGateControl * pParent) override;
+void Button_Play_Pressed (c_InputGateControl * pParent) override;
+void Button_Skip_Pressed (c_InputGateControl * pParent) override;
+void Button_Stop_Pressed (c_InputGateControl * pParent) override;
 
 }; // FsmInputGateOpen
 
