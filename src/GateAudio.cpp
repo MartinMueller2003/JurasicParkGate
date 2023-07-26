@@ -146,7 +146,7 @@ void c_GateAudio::PlayIntro ()
 
     if(IsInstalled)
     {
-        Player.advertise(1);
+        Player.playFolder(2,1);
     }
 
     // DEBUG_END;
